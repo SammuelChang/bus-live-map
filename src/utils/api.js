@@ -31,7 +31,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/Shape/City/${city}?%24top=30&%24format=JSON`, requestOptions)
+    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/Shape/City/${city}?%24orderby=RouteID&%24top=30&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -47,7 +47,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/RealTimeByFrequency/City/${city}?%24top=30&%24format=JSON`, requestOptions)
+    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/RealTimeByFrequency/City/${city}?%24orderby=RouteID&%24top=30&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -63,7 +63,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/RealTimeByFrequency/City/${city}?%24top=30&%24format=JSON`, requestOptions)
+    return fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/Station/City/${city}?%24orderby=RouteID&%24top=30&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
