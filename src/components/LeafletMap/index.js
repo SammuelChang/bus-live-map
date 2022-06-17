@@ -1,39 +1,25 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable global-require */
 import { useState } from 'react';
 import { parse } from 'wellknown';
 import {
   MapContainer, TileLayer, Marker, Popup, GeoJSON,
 } from 'react-leaflet';
+import L from 'leaflet';
 import api from '../../utils/api';
 import 'leaflet/dist/leaflet.css';
 
-const L = require('leaflet');
-
 export default function LeafletMap() {
+  const [location] = useState([25.049637, 121.525986]);
   const [zoom] = useState(13);
   const [tdxShape, setTdxShape] = useState([]);
-  const [convertShape, setConvertShape] = useState([]);
 
-  function setRoute() {
-    api.getToken()
-      .then((token) => api.getShpae('Taipei', token))
-      .then((r) => { setTdxShape(r); });
+  async function getShapeFn() {
+    const t = await api.getToken();
+    const s = await api.getShpae('Taipei', t);
+    const n = s.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
+    setTdxShape(n);
   }
 
-  function reformatGeometry() {
-    const newtdxShape = tdxShape.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
-    setConvertShape(newtdxShape);
-  }
-
-  async function fetchOnce() {
-    await setRoute();
-    await reformatGeometry();
-    console.log(convertShape.map((i) => i));
-    console.log(convertShape.map((i) => i.Geojson));
-  }
-
-  delete L.Icon.Default.prototype._getIconUrl;
+  // delete L.Icon.Default.prototype._getIconUrl;
 
   L.Icon.Default.mergeOptions({
     iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/MTS_Bus_icon.svg',
@@ -42,23 +28,23 @@ export default function LeafletMap() {
   });
 
   return (
-    <MapContainer center={[25.049637, 121.525986]} zoom={zoom} scrollWheelZoom style={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+    <MapContainer center={location} zoom={zoom} scrollWheelZoom style={{ height: 'calc(100vh - 100px)', width: '100%' }}>
       <button
         type="button"
-        onClick={() => fetchOnce()}
+        onClick={() => getShapeFn()}
         style={{
-          width: '100vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem',
+          width: '100vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
         }}
       >
-        get data
+        getShapeFn
       </button>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         opacity="0.5"
       />
-      {convertShape
-      && convertShape.map((i) => (
+      {tdxShape
+      && tdxShape.map((i) => (
         <GeoJSON
           key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
           data={i.Geojson}
