@@ -2,40 +2,29 @@
 import { useEffect, useState } from 'react';
 import { parse } from 'wellknown';
 import {
-  MapContainer, TileLayer, Marker, Popup, Tooltip, GeoJSON,
+  MapContainer, TileLayer, Marker, Popup, Tooltip, GeoJSON, useMapEvents,
 } from 'react-leaflet';
 import L from 'leaflet';
-import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import api from '../../utils/api';
 import 'leaflet/dist/leaflet.css';
 
 export default function LeafletMap() {
   const [location] = useState([25.049637, 121.525986]);
-  const [zoom] = useState(13);
+  const [zoomLevel, setZoomLevel] = useState(13);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxRealTime, setTdxRealTime] = useState([]);
+  const [tdxStation, setTdxStation] = useState([]);
   const [timer, setTimer] = useState(5);
+  const [testInterval, setTestInterval] = useState(0);
 
-  async function getShapeFn() {
-    const t = await api.getToken();
-    const s = await api.getShpae('Taipei', t);
-    const n = s.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
-    setTdxShape(n);
-  }
-
-  async function getBusFn() {
-    const t = await api.getToken();
-    const s = await api.getRealTimeByFrequency('Taipei', t);
-    setTdxRealTime(s);
-    console.log(s[0].UpdateTime);
-    console.log(s.find((i) => i.RouteName.Zh_tw === '652') || s[0]);
-  }
-
-  function countDownHandler() {
-    const interval = setInterval(() => {
-      setTimer((t) => (t === 0 ? 5 : t - 1));
-    }, 1000);
-    return () => clearInterval(interval);
+  function ZoomListener() {
+    const mapEvents = useMapEvents({
+      zoomend: () => {
+        setZoomLevel(mapEvents.getZoom());
+      },
+    });
+    console.log(zoomLevel);
+    return null;
   }
 
   function valueRecode(column, value) {
@@ -58,9 +47,41 @@ export default function LeafletMap() {
     }
   }
 
+  async function getAllShapeFn() {
+    const t = await api.getToken();
+    const s = await api.getAllShpae('Taipei', t);
+    const n = s.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
+    setTdxShape(n);
+  }
+
+  async function getAllBusFn() {
+    const t = await api.getToken();
+    const s = await api.getAllRealTimeByFrequency('Taipei', t);
+    setTdxRealTime(s);
+  }
+
+  async function getAllStationFn() {
+    const t = await api.getToken();
+    const s = await api.getAllStation('Taipei', t);
+    setTdxStation(s);
+  }
+
+  // async function getSingleBusFn() {
+  //   const t = await api.getToken();
+  //   const s = await api.getSingleRealTimeByFrequency('Taipei', '307', t);
+  //   setTdxRealTime(s);
+  // }
+
+  function countDownHandler() {
+    const interval = setInterval(() => {
+      setTimer((t) => (t === 0 ? 5 : t - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }
+
   useEffect(() => {
     if (timer === 0) {
-      getBusFn();
+      getAllBusFn();
     }
   }, [timer]);
 
@@ -70,46 +91,127 @@ export default function LeafletMap() {
     // shadowUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Simpleicons_Places_map-marker-6.svg',
     iconSize: [25, 25],
     shadowSize: [0, 0],
-    // iconAnchor: [20, 20],
+    iconAnchor: [12.5, 12.5],
     // shadowAnchor: [-7.5, -7.5],
     // popupAnchor: [-3, -76],
   });
 
+  const stationIcon = L.icon({
+    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Circle-icons-dev.svg',
+    iconSize: [20, 20], // size of the icon
+    shadowSize: [0, 0], // size of the shadow
+    iconAnchor: [12.5, 12.5],
+  });
+
+  const marker1Path = [
+    { key: 'marker1-point1', position: [25.049637, 121.525986] },
+    { key: 'marker1-point2', position: [25.042661, 121.529571] },
+    { key: 'marker1-point3', position: [25.041804, 121.535370] },
+    { key: 'marker1-point4', position: [25.041501, 121.540014] },
+    { key: 'marker1-point5', position: [25.041298, 121.543249] },
+    { key: 'marker1-point6', position: [25.041374, 121.546986] },
+    { key: 'marker1-point7', position: [25.041804, 121.550222] },
+    { key: 'marker1-point8', position: [25.041185, 121.553527] },
+    { key: 'marker1-point9', position: [25.041185, 121.556874] },
+    { key: 'marker1-point10', position: [25.041008, 121.561253] },
+  ];
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTestInterval((t) => (t >= 9 ? 0 : t + 1));
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, [testInterval]);
+
+  function StationComponent() {
+    const station = tdxStation.map((i) => ({
+      StationUID: i.StationUID,
+      PositionLat: i.StationPosition.PositionLat,
+      PositionLon: i.StationPosition.PositionLon,
+      StationName: i.StationName.Zh_tw,
+      Route: i.Stops.map((s) => (s.RouteName)).sort((a, b) => b - a),
+    }));
+
+    return (station.map((i) => (
+      <Marker
+        key={i.StationUID}
+        position={[i.PositionLat, i.PositionLon]}
+        icon={stationIcon}
+      >
+        <Popup>
+          <h1 style={{ textAlign: 'center' }}>{i.StationName}</h1>
+          <br />
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', height: '200px', flexDirection: 'column', flexBasis: '20px', justifyContent: 'flex-start', alignItems: 'flex-start',
+          }}
+          >
+            {i.Route.map((bus) => <div key={`${i.StationUID}-${bus.Zh_tw}`}>{bus.Zh_tw}</div>)}
+          </div>
+        </Popup>
+        <Tooltip>
+          <h5 style={{
+            textAlign: 'center', height: '10px', padding: '0', margin: '0', background: 'none',
+          }}
+          >
+            {i.StationName}
+          </h5>
+        </Tooltip>
+      </Marker>
+    )));
+  }
+
   return (
-    <MapContainer center={location} zoom={zoom} scrollWheelZoom style={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+    <MapContainer
+      center={location}
+      zoom={zoomLevel}
+      scrollWheelZoom
+      style={{ height: 'calc(100vh - 100px)', width: '100%' }}
+    >
       <button
         type="button"
-        onClick={() => getShapeFn()}
+        onClick={() => getAllShapeFn()}
         style={{
-          width: '50vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
+          width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
         }}
       >
-        getShapeFn
+        getAllShapeFn
       </button>
       <button
         type="button"
         onClick={() => countDownHandler()}
         style={{
-          width: '50vw', height: '50px', background: 'blue', color: 'black', fontSize: '2rem', opacity: 1,
+          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
         }}
       >
         getPositionFn(
         {timer}
         )
       </button>
+      <button
+        type="button"
+        onClick={() => getAllStationFn()}
+        style={{
+          width: '33.3vw', height: '50px', background: 'black', color: 'white', fontSize: '2rem', opacity: 1,
+        }}
+      >
+        getStationFn
+      </button>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         opacity="0.5"
       />
-      {tdxShape[0]
+      {tdxShape[0] !== undefined
       && tdxShape.map((i) => (
         <GeoJSON
           key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
           data={i.Geojson}
         />
       ))}
-      <Marker position={[25.049637, 121.525986]}>
+      <Marker
+        key={marker1Path[testInterval].key}
+        position={marker1Path[testInterval].position}
+      >
         <Popup>
           抱歉佔一下位置
           <br />
@@ -117,9 +219,9 @@ export default function LeafletMap() {
           我怕晚點忘記怎麼寫
         </Popup>
       </Marker>
-      {tdxRealTime[0]
+      {tdxRealTime !== undefined
       && tdxRealTime.map((i) => (
-        <ReactLeafletDriftMarker
+        <Marker
           key={`${i.PlateNumb}-${i.UpdateTime}`}
           position={[i.BusPosition.PositionLat, i.BusPosition.PositionLon]}
         >
@@ -141,8 +243,11 @@ export default function LeafletMap() {
             方位角：
             {i.Azimuth}
           </Tooltip>
-        </ReactLeafletDriftMarker>
+        </Marker>
       ))}
+      {tdxStation !== undefined
+      && <StationComponent />}
+      <ZoomListener />
     </MapContainer>
   );
 }
