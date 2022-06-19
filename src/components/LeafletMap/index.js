@@ -278,6 +278,7 @@ export default function LeafletMap() {
         <Marker
           key={`${i.PlateNumb}-${i.UpdateTime}`}
           position={[i.BusPosition.PositionLat, i.BusPosition.PositionLon]}
+          zIndexOffset={1000000}
         >
           <Tooltip>
             <h1 style={{ textAlign: 'center' }}>{i.RouteName.Zh_tw}</h1>
