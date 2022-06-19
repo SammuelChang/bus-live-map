@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 import { useEffect, useState } from 'react';
 import { parse } from 'wellknown';
@@ -14,6 +15,9 @@ export default function LeafletMap() {
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxRealTime, setTdxRealTime] = useState([]);
   const [tdxStation, setTdxStation] = useState([]);
+  const [tdxRouteStation, setTdxRouteStation] = useState([]);
+  const [tdxRouteStationTime, setTdxRouteStationTime] = useState([]);
+  const [bus] = useState(307);
   const [timer, setTimer] = useState(5);
   const [testInterval, setTestInterval] = useState(0);
 
@@ -23,7 +27,6 @@ export default function LeafletMap() {
         setZoomLevel(mapEvents.getZoom());
       },
     });
-    console.log(zoomLevel);
     return null;
   }
 
@@ -48,29 +51,35 @@ export default function LeafletMap() {
   }
 
   async function getAllShapeFn() {
+    if (tdxShape.length) { return; }
     const t = await api.getToken();
-    const s = await api.getAllShpae('Taipei', t);
+    const s = await api.getAllShpae('Taipei', t, bus);
     const n = s.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
     setTdxShape(n);
   }
 
   async function getAllBusFn() {
     const t = await api.getToken();
-    const s = await api.getAllRealTimeByFrequency('Taipei', t);
+    const s = await api.getAllRealTimeByFrequency('Taipei', t, bus);
     setTdxRealTime(s);
   }
 
   async function getAllStationFn() {
+    if (tdxStation.length) { return; }
     const t = await api.getToken();
     const s = await api.getAllStation('Taipei', t);
-    setTdxStation(s);
+    const f = bus ? await s.filter((station) => station.Stops.some((stop) => stop.RouteName.Zh_tw.includes(bus))) : '';
+    setTdxStation(f || s);
   }
 
-  // async function getSingleBusFn() {
-  //   const t = await api.getToken();
-  //   const s = await api.getSingleRealTimeByFrequency('Taipei', '307', t);
-  //   setTdxRealTime(s);
-  // }
+  async function getRouteStation() {
+    if (tdxStation.length) { return; }
+    const t = await api.getToken();
+    const b = await api.getAllStationStopOfRoute('Taipei', t, bus);
+    const c = await api.getAllStationEstimatedTimeOfArrival('Taipei', t, bus);
+    setTdxRouteStation(b);
+    setTdxRouteStationTime(c);
+  }
 
   function countDownHandler() {
     const interval = setInterval(() => {
@@ -88,19 +97,30 @@ export default function LeafletMap() {
   L.Icon.Default.mergeOptions({
     iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/MTS_Bus_icon.svg',
     iconRetinaUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/MTS_Bus_icon.svg',
-    // shadowUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Simpleicons_Places_map-marker-6.svg',
     iconSize: [25, 25],
     shadowSize: [0, 0],
     iconAnchor: [12.5, 12.5],
-    // shadowAnchor: [-7.5, -7.5],
-    // popupAnchor: [-3, -76],
+  });
+
+  const arrowIcon = L.icon({
+    iconUrl: 'https://www.svgrepo.com/show/97377/right-arrow-in-circular-button.svg',
+    iconSize: [20, 20],
+    shadowSize: [0, 0],
+    iconAnchor: [12.5, 12.5],
   });
 
   const stationIcon = L.icon({
-    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Circle-icons-dev.svg',
-    iconSize: [20, 20], // size of the icon
-    shadowSize: [0, 0], // size of the shadow
-    iconAnchor: [12.5, 12.5],
+    iconUrl: 'https://www.svgrepo.com/show/312735/orange-circle.svg',
+    iconSize: [10, 10],
+    shadowSize: [0, 0],
+    iconAnchor: [5, 5],
+  });
+
+  const stationIcon2 = L.icon({
+    iconUrl: 'https://www.svgrepo.com/show/312735/orange-circle.svg',
+    iconSize: [20, 20],
+    shadowSize: [0, 0],
+    iconAnchor: [10, 10],
   });
 
   const marker1Path = [
@@ -124,102 +144,136 @@ export default function LeafletMap() {
   }, [testInterval]);
 
   function StationComponent() {
-    const station = tdxStation.map((i) => ({
-      StationUID: i.StationUID,
-      PositionLat: i.StationPosition.PositionLat,
-      PositionLon: i.StationPosition.PositionLon,
-      StationName: i.StationName.Zh_tw,
-      Route: i.Stops.map((s) => (s.RouteName)).sort((a, b) => b - a),
-    }));
+    // tdxRouteStation
+    // tdxRouteStationTime
+    return (
+      tdxRouteStation.map((route) => (
+        route.Stops.map((stop) => (
+          <Marker
+            key={`${route.RouteUID}-${route.SubRouteUID}-${stop.StopName.Zh_tw}}`}
+            position={[stop.StopPosition.PositionLat, stop.StopPosition.PositionLon]}
+            icon={zoomLevel >= 15 ? stationIcon2 : stationIcon}
+          >
+            <Tooltip>
+              <h5 style={{
+                textAlign: 'center', height: '10px', padding: '0', margin: '0', background: 'none',
+              }}
+              >
+                {stop.StopName.Zh_tw}
+                {/* tdxRouteStationTime[tdxRouteStationTime.findIndex((routeTime) => routeTime.StopUID === stop.StopUID && routeTime.RouteUID === route.RouteUID)] */}
+              </h5>
+            </Tooltip>
+          </Marker>
+        )))));
+  }
 
-    return (station.map((i) => (
-      <Marker
-        key={i.StationUID}
-        position={[i.PositionLat, i.PositionLon]}
-        icon={stationIcon}
-      >
-        <Popup>
-          <h1 style={{ textAlign: 'center' }}>{i.StationName}</h1>
-          <br />
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', height: '200px', flexDirection: 'column', flexBasis: '20px', justifyContent: 'flex-start', alignItems: 'flex-start',
-          }}
-          >
-            {i.Route.map((bus) => <div key={`${i.StationUID}-${bus.Zh_tw}`}>{bus.Zh_tw}</div>)}
-          </div>
-        </Popup>
-        <Tooltip>
-          <h5 style={{
-            textAlign: 'center', height: '10px', padding: '0', margin: '0', background: 'none',
-          }}
-          >
-            {i.StationName}
-          </h5>
-        </Tooltip>
-      </Marker>
-    )));
+  function AllStationComponent() {
+    return (
+      tdxStation.map((station) => (
+        <Marker
+          key={`${station.StationUID}-${station.StationID}}`}
+          position={[station.StationPosition.PositionLat, station.StationPosition.PositionLon]}
+          icon={zoomLevel >= 15 ? stationIcon2 : stationIcon}
+        >
+          <Popup>
+            <h1 style={{ textAlign: 'center' }}>{station.StationName.Zh_tw}</h1>
+            <br />
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', maxHeight: '200px', flexDirection: 'column', flexBasis: '20px', justifyContent: 'flex-start', alignItems: 'flex-start',
+            }}
+            >
+              {station.Stops.map((stops) => (
+                <div
+                  key={`${station.StationUID}-${stops.StopUID}-${stops.RouteUID}`}
+                >
+                  {stops.RouteName.Zh_tw}
+
+                </div>
+              ))}
+            </div>
+          </Popup>
+          <Tooltip>
+            <h5 style={{
+              textAlign: 'center', height: '10px', padding: '0', margin: '0', background: 'none',
+            }}
+            >
+              {station.StationName.Zh_tw}
+            </h5>
+          </Tooltip>
+        </Marker>
+      )));
   }
 
   return (
-    <MapContainer
-      center={location}
-      zoom={zoomLevel}
-      scrollWheelZoom
-      style={{ height: 'calc(100vh - 100px)', width: '100%' }}
-    >
-      <button
-        type="button"
-        onClick={() => getAllShapeFn()}
-        style={{
-          width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
-        }}
+    <>
+      <div>
+        {' '}
+        <button
+          type="button"
+          onClick={() => getAllShapeFn()}
+          style={{
+            width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
+          }}
+        >
+          getAllShapeFn
+        </button>
+        <button
+          type="button"
+          onClick={() => countDownHandler()}
+          style={{
+            width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+          }}
+        >
+          getPositionFn(
+          {timer}
+          )
+        </button>
+        <button
+          type="button"
+          onClick={() => getRouteStation()}
+          style={{
+            width: '33.3vw', height: '50px', background: 'black', color: 'white', fontSize: '2rem', opacity: 1,
+          }}
+        >
+          getStationFn
+        </button>
+      </div>
+      <MapContainer
+        center={location}
+        zoom={zoomLevel}
+        scrollWheelZoom
+        style={{ height: 'calc(100vh - 100px - 50px)', width: '100%' }}
       >
-        getAllShapeFn
-      </button>
-      <button
-        type="button"
-        onClick={() => countDownHandler()}
-        style={{
-          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
-        }}
-      >
-        getPositionFn(
-        {timer}
-        )
-      </button>
-      <button
-        type="button"
-        onClick={() => getAllStationFn()}
-        style={{
-          width: '33.3vw', height: '50px', background: 'black', color: 'white', fontSize: '2rem', opacity: 1,
-        }}
-      >
-        getStationFn
-      </button>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        opacity="0.5"
-      />
-      {tdxShape[0] !== undefined
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+          opacity={0.7}
+        />
+        {tdxShape[0] !== undefined
       && tdxShape.map((i) => (
         <GeoJSON
           key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
           data={i.Geojson}
-        />
+          style={{ color: '#6c757d' }}
+        >
+          <Popup>
+            <h1>{i.RouteName.Zh_tw}</h1>
+          </Popup>
+        </GeoJSON>
       ))}
-      <Marker
-        key={marker1Path[testInterval].key}
-        position={marker1Path[testInterval].position}
-      >
-        <Popup>
-          抱歉佔一下位置
-          <br />
-          {' '}
-          我怕晚點忘記怎麼寫
-        </Popup>
-      </Marker>
-      {tdxRealTime !== undefined
+        <Marker
+          key={marker1Path[testInterval].key}
+          position={marker1Path[testInterval].position}
+          icon={arrowIcon}
+        >
+          <Popup>
+            抱歉佔一下位置
+            <br />
+            {' '}
+            我怕晚點忘記怎麼寫
+          </Popup>
+        </Marker>
+        {tdxRealTime !== undefined
       && tdxRealTime.map((i) => (
         <Marker
           key={`${i.PlateNumb}-${i.UpdateTime}`}
@@ -245,9 +299,10 @@ export default function LeafletMap() {
           </Tooltip>
         </Marker>
       ))}
-      {tdxStation !== undefined
+        {tdxStation !== undefined
       && <StationComponent />}
-      <ZoomListener />
-    </MapContainer>
+        <ZoomListener />
+      </MapContainer>
+    </>
   );
 }

@@ -21,7 +21,8 @@ const api = {
       .then((result) => result.access_token)
       .catch((error) => console.log('error', error));
   },
-  getAllShpae(city, token) {
+  getAllShpae(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -32,28 +33,14 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/Shape/City/${city}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => result)
-      .catch((error) => console.log('error', error));
-  },
-  getAllRealTimeByFrequency(city, token) {
-    const myHeaders = new Headers();
-    myHeaders.append('accept', 'application/json');
-    myHeaders.append('Authorization', `Bearer ${token}`);
-
-    const requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-    };
-    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
   },
 
-  getSingleRealTimeByFrequency(city, bus, token) {
+  getAllRealTimeByFrequency(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -63,8 +50,7 @@ const api = {
       headers: myHeaders,
       redirect: 'follow',
     };
-
-    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}/${bus}?%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -87,7 +73,8 @@ const api = {
       .catch((error) => console.log('error', error));
   },
 
-  getAllStationEstimatedTimeOfArrival(city, bus, token) {
+  getAllStationEstimatedTimeOfArrival(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -98,7 +85,24 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}?%24orderby=StationID&%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=15&%24format=JSON`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => result)
+      .catch((error) => console.log('error', error));
+  },
+  getAllStationStopOfRoute(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
+    const myHeaders = new Headers();
+    myHeaders.append('accept', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=15&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
