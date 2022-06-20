@@ -234,18 +234,26 @@ export default function LeafletMap() {
           zIndexOffset={1000000}
         >
           <Tooltip>
-            <h1 style={{ textAlign: 'center' }}>{i.RouteName.Zh_tw}</h1>
+            <h1 style={{ textAlign: 'center' }}>
+              {i.RouteName.Zh_tw}
+            </h1>
+            <h4 style={{ textAlign: 'center' }}>
+              {
+                i.Direction === 0
+                  ? i.SubRouteName.Zh_tw.substring(i.SubRouteName.Zh_tw.search('往'), i.SubRouteName.Zh_tw.length)
+                  : `往${i.SubRouteName.Zh_tw.substring(0, i.SubRouteName.Zh_tw.search('往')).replace(i.RouteName.Zh_tw, '')}`
+                }
+
+            </h4>
+            路線：
+            {i.SubRouteName.Zh_tw
+              .replace(i.RouteName.Zh_tw, '')
+              .replace('往', ' - ')}
             <br />
-            附屬路線：
-            {i.SubRouteName.Zh_tw}
-            <br />
-            行駛方向：
-            {valueRecode('Direction', i.Direction)}
-            <br />
-            行駛速度：
+            時速：
             {i.Speed}
             <br />
-            車輛狀態：
+            車況：
             {valueRecode('BusStatus', i.BusStatus)}
           </Tooltip>
         </Marker>
