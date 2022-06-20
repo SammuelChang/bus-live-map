@@ -21,7 +21,7 @@ const api = {
       .then((result) => result.access_token)
       .catch((error) => console.log('error', error));
   },
-  getAllShpae(city, token, bus = '') {
+  getAllShape(city, token, bus = '') {
     const busCode = bus ? `/${bus}` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
@@ -103,6 +103,22 @@ const api = {
     };
 
     return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=100&%24format=JSON`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => result)
+      .catch((error) => console.log('error', error));
+  },
+  getNearbyStops(city, token, lon, lat) {
+    const myHeaders = new Headers();
+    myHeaders.append('accept', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    return fetch(`${this.host}/api/basic/V3/Map/Bus/Network/Stop/City/${city}/Nearby/LocationX/${lon}/LocationY/${lat}/Radius/500?%24top=100&%24format=GEOJSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));

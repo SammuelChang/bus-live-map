@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
 import { useEffect, useState } from 'react';
 import { parse } from 'wellknown';
 import {
@@ -20,7 +19,8 @@ export default function LeafletMap() {
   const [tdxRealTime, setTdxRealTime] = useState([]);
   const [tdxRouteStation, setTdxRouteStation] = useState([]);
   const [tdxRouteStationTime, setTdxRouteStationTime] = useState([]);
-  const [bus] = useState(307);
+  const [tdxNearby, setTdxNearby] = useState([]);
+  const [bus] = useState();
   const [timer, setTimer] = useState(5);
   const [testInterval, setTestInterval] = useState(0);
 
@@ -33,15 +33,15 @@ export default function LeafletMap() {
     return null;
   }
 
-  async function getAllShapeFn() {
+  async function getShapeFn() {
     if (tdxShape.length) { return; }
     const token = await api.getToken();
-    const shape = await api.getAllShpae('Taipei', token, bus);
+    const shape = await api.getAllShape('Taipei', token, bus);
     const geoShape = shape.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
     setTdxShape(geoShape);
   }
 
-  async function getAllBusFn() {
+  async function getBusFn() {
     const token = await api.getToken();
     const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
     setTdxRealTime(busWithTime);
@@ -57,6 +57,13 @@ export default function LeafletMap() {
     setTdxRouteStation(route);
   }
 
+  async function getNearbyStopsFn(lon, lat) {
+    const token = await api.getToken();
+    const nearbyStops = await api.getNearbyStops('Taipei', token, lon, lat);
+    setTdxNearby(nearbyStops);
+    console.log(tdxNearby);
+  }
+
   function countDownHandler() {
     const interval = setInterval(() => {
       setTimer((t) => (t === 0 ? 5 : t - 1));
@@ -66,7 +73,7 @@ export default function LeafletMap() {
 
   useEffect(() => {
     if (timer === 0) {
-      getAllBusFn();
+      getBusFn();
       getRouteStation();
     }
   }, [timer]);
@@ -81,7 +88,7 @@ export default function LeafletMap() {
   return (
     <>
       <TestButton
-        getAllShapeFn={() => getAllShapeFn()}
+        getShapeFn={() => getShapeFn()}
         countDownHandler={() => countDownHandler()}
         timer={timer}
       />
@@ -92,8 +99,15 @@ export default function LeafletMap() {
         style={{ height: 'calc(100vh - 100px - 50px)', width: '100%' }}
       >
         {tdxShape.length && <Shape tdxShape={tdxShape} />}
-        {tdxRealTime !== undefined && <BusMarker tdxRealTime={tdxRealTime} />}
-        {tdxRouteStation !== undefined && <BusStation tdxRouteStation={tdxRouteStation} tdxRouteStationTime={tdxRouteStationTime} zoomLevel={zoomLevel} />}
+        {tdxRealTime.length && <BusMarker tdxRealTime={tdxRealTime} />}
+        {tdxRouteStation.length
+          && (
+          <BusStation
+            tdxRouteStation={tdxRouteStation}
+            tdxRouteStationTime={tdxRouteStationTime}
+            zoomLevel={zoomLevel}
+          />
+          )}
         <TestMarker testInterval={testInterval} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

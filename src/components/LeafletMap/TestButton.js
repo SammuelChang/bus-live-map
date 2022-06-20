@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 
-export default function TestButton({ getAllShapeFn, countDownHandler, timer }) {
+export default function TestButton({ getShapeFn, countDownHandler, timer }) {
   return (
     <div>
       <button
         type="button"
-        onClick={getAllShapeFn}
+        onClick={getShapeFn}
         style={{
           width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
         }}
@@ -28,7 +28,7 @@ export default function TestButton({ getAllShapeFn, countDownHandler, timer }) {
 }
 
 TestButton.propTypes = {
-  getAllShapeFn: PropTypes.func.isRequired,
+  getShapeFn: PropTypes.func.isRequired,
   countDownHandler: PropTypes.func.isRequired,
   timer: PropTypes.number.isRequired,
 };

@@ -8,7 +8,7 @@ export default function BusStation({ tdxRouteStation, tdxRouteStationTime, zoomL
     tdxRouteStation.map((route) => (
       route.Stops.map((stop) => (
         <Marker
-          key={`${route.RouteUID}-${route.SubRouteUID}-${stop.StopName.Zh_tw}}`}
+          key={`${route.RouteUID}-${route.SubRouteUID}-${stop.StopName.Zh_tw}-${route.Direction}-${stop.StopPosition.PositionLon}}`}
           position={[stop.StopPosition.PositionLat, stop.StopPosition.PositionLon]}
           icon={zoomLevel >= 15 ? icon.stationIcon2 : icon.stationIcon}
         >
