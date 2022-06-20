@@ -33,7 +33,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=100&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -50,7 +50,7 @@ const api = {
       headers: myHeaders,
       redirect: 'follow',
     };
-    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=100&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -67,7 +67,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=100&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -85,7 +85,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=100&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -102,7 +102,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=15&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=100&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
