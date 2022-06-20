@@ -14,7 +14,6 @@ export default function LeafletMap() {
   const [zoomLevel, setZoomLevel] = useState(13);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxRealTime, setTdxRealTime] = useState([]);
-  const [tdxStation, setTdxStation] = useState([]);
   const [tdxRouteStation, setTdxRouteStation] = useState([]);
   const [tdxRouteStationTime, setTdxRouteStationTime] = useState([]);
   const [bus] = useState(307);
@@ -52,35 +51,26 @@ export default function LeafletMap() {
 
   async function getAllShapeFn() {
     if (tdxShape.length) { return; }
-    const t = await api.getToken();
-    const s = await api.getAllShpae('Taipei', t, bus);
-    const n = s.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
-    setTdxShape(n);
+    const token = await api.getToken();
+    const shape = await api.getAllShpae('Taipei', token, bus);
+    const geoShape = shape.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
+    setTdxShape(geoShape);
   }
 
   async function getAllBusFn() {
-    const t = await api.getToken();
-    const s = await api.getAllRealTimeByFrequency('Taipei', t, bus);
-    setTdxRealTime(s);
-  }
-
-  async function getAllStationFn() {
-    if (tdxStation.length) { return; }
-    const t = await api.getToken();
-    const s = await api.getAllStation('Taipei', t);
-    const f = bus ? await s.filter((station) => station.Stops.some((stop) => stop.RouteName.Zh_tw.includes(bus))) : '';
-    setTdxStation(f || s);
+    const token = await api.getToken();
+    const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
+    setTdxRealTime(busWithTime);
   }
 
   async function getRouteStation() {
-    if (tdxStation.length) { return; }
-    const t = await api.getToken();
-    const c = await api.getAllStationEstimatedTimeOfArrival('Taipei', t, bus);
-    setTdxRouteStationTime(c);
+    const token = await api.getToken();
+    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival('Taipei', token, bus);
+    setTdxRouteStationTime(routeWithTime);
 
     if (tdxRouteStation.length) { return; }
-    const b = await api.getAllStationStopOfRoute('Taipei', t, bus);
-    setTdxRouteStation(b);
+    const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
+    setTdxRouteStation(route);
   }
 
   function countDownHandler() {
@@ -178,47 +168,9 @@ export default function LeafletMap() {
         )))));
   }
 
-  function AllStationComponent() {
-    return (
-      tdxStation.map((station) => (
-        <Marker
-          key={`${station.StationUID}-${station.StationID}}`}
-          position={[station.StationPosition.PositionLat, station.StationPosition.PositionLon]}
-          icon={zoomLevel >= 15 ? stationIcon2 : stationIcon}
-        >
-          <Popup>
-            <h1 style={{ textAlign: 'center' }}>{station.StationName.Zh_tw}</h1>
-            <br />
-            <div style={{
-              display: 'flex', flexWrap: 'wrap', maxHeight: '200px', flexDirection: 'column', flexBasis: '20px', justifyContent: 'flex-start', alignItems: 'flex-start',
-            }}
-            >
-              {station.Stops.map((stops) => (
-                <div
-                  key={`${station.StationUID}-${stops.StopUID}-${stops.RouteUID}`}
-                >
-                  {stops.RouteName.Zh_tw}
-
-                </div>
-              ))}
-            </div>
-          </Popup>
-          <Tooltip>
-            <h5 style={{
-              textAlign: 'center', height: '10px', padding: '0', margin: '0', background: 'none',
-            }}
-            >
-              {station.StationName.Zh_tw}
-            </h5>
-          </Tooltip>
-        </Marker>
-      )));
-  }
-
   return (
     <>
       <div>
-        {' '}
         <button
           type="button"
           onClick={() => getAllShapeFn()}
@@ -232,21 +184,10 @@ export default function LeafletMap() {
           type="button"
           onClick={() => countDownHandler()}
           style={{
-            width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+            width: '66.6vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
           }}
         >
-          getPositionFn(
-          {timer}
-          )
-        </button>
-        <button
-          type="button"
-          onClick={() => getRouteStation()}
-          style={{
-            width: '33.3vw', height: '50px', background: 'black', color: 'white', fontSize: '2rem', opacity: 1,
-          }}
-        >
-          getStationFn(
+          getBus&StationFn(
           {timer}
           )
         </button>
@@ -263,17 +204,17 @@ export default function LeafletMap() {
           opacity={0.7}
         />
         {tdxShape[0] !== undefined
-      && tdxShape.map((i) => (
-        <GeoJSON
-          key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
-          data={i.Geojson}
-          style={{ color: '#6c757d' }}
-        >
-          <Popup>
-            <h1>{i.RouteName.Zh_tw}</h1>
-          </Popup>
-        </GeoJSON>
-      ))}
+        && tdxShape.map((i) => (
+          <GeoJSON
+            key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
+            data={i.Geojson}
+            style={{ color: '#6c757d' }}
+          >
+            <Popup>
+              <h1>{i.RouteName.Zh_tw}</h1>
+            </Popup>
+          </GeoJSON>
+        ))}
         <Marker
           key={marker1Path[testInterval].key}
           position={marker1Path[testInterval].position}
@@ -282,7 +223,6 @@ export default function LeafletMap() {
           <Popup>
             抱歉佔一下位置
             <br />
-            {' '}
             我怕晚點忘記怎麼寫
           </Popup>
         </Marker>
@@ -307,13 +247,10 @@ export default function LeafletMap() {
             <br />
             車輛狀態：
             {valueRecode('BusStatus', i.BusStatus)}
-            <br />
-            方位角：
-            {i.Azimuth}
           </Tooltip>
         </Marker>
       ))}
-        {tdxStation !== undefined
+        {tdxRouteStation !== undefined
       && <StationComponent />}
         <ZoomListener />
       </MapContainer>
