@@ -1,12 +1,17 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import LeafletMap from './components/LeafletMap';
 
 function App() {
   return (
-    <>
+    <Router>
       <Header />
-      <LeafletMap />
-    </>
+      <Routes>
+        <Route path="/" element={<LeafletMap />} />
+      </Routes>
+      {/* <Footer /> */}
+    </Router>
   );
 }
 
