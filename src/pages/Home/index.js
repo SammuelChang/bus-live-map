@@ -1,16 +1,30 @@
 import styled from 'styled-components';
+import traffic from '../../images/traffic.jpg';
 
 const Wrapper = styled.div`
-  background: url(https://gastrogays.com/wp-content/uploads/2018/09/taiwan-1-338.jpg), #ebebe6;
+  background: url(${traffic}), #ebebe6;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.5;
   height: calc(100vh - 120px);
   width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Content = styled.div`
+  text-align: center;
+  font-size: 8rem;
+  color: #000;
+  background: #fff;
+  opacity: 0.7;
+  border-radius: 50px;
 `;
 
 export default function Home() {
   return (
-    <Wrapper />
+    <Wrapper>
+      <Content>公車塞在路上？</Content>
+    </Wrapper>
   );
 }
