@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import {
   Marker, Popup,
 } from 'react-leaflet';
-import L from 'leaflet';
+import { icon } from './icon';
 
 export default function TestMarker({ testInterval }) {
   const marker1Path = [
@@ -18,18 +18,11 @@ export default function TestMarker({ testInterval }) {
     { key: 'marker1-point10', position: [25.041008, 121.561253] },
   ];
 
-  const arrowIcon = L.icon({
-    iconUrl: 'https://www.svgrepo.com/show/97377/right-arrow-in-circular-button.svg',
-    iconSize: [20, 20],
-    shadowSize: [0, 0],
-    iconAnchor: [12.5, 12.5],
-  });
-
   return (
     <Marker
       key={marker1Path[testInterval].key}
       position={marker1Path[testInterval].position}
-      icon={arrowIcon}
+      icon={icon.bus}
     >
       <Popup>
         抱歉佔一下位置

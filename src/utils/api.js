@@ -90,8 +90,9 @@ const api = {
       .then((result) => result)
       .catch((error) => console.log('error', error));
   },
-  getAllStationStopOfRoute(city, token, bus = '') {
+  getAllStationStopOfRoute(city, token, bus = '', filter = '') {
     const busCode = bus ? `/${bus}` : '';
+    const filterCode = filter ? `&%24filter=Direction eq '0' and(${filter})` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -102,7 +103,7 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=100&%24format=JSON`, requestOptions)
+    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=100${filterCode}&%24format=JSON`, requestOptions)
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));

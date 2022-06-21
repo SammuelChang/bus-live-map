@@ -1,34 +1,49 @@
+/* eslint-disable react/require-default-props */
 import PropTypes from 'prop-types';
 
-export default function TestButton({ getShapeFn, countDownHandler, timer }) {
+export default function TestButton({
+  assignRouteHandler, allBusHandler, getNearby, timer,
+}) {
   return (
     <div>
       <button
         type="button"
-        onClick={getShapeFn}
+        onClick={(bus) => assignRouteHandler(bus)}
         style={{
           width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
         }}
       >
-        getAllShapeFn
+        指定路線(
+        {timer}
+        )
       </button>
       <button
         type="button"
-        onClick={countDownHandler}
+        onClick={allBusHandler}
         style={{
-          width: '66.6vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
         }}
       >
-        getBus&StationFn(
+        全市區公車(
         {timer}
         )
+      </button>
+      <button
+        type="button"
+        onClick={getNearby}
+        style={{
+          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+        }}
+      >
+        行經路線
       </button>
     </div>
   );
 }
 
 TestButton.propTypes = {
-  getShapeFn: PropTypes.func.isRequired,
-  countDownHandler: PropTypes.func.isRequired,
+  assignRouteHandler: PropTypes.func.isRequired,
+  allBusHandler: PropTypes.func.isRequired,
+  getNearby: PropTypes.func.isRequired,
   timer: PropTypes.number.isRequired,
 };
