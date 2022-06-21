@@ -112,17 +112,17 @@ export default function LeafletMap() {
 
   return (
     <>
-      <TestButton
+      {/* <TestButton
         assignRouteHandler={() => assignRouteHandler(307)}
         allBusHandler={() => allBusHandler()}
         getNearby={() => getNearby()}
         timer={timer}
-      />
+      /> */}
       <MapContainer
         center={location}
         zoom={zoomLevel}
         scrollWheelZoom
-        style={{ height: 'calc(100vh - 100px - 50px)', width: '100%' }}
+        style={{ height: 'calc(100vh - 120px)', width: '100%' }}
       >
         {tdxShape.length && <Shape tdxShape={tdxShape} />}
         {tdxRealTime.length && <BusMarker tdxRealTime={tdxRealTime} />}

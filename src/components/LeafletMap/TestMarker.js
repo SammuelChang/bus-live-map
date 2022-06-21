@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Marker, Popup,
+  Marker, Tooltip,
 } from 'react-leaflet';
 import { icon } from './icon';
 
@@ -24,11 +24,9 @@ export default function TestMarker({ testInterval }) {
       position={marker1Path[testInterval].position}
       icon={icon.bus}
     >
-      <Popup>
-        抱歉佔一下位置
-        <br />
-        我怕晚點忘記怎麼寫
-      </Popup>
+      <Tooltip permanent offset={[10, 0]}>
+        UI測試使用
+      </Tooltip>
     </Marker>
   );
 }
