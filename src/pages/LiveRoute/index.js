@@ -1,33 +1,34 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
 import {
   MapContainer, TileLayer, useMapEvents,
 } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import BusStation from './BusStation';
-import BusMarker from './BusMarker';
-import Shape from './BusShape';
-import TestMarker from './TestMarker';
-import TestButton from './TestButton';
+import BusStation from '../../components/LeafletMap/BusStation';
+import BusMarker from '../../components/LeafletMap/BusMarker';
+import Shape from '../../components/LeafletMap/BusShape';
+import TestMarker from '../../components/LeafletMap/TestMarker';
+import TestButton from '../../components/LeafletMap/TestButton';
 import api from '../../utils/api';
-import Sidebar from '../Sidebar';
+import Sidebar from '../../components/Sidebar';
 
 const Wrapper = styled.div`
     display: flex;
   `;
 
 export default function LeafletMap() {
+  const busRef = useRef('');
+  const [keyinRoute, setKeyinRoute] = useState('');
   const [location] = useState([25.049637, 121.525986]);
   const [zoomLevel, setZoomLevel] = useState(13);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxRealTime, setTdxRealTime] = useState([]);
   const [tdxRouteStation, setTdxRouteStation] = useState([]);
   const [tdxRouteStationTime, setTdxRouteStationTime] = useState([]);
-  const [tdxNearby, setTdxNearby] = useState([]);
-  const [userPattern, setUserPattern] = useState('');
-  const [timer, setTimer] = useState(10);
+  const [routeTimer, setRouteTimer] = useState(1000);
   const [testInterval, setTestInterval] = useState(0);
 
   function ZoomListener() {
@@ -40,7 +41,8 @@ export default function LeafletMap() {
   }
 
   async function getShapeFn(token, bus) {
-    if (tdxShape.length) { return; }
+    // if (tdxShape.length) { setTdxShape([]); }
+    setTdxShape([]);
     const shape = await api.getAllShape('Taipei', token, bus);
     const geoShape = shape.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
     setTdxShape(geoShape);
@@ -57,20 +59,20 @@ export default function LeafletMap() {
   }
 
   async function getRouteStationTimeFn(token, bus = '') {
-    if (tdxRouteStation.length) { return; }
+    if (tdxRouteStation.length) { setTdxRouteStation([]); }
     const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
     setTdxRouteStation(route);
   }
 
   function countDownHandler() {
     const interval = setInterval(() => {
-      setTimer((t) => (t === 0 ? 10 : t - 1));
+      setRouteTimer((t) => (t === 0 ? routeTimer : t - 1));
     }, 1000);
     return () => clearInterval(interval);
   }
 
   async function assignRouteHandler(bus) {
-    setUserPattern('assignRoute');
+    console.log('call api');
     countDownHandler();
     const token = await api.getToken();
     getShapeFn(token, bus);
@@ -79,35 +81,12 @@ export default function LeafletMap() {
     getRouteStationTimeFn(token, bus);
   }
 
-  async function allBusHandler() {
-    setUserPattern('allBus');
-    countDownHandler();
-    const token = await api.getToken();
-    getBusFn(token);
-  }
-
-  async function getNearby(lon = 121.483497, lat = 25.062249) {
-    const token = await api.getToken();
-    const nearbyStops = await api.getNearbyStops('Taipei', token, lon, lat);
-    const query = nearbyStops.features.map((i) => `Stops/any(d:d/StationID eq '${i.properties.model.StationID}')`).join(' or ');
-    const nearby = await api.getAllStationStopOfRoute('Taipei', token, '', query);
-    nearby.forEach((e) => {
-      console.log(e.RouteName.Zh_tw);
-    });
-    // setTdxNearby(nearbyStops.features);
-  }
-
   useEffect(() => {
-    if (timer === 0) {
-      if (userPattern === 'assignRoute') {
-        assignRouteHandler();
-      }
-
-      if (userPattern === 'allBus') {
-        allBusHandler();
-      }
-    }
-  }, [timer]);
+    // if (routeTimer === 1000) {
+    assignRouteHandler(keyinRoute || '299');
+    console.log(keyinRoute);
+    // }
+  }, [keyinRoute]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -116,15 +95,14 @@ export default function LeafletMap() {
     return () => clearInterval(intervalId);
   }, [testInterval]);
 
+  useEffect(() => {
+    if (busRef.current?.value.length <= 1) { return; }
+    setKeyinRoute(busRef.current?.value);
+  }, [busRef.current?.value]);
+
   return (
     <Wrapper>
-      {/* <TestButton
-        assignRouteHandler={() => assignRouteHandler(307)}
-        allBusHandler={() => allBusHandler()}
-        getNearby={() => getNearby()}
-        timer={timer}
-      /> */}
-      <Sidebar />
+      <Sidebar busRef={busRef} />
       <MapContainer
         center={location}
         zoom={zoomLevel}

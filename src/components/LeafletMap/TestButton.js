@@ -10,7 +10,7 @@ export default function TestButton({
         type="button"
         onClick={(bus) => assignRouteHandler(bus)}
         style={{
-          width: '33.3vw', height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
+          height: '50px', background: 'red', color: 'black', fontSize: '2rem', opacity: 1,
         }}
       >
         指定路線(
@@ -21,7 +21,7 @@ export default function TestButton({
         type="button"
         onClick={allBusHandler}
         style={{
-          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+          height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
         }}
       >
         全市區公車(
@@ -32,7 +32,7 @@ export default function TestButton({
         type="button"
         onClick={getNearby}
         style={{
-          width: '33.3vw', height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
+          height: '50px', background: 'blue', color: 'white', fontSize: '2rem', opacity: 1,
         }}
       >
         行經路線

@@ -46,9 +46,9 @@ const Func = styled.button`
 export default function Live() {
   return (
     <Wrapper>
-      <StyleLink to="/live/map"><Func>路線查詢</Func></StyleLink>
-      <StyleLink to="/live/map"><Func>全城動態</Func></StyleLink>
-      <StyleLink to="/live/map"><Func>最遠路徑</Func></StyleLink>
+      <StyleLink to="/live/route"><Func>路線查詢</Func></StyleLink>
+      <StyleLink to="/live/city"><Func>全城動態</Func></StyleLink>
+      <StyleLink to="/live/accessibility"><Func>最遠路徑</Func></StyleLink>
     </Wrapper>
   );
 }

@@ -6,7 +6,7 @@ export default function BusShape({ tdxShape }) {
   return (
     tdxShape.map((i) => (
       <GeoJSON
-        key={`${i.RouteUID}_${i.SubRouteUID}` || 'nothingNow'}
+        key={`${i.RouteUID}_${i.SubRouteUID}_${Date.now()}`}
         data={i.Geojson}
         style={{ color: '#6c757d' }}
       >

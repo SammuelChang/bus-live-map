@@ -17,19 +17,20 @@ export default function BusMarker({ tdxRealTime }) {
           <h1 style={{ textAlign: 'center' }}>
             {i.RouteName.Zh_tw}
           </h1>
-          <h4 style={{ textAlign: 'center' }}>
+          {/* <h4 style={{ textAlign: 'center' }}>
             {
               i.Direction === 0
-                ? i.SubRouteName.Zh_tw.substring(i.SubRouteName.Zh_tw.search('往'), i.SubRouteName.Zh_tw.length)
-                : `往${i.SubRouteName.Zh_tw.substring(0, i.SubRouteName.Zh_tw.search('往')).replace(i.RouteName.Zh_tw, '')}`
+                ? i.SubRouteName.Zh_tw.substring(i.SubRouteName.Zh_tw.search('往'),
+                i.SubRouteName.Zh_tw.length)
+                : `往${i.SubRouteName.Zh_tw.substring(0, i.SubRouteName.Zh_tw.search('往'))
+                .replace(i.RouteName.Zh_tw, '')}`
               }
-
-          </h4>
-          路線：
+          </h4> */}
+          {/* 路線：
           {i.SubRouteName.Zh_tw
             .replace(i.RouteName.Zh_tw, '')
             .replace('往', ' - ')}
-          <br />
+          <br /> */}
           時速：
           {i.Speed}
           <br />
