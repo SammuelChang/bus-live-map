@@ -16,7 +16,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/auth/realms/TDXConnect/protocol/openid-connect/token`, requestOptions)
+    return fetch(
+      `${this.host}/auth/realms/TDXConnect/protocol/openid-connect/token`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result.access_token)
       .catch((error) => console.log('error', error));
@@ -33,7 +36,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=100&%24format=JSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=500&%24format=JSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -50,7 +56,10 @@ const api = {
       headers: myHeaders,
       redirect: 'follow',
     };
-    return fetch(`${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=100&%24format=JSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=500&%24format=JSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -67,7 +76,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=100&%24format=JSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=500&%24format=JSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -85,7 +97,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=100&%24format=JSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=500&%24format=JSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -103,7 +118,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=100${filterCode}&%24format=JSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=500${filterCode}&%24format=JSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));
@@ -119,7 +137,10 @@ const api = {
       redirect: 'follow',
     };
 
-    return fetch(`${this.host}/api/basic/V3/Map/Bus/Network/Stop/City/${city}/Nearby/LocationX/${lon}/LocationY/${lat}/Radius/500?%24top=100&%24format=GEOJSON`, requestOptions)
+    return fetch(
+      `${this.host}/api/basic/V3/Map/Bus/Network/Stop/City/${city}/Nearby/LocationX/${lon}/LocationY/${lat}/Radius/500?%24top=500&%24format=GEOJSON`,
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => result)
       .catch((error) => console.log('error', error));

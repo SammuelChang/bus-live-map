@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -8,7 +9,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  border: .5px solid gray;
+  border: 0.5px solid gray;
 `;
 
 const SideNav = styled.div`
@@ -25,7 +26,7 @@ const SideNav = styled.div`
 `;
 
 const Feature = styled.div`
-  border-radius: 5px; 
+  border-radius: 5px;
   text-align: center;
   font-weight: 500;
   display: flex;
@@ -34,8 +35,8 @@ const Feature = styled.div`
 `;
 
 const SideContent = styled.div`
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   display: flex;
   margin: 0 5px;
   flex-direction: column;
@@ -58,8 +59,8 @@ const SearchButton = styled.button`
 const SearchText = styled.input`
   background: none;
   border: none;
-  width: 100%; 
-  height: 50%; 
+  width: 100%;
+  height: 50%;
   max-height: 100px;
   font-size: 1.3rem;
   font-weight: bold;
@@ -85,7 +86,7 @@ const BusItem = styled.li`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  border: .1px solid gray;
+  border: 0.1px solid gray;
   border-bottom: 1px solid gray;
 `;
 
@@ -112,7 +113,11 @@ const Collect = styled.button`
   text-align: center;
 `;
 
-export default function Sidebar({ busRef }) {
+export default function Sidebar({ searchRoute }) {
+  console.log('Sidebar Component');
+
+  const busRef = useRef('');
+
   return (
     <Wrapper>
       <SideNav>
@@ -123,7 +128,7 @@ export default function Sidebar({ busRef }) {
       <SideContent>
         <SearchContainer>
           <SearchText placeholder="請輸入路線，如307" ref={busRef} />
-          <SearchButton>查詢</SearchButton>
+          <SearchButton onClick={() => searchRoute(busRef.current.value)}>查詢</SearchButton>
         </SearchContainer>
         <BusItem>
           <BusInfo>
@@ -138,5 +143,5 @@ export default function Sidebar({ busRef }) {
 }
 
 Sidebar.propTypes = {
-  busRef: PropTypes.shape({}).isRequired,
+  searchRoute: PropTypes.func.isRequired,
 };
