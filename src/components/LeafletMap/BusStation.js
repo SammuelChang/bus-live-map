@@ -2,38 +2,6 @@ import { Marker, Tooltip } from 'react-leaflet';
 import { icon } from './icon';
 
 export default function BusStation({ mergeStation, zoomLevel }) {
-  console.log('BusStation Component');
-
-  // const stopMap = {};
-  // tdxRouteStation[0].Stops.forEach((stop) => {
-  //   stopMap[stop.StopUID] = stop;
-  //   stopMap[stop.StopUID].RouteUID = stop.RouteUID;
-  // });
-
-  // const routeMerge = tdxRouteStation.reduce((acc, cur) => {
-  //   const newAcc = { ...acc };
-  //   cur.Stops.forEach((stop) => {
-  //     if (stop in newAcc) return;
-  //     newAcc[stop.StopUID] = stop;
-  //     newAcc[stop.StopUID].RouteUID = cur.RouteUID;
-  //     newAcc[stop.StopUID].SubRouteUID = cur.SubRouteUID;
-  //     newAcc[stop.StopUID].Direction = cur.Direction;
-  //   });
-  //   return newAcc;
-  // }, {});
-
-  // tdxRouteStationTime.forEach((time) => {
-  //   if (routeMerge[time.StopUID]) {
-  //     routeMerge[time.StopUID].EstimateTime = time.EstimateTime;
-  //   }
-  // });
-
-  // useEffect(() => {
-  // console.log(Object.values(routeMerge).length);
-  // console.log(tdxRouteStation);
-  // console.log(routeMerge);
-  // }, [routeMerge.length]);
-
   return Object.values(mergeStation).map((stop) => (
     <Marker
       key={`${stop.RouteUID}-${stop.SubRouteUID}-${stop.StopUID}-${stop.Direction}}`}

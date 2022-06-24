@@ -6,7 +6,6 @@ import Home from './pages/Home';
 // import Sidebar from './components/Sidebar';
 import Live from './pages/Live';
 import Collection from './pages/Collection';
-import LeafletMap from './components/LeafletMap';
 import LiveRoute from './pages/LiveRoute';
 
 function App() {
@@ -18,8 +17,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/live" element={<Live />} />
         <Route path="/live/route" element={<LiveRoute />} />
-        <Route path="/live/city" element={<LeafletMap />} />
-        <Route path="/live/accessibility" element={<LeafletMap />} />
+        <Route path="/live/city" element={<LiveRoute />} />
+        <Route path="/live/accessibility" element={<LiveRoute />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/advInfo" />
       </Routes>

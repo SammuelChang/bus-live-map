@@ -145,6 +145,26 @@ const api = {
       .then((result) => result)
       .catch((error) => console.log('error', error));
   },
+  getRouteInfo(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
+    const myHeaders = new Headers();
+    myHeaders.append('accept', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/Route/City/${city}${busCode}?%24top=500&%24format=JSON`,
+      requestOptions,
+    )
+      .then((response) => response.json())
+      .then((result) => result)
+      .catch((error) => console.log('error', error));
+  },
 };
 
 export default api;
