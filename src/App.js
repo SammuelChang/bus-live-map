@@ -8,6 +8,7 @@ import Live from './pages/Live';
 import Collection from './pages/Collection';
 import LiveRoute from './pages/LiveRoute';
 import LiveCity from './pages/LiveCity';
+import LiveNearbyPath from './pages/LiveNearbyPath';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
         <Route path="/live" element={<Live />} />
         <Route path="/live/route" element={<LiveRoute />} />
         <Route path="/live/city" element={<LiveCity />} />
-        <Route path="/live/accessibility" element={<LiveRoute />} />
+        <Route path="/live/nearbyPath" element={<LiveNearbyPath />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/advInfo" />
       </Routes>

@@ -54,7 +54,7 @@ export default function Sidebar({ children }) {
         <StyleLink to="/live/city">
           <Feature>全城動態</Feature>
         </StyleLink>
-        <StyleLink to="/live/accessibility">
+        <StyleLink to="/live/nearbyPath">
           <Feature>最遠路徑</Feature>
         </StyleLink>
       </SideNav>
