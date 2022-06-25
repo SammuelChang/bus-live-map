@@ -14,6 +14,7 @@ import BusMarker from '../../components/LeafletMap/BusMarker';
 import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
+import RouteSearch from '../../components/Sidebar/RouteSearch';
 
 const Wrapper = styled.div`
   display: flex;
@@ -145,7 +146,7 @@ export default function LeafletMap() {
     const routeTimeData = await getRouteStationTimeFn(token, bus);
 
     const data = await mergeStationHandler(routeData, routeTimeData, info);
-    console.log(data);
+    // console.log(data);
     setMergeStation(data);
 
     setLoading(false);
@@ -157,7 +158,9 @@ export default function LeafletMap() {
 
   return (
     <Wrapper>
-      <Sidebar searchRoute={searchRoute} mergeStation={Object.values(mergeStation)} />
+      <Sidebar>
+        <RouteSearch searchRoute={searchRoute} mergeStation={Object.values(mergeStation)} />
+      </Sidebar>
       <MemoMapContainer
         center={location}
         zoom={zoomLevel}

@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Live from './pages/Live';
 import Collection from './pages/Collection';
 import LiveRoute from './pages/LiveRoute';
+import LiveCity from './pages/LiveCity';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/live" element={<Live />} />
         <Route path="/live/route" element={<LiveRoute />} />
-        <Route path="/live/city" element={<LiveRoute />} />
+        <Route path="/live/city" element={<LiveCity />} />
         <Route path="/live/accessibility" element={<LiveRoute />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/advInfo" />
