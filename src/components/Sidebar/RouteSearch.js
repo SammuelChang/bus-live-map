@@ -104,17 +104,28 @@ const StopTime = styled.div`
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
 `;
 
-const StopLine = styled.div`
-  width: 10%;
-  border-left: 1px solid black;
-  &:after {
-    display: flex;
-    align-items: center;
-    content: '▼';
-    margin-left: -7px;
-    color: ${(props) => (props.coming ? '#e63946' : 'black')};
-    z-index: 20;
-  }
+// const StopLine = styled.div`
+//   width: 10%;
+//   ${'' /* border-left: 1px solid black; */}
+//   ${
+//   '' /* &:after {
+//     display: flex;
+//     align-items: center;
+//     content: '♡';
+//     margin-left: -7px;
+//     color: ${(props) => (props.coming ? '#e63946' : 'black')};
+//     z-index: 20;
+//   } */
+// }
+// `;
+
+const Collect = styled.button`
+  width: 20px;
+  background: none;
+  border: none;
+  text-align: center;
+  display: flex;
+  justify-content: center;
 `;
 
 // eslint-disable-next-line no-unused-vars
@@ -122,11 +133,36 @@ export default function RouteSearch({ searchRoute, mergeStation }) {
   const busRef = useRef('');
   const [bus, setBus] = useState('');
   const [direction, setDirection] = useState(0);
-  // console.log(mergeStation);
+  const [collectList, setCollectList] = useState(
+    JSON.parse(localStorage.getItem('stopCollect')) || [],
+  );
 
   useEffect(() => {
     setBus(bus);
   }, [busRef.current.value]);
+
+  function clickHandler(RouteUID, StopUID) {
+    const collectListIndex = collectList.findIndex(
+      (c) => c.RouteUID === RouteUID && c.StopUID === StopUID && c.direction === direction,
+    );
+
+    if (collectListIndex === -1) {
+      const collect = [
+        ...collectList,
+        {
+          RouteUID,
+          StopUID,
+          direction,
+        },
+      ];
+      setCollectList(collect);
+      localStorage.setItem('stopCollect', JSON.stringify(collect));
+    } else if (collectListIndex > -1) {
+      const collect = collectList.filter((_, index) => index !== collectListIndex);
+      setCollectList(collect);
+      localStorage.setItem('stopCollect', JSON.stringify(collect));
+    }
+  }
 
   return (
     <Wrapper>
@@ -146,12 +182,10 @@ export default function RouteSearch({ searchRoute, mergeStation }) {
           <Depart onClick={() => setDirection(0)}>
             往
             {mergeStation.length ? mergeStation[0].DestinationStopNameZh : '終點站'}
-            <span> ♡</span>
           </Depart>
           <Destination onClick={() => setDirection(1)}>
             往
             {mergeStation.length ? mergeStation[0].DepartureStopNameZh : '起點站'}
-            <span> ♡</span>
           </Destination>
         </Direction>
         <Stops>
@@ -165,7 +199,16 @@ export default function RouteSearch({ searchRoute, mergeStation }) {
                   {stop.EstimateTime < 60 && '即將進站'}
                   {stop.EstimateTime >= 60 && Math.floor(stop.EstimateTime / 60)}
                 </StopTime>
-                <StopLine coming={stop.EstimateTime < 60} />
+                {/* <StopLine coming={stop.EstimateTime < 60} /> */}
+                <Collect onClick={() => clickHandler(stop.RouteUID, stop.StopUID)}>
+                  {collectList.find(
+                    (c) => c.RouteUID === stop.RouteUID
+                      && c.StopUID === stop.StopUID
+                      && c.direction === direction,
+                  )
+                    ? '❤️'
+                    : '♡'}
+                </Collect>
               </Stop>
             ))}
         </Stops>
