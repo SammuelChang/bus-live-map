@@ -87,8 +87,9 @@ const api = {
       .catch((error) => console.log('error', error));
   },
 
-  getAllStationEstimatedTimeOfArrival(city, token, bus = '') {
+  getAllStationEstimatedTimeOfArrival(city, token, bus = '', filter = '') {
     const busCode = bus ? `/${bus}` : '';
+    const filterCode = filter ? `&%24filter=(${filter})` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -100,7 +101,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=100&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=100${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -148,8 +149,9 @@ const api = {
       .then((result) => result)
       .catch((error) => console.log('error', error));
   },
-  getRouteInfo(city, token, bus = '') {
+  getRouteInfo(city, token, bus = '', filter = '') {
     const busCode = bus ? `/${bus}` : '';
+    const filterCode = filter ? `&%24filter=(${filter})` : '';
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -161,7 +163,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/Route/City/${city}${busCode}?%24top=100&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/Route/City/${city}${busCode}?%24top=100${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
