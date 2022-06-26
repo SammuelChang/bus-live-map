@@ -129,16 +129,17 @@ const Collect = styled.button`
 `;
 
 // eslint-disable-next-line no-unused-vars
-export default function RouteSearch({ searchRoute, mergeStation }) {
+export default function RouteSearch({
+  displayBus, setDisplayBus, searchRoute, mergeStation,
+}) {
   const busRef = useRef('');
-  const [bus, setBus] = useState('');
   const [direction, setDirection] = useState(0);
   const [collectList, setCollectList] = useState(
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
 
   useEffect(() => {
-    setBus(bus);
+    setDisplayBus(displayBus);
   }, [busRef.current.value]);
 
   function clickHandler(RouteUID, StopUID) {
@@ -167,11 +168,11 @@ export default function RouteSearch({ searchRoute, mergeStation }) {
   return (
     <Wrapper>
       <SearchContainer>
-        <SearchText placeholder={bus ? `${bus}` : '請輸入路線'} ref={busRef} />
+        <SearchText placeholder={displayBus ? `${displayBus}` : '請輸入路線'} ref={busRef} />
         <SearchButton
           onClick={() => {
             searchRoute(busRef.current.value);
-            setBus(busRef.current.value);
+            setDisplayBus(busRef.current.value);
           }}
         >
           🔍
@@ -218,6 +219,8 @@ export default function RouteSearch({ searchRoute, mergeStation }) {
 }
 
 RouteSearch.propTypes = {
+  displayBus: PropTypes.string.isRequired,
+  setDisplayBus: PropTypes.func.isRequired,
   searchRoute: PropTypes.func.isRequired,
   mergeStation: PropTypes.oneOfType([PropTypes.array]).isRequired,
 };

@@ -33,6 +33,7 @@ export default function LeafletMap() {
   const [tdxInfo, setTdxInfo] = useState([]);
   const [mergeStation, setMergeStation] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
+  const [displayBus, setDisplayBus] = useState('');
 
   function ZoomListener() {
     const mapEvents = useMapEvents({
@@ -105,17 +106,6 @@ export default function LeafletMap() {
     return routeMerge;
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (routeTimer === 0) {
-        setRouteTimer(10);
-      } else {
-        setRouteTimer((t) => t - 1);
-      }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   function removeLayer() {
     featureGroupRef.current?.clearLayers();
   }
@@ -126,27 +116,24 @@ export default function LeafletMap() {
     }
     console.log('call api');
 
-    removeLayer();
+    // removeLayer();
     setLoading(true);
 
     const token = await api.getToken();
 
     const info = await getInfoFn(token, bus);
-    // console.log(info);
     setTdxInfo(info);
 
     const shapeData = await getShapeFn(token, bus);
     setTdxShape(shapeData);
 
     const busData = await getBusFn(token, bus);
-    // console.log(busData);
     setTdxBus(busData);
 
     const routeData = await getRouteStationFn(token, bus);
     const routeTimeData = await getRouteStationTimeFn(token, bus);
 
     const data = await mergeStationHandler(routeData, routeTimeData, info);
-    // console.log(data);
     setMergeStation(data);
 
     setLoading(false);
@@ -156,10 +143,38 @@ export default function LeafletMap() {
     assignRouteHandler(route || '299');
   }
 
+  useEffect(() => {
+    // 初次渲染時設定計時器
+    const interval = setInterval(() => {
+      setRouteTimer((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    console.log(routeTimer);
+    // 根據計時狀況與是否輸入路線，重置計時器並呼叫api
+    if (routeTimer < 0) {
+      setRouteTimer(10);
+    }
+    if (displayBus.length > 0 && routeTimer === 10) {
+      assignRouteHandler(displayBus);
+    }
+  }, [routeTimer, displayBus]);
+
+  useEffect(() => {
+    setRouteTimer(10);
+  }, [displayBus]);
+
   return (
     <Wrapper>
       <Sidebar>
-        <RouteSearch searchRoute={searchRoute} mergeStation={Object.values(mergeStation)} />
+        <RouteSearch
+          displayBus={displayBus}
+          setDisplayBus={setDisplayBus}
+          searchRoute={searchRoute}
+          mergeStation={Object.values(mergeStation)}
+        />
       </Sidebar>
       <MemoMapContainer
         center={location}

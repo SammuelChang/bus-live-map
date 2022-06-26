@@ -36,16 +36,16 @@ export default function LiveCityLeafletMap() {
     return busWithTime;
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (routeTimer === 0) {
-        setRouteTimer(10);
-      } else {
-        setRouteTimer((t) => t - 1);
-      }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (routeTimer === 0) {
+  //       setRouteTimer(10);
+  //     } else {
+  //       setRouteTimer((t) => t - 1);
+  //     }
+  //   }, 3000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   function removeLayer() {
     featureGroupRef.current?.clearLayers();
@@ -57,7 +57,7 @@ export default function LiveCityLeafletMap() {
     }
     console.log('call api');
 
-    removeLayer();
+    // removeLayer();
     setLoading(true);
 
     const token = await api.getToken();
@@ -67,10 +67,32 @@ export default function LiveCityLeafletMap() {
     setLoading(false);
   }
 
+  // useEffect(() => {
+  //   assignRouteHandler();
+  // }, []);
+
   useEffect(() => {
-    assignRouteHandler();
+    // 初次渲染時設定計時器
+    const interval = setInterval(() => {
+      setRouteTimer((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    console.log(routeTimer);
+    // 根據計時狀況，重置計時器並呼叫api
+    if (routeTimer === 0) {
+      setRouteTimer(10);
+    }
+
+    if (routeTimer === 10) {
+      assignRouteHandler();
+    }
+  }, [routeTimer]);
+
   const allBus = true;
+
   return (
     <Wrapper>
       <Sidebar>
