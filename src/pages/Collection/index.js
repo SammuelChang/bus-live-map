@@ -5,7 +5,7 @@ import api from '../../utils/api';
 const Wrapper = styled.div`
   margin: 30px 100px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
 `;
 
@@ -22,9 +22,9 @@ const InfoCard = styled.div`
   margin: 15px;
   background: ${(props) => (props.coming ? '#ef476f' : '#84a98c')};
   color: ${(props) => (props.coming ? 'white' : 'black')};
-  border: 1px solid black;
 
   animation-duration: 10s;
+  animation-delay: 1.5s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   animation-name: ${(props) => (props.coming ? 'shake-horizontal' : '')};

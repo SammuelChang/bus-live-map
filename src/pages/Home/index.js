@@ -19,6 +19,9 @@ const Content = styled.div`
   background: #fff;
   opacity: 0.7;
   border-radius: 50px;
+  cursor: default;
+  user-select: none;
+  padding: 0 10px;
 `;
 
 export default function Home() {
