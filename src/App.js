@@ -9,6 +9,7 @@ import Collection from './pages/Collection';
 import LiveRoute from './pages/LiveRoute';
 import LiveCity from './pages/LiveCity';
 import LiveNearbyPath from './pages/LiveNearbyPath';
+import AdvInfo from './pages/AdvInfo';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
         <Route path="/live/city" element={<LiveCity />} />
         <Route path="/live/nearbyPath" element={<LiveNearbyPath />} />
         <Route path="/collection" element={<Collection />} />
-        <Route path="/advInfo" />
+        <Route path="/advInfo" element={<AdvInfo />} />
       </Routes>
       {/* <Footer /> */}
     </Router>
