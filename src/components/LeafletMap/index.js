@@ -2,9 +2,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
-import {
-  MapContainer, TileLayer, useMapEvents,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from './BusStation';
 import BusMarker from './BusMarker';
@@ -15,8 +13,8 @@ import api from '../../utils/api';
 import Sidebar from '../Sidebar';
 
 const Wrapper = styled.div`
-    display: flex;
-  `;
+  display: flex;
+`;
 
 export default function LeafletMap() {
   const [location] = useState([25.049637, 121.525986]);
@@ -40,7 +38,9 @@ export default function LeafletMap() {
   }
 
   async function getShapeFn(token, bus) {
-    if (tdxShape.length) { return; }
+    if (tdxShape.length) {
+      return;
+    }
     const shape = await api.getAllShape('Taipei', token, bus);
     const geoShape = shape.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
     setTdxShape(geoShape);
@@ -57,7 +57,9 @@ export default function LeafletMap() {
   }
 
   async function getRouteStationTimeFn(token, bus = '') {
-    if (tdxRouteStation.length) { return; }
+    if (tdxRouteStation.length) {
+      return;
+    }
     const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
     setTdxRouteStation(route);
   }
@@ -89,7 +91,9 @@ export default function LeafletMap() {
   async function getNearby(lon = 121.483497, lat = 25.062249) {
     const token = await api.getToken();
     const nearbyStops = await api.getNearbyStops('Taipei', token, lon, lat);
-    const query = nearbyStops.features.map((i) => `Stops/any(d:d/StationID eq '${i.properties.model.StationID}')`).join(' or ');
+    const query = nearbyStops.features
+      .map((i) => `Stops/any(d:d/StationID eq '${i.properties.model.StationID}')`)
+      .join(' or ');
     const nearby = await api.getAllStationStopOfRoute('Taipei', token, '', query);
     nearby.forEach((e) => {
       console.log(e.RouteName.Zh_tw);
@@ -135,14 +139,13 @@ export default function LeafletMap() {
       >
         {tdxShape.length && <Shape tdxShape={tdxShape} />}
         {tdxRealTime.length && <BusMarker tdxRealTime={tdxRealTime} />}
-        {tdxRouteStation.length
-          && (
+        {tdxRouteStation.length && (
           <BusStation
             tdxRouteStation={tdxRouteStation}
             tdxRouteStationTime={tdxRouteStationTime}
             zoomLevel={zoomLevel}
           />
-          )}
+        )}
         <TestMarker testInterval={testInterval} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

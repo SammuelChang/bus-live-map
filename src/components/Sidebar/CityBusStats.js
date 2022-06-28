@@ -36,7 +36,7 @@ export default function CityBusState({ tdxBus }) {
     <Wrapper>
       <Circle bg="#e63946" clr="white">
         <Status>飆速中</Status>
-        <Count>{tdxBus.filter((x) => x.Speed > 50).length}</Count>
+        <Count>{tdxBus.filter((x) => x.Speed > 40).length}</Count>
       </Circle>
       <Circle bg="#2a9d8f">
         <Status>移動中</Status>

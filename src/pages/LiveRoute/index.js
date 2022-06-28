@@ -34,6 +34,7 @@ export default function LeafletMap() {
   const [mergeStation, setMergeStation] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const [displayBus, setDisplayBus] = useState('');
+  const [direction, setDirection] = useState(0);
 
   function ZoomListener() {
     const mapEvents = useMapEvents({
@@ -174,21 +175,25 @@ export default function LeafletMap() {
           setDisplayBus={setDisplayBus}
           searchRoute={searchRoute}
           mergeStation={Object.values(mergeStation)}
+          direction={direction}
+          setDirection={setDirection}
         />
       </Sidebar>
       <MemoMapContainer
         center={location}
         zoom={zoomLevel}
         minZoom={12}
-        maxZoom={16}
+        maxZoom={15}
         scrollWheelZoom
         style={{ height: 'calc(100vh - 120px)', width: '100%' }}
         ref={setMap}
       >
         <FeatureGroup ref={featureGroupRef}>
-          {tdxShape && <BusShape tdxShape={tdxShape} />}
-          {tdxBus && <BusMarker tdxBus={tdxBus} />}
-          {mergeStation && <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} />}
+          {tdxShape && <BusShape tdxShape={tdxShape} direction={direction} />}
+          {tdxBus && <BusMarker tdxBus={tdxBus} direction={direction} />}
+          {mergeStation && zoomLevel >= 14 && (
+            <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} direction={direction} />
+          )}
         </FeatureGroup>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

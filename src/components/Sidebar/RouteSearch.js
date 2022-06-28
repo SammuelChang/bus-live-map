@@ -15,6 +15,7 @@ const SearchContainer = styled.div`
   min-height: 100px;
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 
 const SearchButton = styled.button`
@@ -46,15 +47,17 @@ const SearchText = styled.input`
   }
 `;
 
-const RealTimeTable = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: scroll;
-`;
+// const RealTimeTable = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+// `;
 
 const Direction = styled.div`
   display: flex;
   justify-content: space-around;
+  width: 100%;
 
   & * {
     width: 100%;
@@ -76,7 +79,26 @@ const Destination = styled.div`
 
 const Stops = styled.div`
   margin: 10px 0;
-  height: 100%;
+  width: 100%;
+  height: calc(100% - 140px);
+  overflow-x: auto;
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
+  }
 `;
 
 const Stop = styled.div`
@@ -130,10 +152,14 @@ const Collect = styled.button`
 
 // eslint-disable-next-line no-unused-vars
 export default function RouteSearch({
-  displayBus, setDisplayBus, searchRoute, mergeStation,
+  displayBus,
+  setDisplayBus,
+  searchRoute,
+  mergeStation,
+  direction,
+  setDirection,
 }) {
   const busRef = useRef('');
-  const [direction, setDirection] = useState(0);
   const [collectList, setCollectList] = useState(
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
@@ -180,42 +206,42 @@ export default function RouteSearch({
           🔍
         </SearchButton>
       </SearchContainer>
-      <RealTimeTable>
-        <Direction>
-          <Depart onClick={() => setDirection(0)}>
-            往
-            {mergeStation.length ? mergeStation[0].DestinationStopNameZh : '終點站'}
-          </Depart>
-          <Destination onClick={() => setDirection(1)}>
-            往
-            {mergeStation.length ? mergeStation[0].DepartureStopNameZh : '起點站'}
-          </Destination>
-        </Direction>
-        <Stops>
-          {mergeStation
-            .filter((i) => i.Direction === direction)
-            .map((stop) => (
-              <Stop key={stop.StopUID}>
-                <StopName>{stop.StopName.Zh_tw}</StopName>
-                <StopTime coming={stop.EstimateTime < 60}>
-                  {stop.EstimateTime == null && '未發車'}
-                  {stop.EstimateTime < 60 && '即將進站'}
-                  {stop.EstimateTime >= 60 && Math.floor(stop.EstimateTime / 60)}
-                </StopTime>
-                {/* <StopLine coming={stop.EstimateTime < 60} /> */}
-                <Collect onClick={() => clickHandler(stop.RouteUID, stop.StopUID)}>
-                  {collectList.find(
-                    (c) => c.RouteUID === stop.RouteUID
-                      && c.StopUID === stop.StopUID
-                      && c.direction === direction,
-                  )
-                    ? '❤️'
-                    : '♡'}
-                </Collect>
-              </Stop>
-            ))}
-        </Stops>
-      </RealTimeTable>
+      {/* <RealTimeTable> */}
+      <Direction>
+        <Depart onClick={() => setDirection(0)}>
+          往
+          {mergeStation.length ? mergeStation[0].DestinationStopNameZh : '終點站'}
+        </Depart>
+        <Destination onClick={() => setDirection(1)}>
+          往
+          {mergeStation.length ? mergeStation[0].DepartureStopNameZh : '起點站'}
+        </Destination>
+      </Direction>
+      <Stops>
+        {mergeStation
+          .filter((i) => i.Direction === direction)
+          .map((stop) => (
+            <Stop key={stop.StopUID}>
+              <StopName>{stop.StopName.Zh_tw}</StopName>
+              <StopTime coming={stop.EstimateTime < 60}>
+                {stop.EstimateTime == null && '未發車'}
+                {stop.EstimateTime < 60 && '即將進站'}
+                {stop.EstimateTime >= 60 && Math.floor(stop.EstimateTime / 60)}
+              </StopTime>
+              {/* <StopLine coming={stop.EstimateTime < 60} /> */}
+              <Collect onClick={() => clickHandler(stop.RouteUID, stop.StopUID)}>
+                {collectList.find(
+                  (c) => c.RouteUID === stop.RouteUID
+                    && c.StopUID === stop.StopUID
+                    && c.direction === direction,
+                )
+                  ? '❤️'
+                  : '♡'}
+              </Collect>
+            </Stop>
+          ))}
+      </Stops>
+      {/* </RealTimeTable> */}
     </Wrapper>
   );
 }
@@ -225,4 +251,6 @@ RouteSearch.propTypes = {
   setDisplayBus: PropTypes.func.isRequired,
   searchRoute: PropTypes.func.isRequired,
   mergeStation: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  direction: PropTypes.number.isRequired,
+  setDirection: PropTypes.func.isRequired,
 };
