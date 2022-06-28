@@ -3,10 +3,54 @@ import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 
 const Wrapper = styled.div`
+  height: 100%;
   margin: 30px 100px;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+`;
+
+const NoDataWarn = styled.div`
+  padding-top: 10px;
+  height: 300px;
+  width: 300px;
+  border-radius: 50%;
+  background: #ef476f;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  animation: wobble-horizontal-bottom 1s linear both;
+
+  @keyframes wobble-horizontal-bottom {
+    0%,
+    100% {
+      transform: translateX(0);
+      transform-origin: 50% 50%;
+    }
+    15% {
+      transform: translateX(-30px) rotate(-6deg);
+    }
+    30% {
+      transform: translateX(15px) rotate(6deg);
+    }
+    45% {
+      transform: translateX(-15px) rotate(-3.6deg);
+    }
+    60% {
+      transform: translateX(9px) rotate(2.4deg);
+    }
+    75% {
+      transform: translateX(-6px) rotate(-1.2deg);
+    }
+  }
 `;
 
 const InfoCard = styled.div`
@@ -100,8 +144,9 @@ export default function Collection() {
     .replace('or (RouteUID', '(RouteUID');
 
   async function getStops() {
-    // console.log(stopFilter);
-    // console.log(routeFilter);
+    if (collectList.length === 0) {
+      return;
+    }
     const token = await api.getToken();
     const stopsWithTime = await api.getAllStationEstimatedTimeOfArrival(
       'Taipei',
@@ -135,7 +180,6 @@ export default function Collection() {
   }, []);
 
   useEffect(() => {
-    console.log(routeTimer);
     // 根據計時狀況，重置計時器並呼叫api
     if (routeTimer === 0) {
       setRouteTimer(10);
@@ -148,6 +192,7 @@ export default function Collection() {
 
   return (
     <Wrapper>
+      {collectList.length === 0 && <NoDataWarn>目前尚未收藏</NoDataWarn>}
       {stops.map((stop) => (
         <InfoCard
           key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}

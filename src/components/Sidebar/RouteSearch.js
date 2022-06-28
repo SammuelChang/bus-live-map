@@ -154,6 +154,8 @@ export default function RouteSearch({
           RouteUID,
           StopUID,
           direction,
+          favorite: false,
+          category: 'default',
         },
       ];
       setCollectList(collect);
