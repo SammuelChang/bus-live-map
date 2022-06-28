@@ -23,6 +23,7 @@ const Wrapper = styled.div`
 const MemoMapContainer = memo(MapContainer);
 
 export default function LeafletMap() {
+  const timeThresold = 10;
   const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(null);
   const featureGroupRef = useRef();
@@ -30,9 +31,10 @@ export default function LeafletMap() {
   const [zoomLevel, setZoomLevel] = useState(13);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxBus, setTdxBus] = useState([]);
+  const [tdxBusRef] = useState([]);
   const [tdxInfo, setTdxInfo] = useState([]);
   const [mergeStation, setMergeStation] = useState([]);
-  const [routeTimer, setRouteTimer] = useState(10);
+  const [routeTimer, setRouteTimer] = useState(timeThresold);
   const [displayBus, setDisplayBus] = useState('');
 
   function ZoomListener() {
@@ -128,7 +130,12 @@ export default function LeafletMap() {
     setTdxShape(shapeData);
 
     const busData = await getBusFn(token, bus);
+    busData.sort((a, b) => a.PlateNumb - b.PlateNumb);
     setTdxBus(busData);
+    console.log(tdxBus);
+    console.log(busData);
+
+    tdxBusRef.current = tdxBus ?? [];
 
     const routeData = await getRouteStationFn(token, bus);
     const routeTimeData = await getRouteStationTimeFn(token, bus);
@@ -155,15 +162,16 @@ export default function LeafletMap() {
     console.log(routeTimer);
     // 根據計時狀況與是否輸入路線，重置計時器並呼叫api
     if (routeTimer < 0) {
-      setRouteTimer(10);
+      setRouteTimer(timeThresold);
     }
-    if (displayBus.length > 0 && routeTimer === 10) {
+    if (displayBus.length > 0 && routeTimer === timeThresold) {
       assignRouteHandler(displayBus);
     }
   }, [routeTimer, displayBus]);
 
   useEffect(() => {
-    setRouteTimer(10);
+    removeLayer();
+    setRouteTimer(timeThresold);
   }, [displayBus]);
 
   return (
@@ -187,7 +195,7 @@ export default function LeafletMap() {
       >
         <FeatureGroup ref={featureGroupRef}>
           {tdxShape && <BusShape tdxShape={tdxShape} />}
-          {tdxBus && <BusMarker tdxBus={tdxBus} />}
+          {tdxBus && <BusMarker tdxBus={tdxBus} tdxBusRef={tdxBusRef} />}
           {mergeStation && <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} />}
         </FeatureGroup>
         <TileLayer
