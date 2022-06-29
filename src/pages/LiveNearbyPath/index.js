@@ -126,9 +126,11 @@ export default function LiveNearbyPath() {
         .map((i) => `or RouteUID eq '${i}'`)
         .join('')
         .replace('or RouteUID', 'RouteUID');
-
       const shapeData = await api.getAllShape('Taipei', token, '', routeSets);
-      const geoShapeData = shapeData.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
+      const geoShapeData = shapeData.map((obj) => ({
+        ...obj,
+        Geojson: { ...parse(obj.Geometry), properties: { RouteName: obj.RouteName.Zh_tw } },
+      }));
       setTdxShape(geoShapeData);
     }
   }
