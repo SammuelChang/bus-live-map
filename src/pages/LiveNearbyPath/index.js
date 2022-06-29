@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
 import {
   useState, useRef, memo, useEffect,
 } from 'react';
@@ -9,7 +7,6 @@ import {
   TileLayer,
   useMapEvents,
   FeatureGroup,
-  Marker,
   Circle,
   Tooltip,
   Popup,
@@ -17,23 +14,31 @@ import {
 import 'leaflet/dist/leaflet.css';
 import { parse } from 'wellknown';
 import styled from 'styled-components';
-import L from 'leaflet';
+import Modal from 'react-modal';
 import api from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import BusShape from '../../components/LeafletMap/BusShape';
 import NearbyPath from '../../components/Sidebar/NearbyPath';
+import './index.css';
 
 const Wrapper = styled.div`
   display: flex;
 `;
 const MemoMapContainer = memo(MapContainer);
 
-function AddMarkerToClick({ markers, setMarkers }) {
+Modal.setAppElement('#root');
+
+function AddMarkerToClick({
+  markers, setMarkers, getCurrentPoi, setGetCurrentPoi,
+}) {
   const circleOption = { color: 'gray', fillColor: 'gray' };
-  const map = useMapEvents({
+  const circleOptionCurrent = { color: '#e9c46a', fillColor: '#e9c46a' };
+
+  useMapEvents({
     click(e) {
       const newMarker = e.latlng;
       setMarkers([newMarker]);
+      setGetCurrentPoi(false);
     },
   });
 
@@ -43,7 +48,7 @@ function AddMarkerToClick({ markers, setMarkers }) {
         <Circle
           key={`${marker}_${Date.now()}`}
           center={marker}
-          pathOptions={circleOption}
+          pathOptions={getCurrentPoi ? circleOptionCurrent : circleOption}
           fillOpacity={0.3}
           weight={3}
           radius={500}
@@ -63,6 +68,8 @@ function AddMarkerToClick({ markers, setMarkers }) {
 AddMarkerToClick.propTypes = {
   markers: PropTypes.oneOfType([PropTypes.array]).isRequired,
   setMarkers: PropTypes.func.isRequired,
+  getCurrentPoi: PropTypes.bool.isRequired,
+  setGetCurrentPoi: PropTypes.func.isRequired,
 };
 
 function BusStop({ nearby }) {
@@ -98,6 +105,8 @@ export default function LiveNearbyPath() {
   const [nearby, setNearby] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [tdxShape, setTdxShape] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [getCurrentPoi, setGetCurrentPoi] = useState(false);
 
   async function getNearby(lon, lat) {
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
@@ -149,8 +158,59 @@ export default function LiveNearbyPath() {
     }
   }, [markers]);
 
+  function locatePosition() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
+      setGetCurrentPoi(true);
+    });
+  }
+
+  useEffect(() => {
+    locatePosition();
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 3000);
+  }, [getCurrentPoi]);
+
   return (
     <Wrapper>
+      {getCurrentPoi && (
+        <Modal
+          closeTimeoutMS={500}
+          isOpen={isOpen}
+          onRequestClose={() => setIsOpen(false)}
+          contentLabel="modal"
+          style={{
+            content: {
+              textAlign: 'center',
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              transition: '.5s',
+              width: '90%',
+              maxHeight: '600px',
+              overflow: 'auto',
+              padding: '40px',
+              maxWidth: '500px',
+              borderRadius: '10px',
+              boxShadow: '0px 0px 15px 1px gray',
+            },
+            overlay: {
+              zIndex: '1000',
+              top: '120px',
+            },
+          }}
+        >
+          <div>已自動定位您所在位置，三秒後自動關閉視窗</div>
+        </Modal>
+      )}
       <Sidebar>
         <NearbyPath nearby={nearby} routes={routes} markers={markers} />
       </Sidebar>
@@ -162,7 +222,12 @@ export default function LiveNearbyPath() {
         style={{ height: 'calc(100vh - 120px)', width: '100%' }}
       >
         <FeatureGroup ref={featureGroupRef}>
-          <AddMarkerToClick markers={markers} setMarkers={setMarkers} />
+          <AddMarkerToClick
+            markers={markers}
+            setMarkers={setMarkers}
+            getCurrentPoi={getCurrentPoi}
+            setGetCurrentPoi={setGetCurrentPoi}
+          />
           {tdxShape !== undefined && <BusShape tdxShape={tdxShape} />}
           {nearby !== undefined && <BusStop nearby={nearby} />}
         </FeatureGroup>

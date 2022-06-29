@@ -2,12 +2,13 @@ import { useRef } from 'react';
 import { Popup, GeoJSON } from 'react-leaflet';
 import styled from 'styled-components';
 
+const StyledRouteName = styled.h3`
+  padding: none;
+  margin: none;
+  text-align: center;
+`;
+
 export default function BusShape({ tdxShape }) {
-  const StyledRouteName = styled.h3`
-    padding: none;
-    margin: none;
-    text-align: center;
-  `;
   const geoJsonRef = useRef();
   const defaultLightStyle = { color: '#6c757d', zIndexOffset: 0, weight: 1 };
   const hieghtLightStyle = { color: '#e63946', zIndexOffset: 1000, weight: 5 };
