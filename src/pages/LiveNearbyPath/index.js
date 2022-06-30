@@ -228,7 +228,7 @@ export default function LiveNearbyPath() {
             getCurrentPoi={getCurrentPoi}
             setGetCurrentPoi={setGetCurrentPoi}
           />
-          {tdxShape !== undefined && <BusShape tdxShape={tdxShape} />}
+          {tdxShape !== undefined && <BusShape tdxShape={tdxShape} nearby={nearby} />}
           {nearby !== undefined && <BusStop nearby={nearby} />}
         </FeatureGroup>
         <TileLayer
