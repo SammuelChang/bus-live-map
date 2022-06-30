@@ -3,16 +3,20 @@ import PropTypes from 'prop-types';
 
 const Wrapper = styled.div`
   height: 100%;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: space-evenly;
+  @media (max-width: 780px) {
+    width: 100vw;
+  }
 `;
 
 const Circle = styled.div`
   height: 100px;
-  width: 100px;
-  border-radius: 50px;
+  width: 200px;
+  border-radius: 5px;
   background: ${(props) => props.bg};
   color: ${(props) => props.clr || 'black'};
   margin: 10px;

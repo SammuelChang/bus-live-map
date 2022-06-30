@@ -6,6 +6,10 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 10px;
+  min-width: 300px;
+  @media (max-width: 780px) {
+    display: none;
+  }
 `;
 
 const Position = styled.div`

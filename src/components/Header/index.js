@@ -6,13 +6,13 @@ import GlobalStyle from '../../globalStyles';
 
 const StyleLink = styled(Link)`
   text-decoration: none;
-  color: ${({ theme }) => theme.color};
+  color: ${({ theme }) => theme.headerColor};
 `;
 
 const Wrapper = styled.div`
   position: relative;
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
+  color: ${({ theme }) => theme.headerColor};
   height: 120px;
   width: 100vw;
   display: flex;
@@ -79,7 +79,7 @@ const NavTo = styled.div`
   margin: 0 20px;
 
   &:hover {
-    color: ${({ theme }) => theme.hoverColor};
+    color: ${({ theme }) => theme.headerHoverColor};
     font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.3s linear;
@@ -163,6 +163,9 @@ const SideNav = styled.div`
   top: 120px;
   z-index: 1000;
   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+  @media (max-width: 780px) {
+    width: 200px;
+  }
 `;
 
 const SideContent = styled.div`

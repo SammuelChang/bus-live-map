@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const Wrapper = styled.div`
   display: flex;
@@ -9,6 +9,14 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   height: 100%;
+  min-width: 300px;
+
+  @media (max-width: 780px) {
+    min-width: 100%;
+    padding: 10px;
+    margin: 0;
+    width: 100vw;
+  }
 `;
 
 const SearchContainer = styled.div`
@@ -32,6 +40,7 @@ const SearchText = styled.input`
   width: 100%;
   height: 50%;
   max-height: 100px;
+  color: ${({ theme }) => theme.color};
   font-size: 1.5rem;
   font-weight: bold;
   padding: 10px;
@@ -42,9 +51,6 @@ const SearchText = styled.input`
   white-space: nowrap;
   display: flex;
   align-items: center;
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
 `;
 
 // const RealTimeTable = styled.div`
@@ -66,6 +72,7 @@ const Direction = styled.div`
     text-align: center;
     font-weight: bold;
     cursor: pointer;
+    color: black;
   }
 `;
 
@@ -122,7 +129,8 @@ const StopTime = styled.div`
   white-space: nowrap;
   font-size: 0.7rem;
   padding-left: ${(props) => (props.coming ? '0' : '2px')};
-  color: ${(props) => (props.coming ? '#e63946' : 'black')};
+  color: ${({ theme }) => theme.color};
+  color: ${(props) => (props.coming ? '#e63946' : '')};
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
 `;
 
@@ -142,6 +150,7 @@ const StopTime = styled.div`
 // `;
 
 const Collect = styled.button`
+  color: ${({ theme }) => theme.color};
   width: 20px;
   background: none;
   border: none;
