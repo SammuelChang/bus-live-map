@@ -11,17 +11,14 @@ import Collection from './pages/Collection';
 import LiveRoute from './pages/LiveRoute';
 import LiveCity from './pages/LiveCity';
 import LiveNearbyPath from './pages/LiveNearbyPath';
-import AdvInfo from './pages/AdvInfo';
+import NoMatch from './pages/NoMatch';
 
 function App() {
   const [theme, setTheme] = useState('light');
 
-  // The function that toggles between themes
   const toggleTheme = () => {
-    // if the theme is not light, then set it to dark
     if (theme === 'light') {
       setTheme('dark');
-      // otherwise, it should be light
     } else {
       setTheme('light');
     }
@@ -39,7 +36,8 @@ function App() {
           <Route path="/live/city" element={<LiveCity />} />
           <Route path="/live/nearbyPath" element={<LiveNearbyPath />} />
           <Route path="/collection" element={<Collection />} />
-          <Route path="/advInfo" element={<AdvInfo />} />
+          {/* <Route path="/advInfo" element={<AdvInfo />} /> */}
+          <Route path="*" element={<NoMatch />} />
         </Routes>
         {/* <Footer /> */}
       </ThemeProvider>
