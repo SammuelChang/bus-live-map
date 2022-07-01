@@ -3,11 +3,13 @@
 import {
   useEffect, useState, useRef, memo,
 } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
 import {
-  MapContainer, TileLayer, useMapEvents, FeatureGroup,
+  MapContainer, TileLayer, useMapEvents, FeatureGroup, useMap,
 } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
 import BusMarker from '../../components/LeafletMap/BusMarker';
@@ -22,7 +24,7 @@ const Wrapper = styled.div`
 
 const MemoMapContainer = memo(MapContainer);
 
-export default function LeafletMap() {
+export default function LiveRoute({ isDark }) {
   const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(null);
   const featureGroupRef = useRef();
@@ -195,13 +197,24 @@ export default function LeafletMap() {
             <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} direction={direction} />
           )}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.7}
-        />
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+          />
+        )}
         <ZoomListener />
       </MemoMapContainer>
     </Wrapper>
   );
 }
+
+LiveRoute.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};

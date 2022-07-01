@@ -98,7 +98,7 @@ BusStop.propTypes = {
   nearby: PropTypes.oneOfType([PropTypes.array]).isRequired,
 };
 
-export default function LiveNearbyPath() {
+export default function LiveNearbyPath({ isDark }) {
   const featureGroupRef = useRef();
   const [location] = useState([25.049637, 121.525986]);
   const [markers, setMarkers] = useState([]);
@@ -231,12 +231,23 @@ export default function LiveNearbyPath() {
           {tdxShape !== undefined && <BusShape tdxShape={tdxShape} nearby={nearby} />}
           {nearby !== undefined && <BusStop nearby={nearby} />}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.9}
-        />
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+          />
+        )}
       </MemoMapContainer>
     </Wrapper>
   );
 }
+
+LiveNearbyPath.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};

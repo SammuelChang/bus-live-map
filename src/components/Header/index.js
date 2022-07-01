@@ -171,7 +171,7 @@ const SideToggler = styled.div`
   height: 30px;
   width: 30px;
   background-size: 100%;
-  transform: rotate(${(props) => (props.onMenu ? '90deg' : '0deg')});
+  transform: rotate(${(props) => (props.openMenu ? '90deg' : '0deg')});
 
   &:active {
     animation: blur-out 0.4s linear;
@@ -271,7 +271,7 @@ function Header({ toggleTheme }) {
           <NavTo>最遠路徑</NavTo>
         </StyleLink>
       </NavContainer>
-      <SideToggler onClick={handleToggle} onMenu={menu} />
+      <SideToggler onClick={handleToggle} openMenu={menu} />
       <ThemeToggler type="button" label="toggleTheme" onClick={() => toggleTheme()} />
     </Wrapper>
   );

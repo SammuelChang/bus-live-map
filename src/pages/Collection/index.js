@@ -1,13 +1,15 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 
 const Wrapper = styled.div`
-  height: 100%;
-  margin: 30px 100px;
+  background: ${({ theme }) => theme.background};
+  height: calc(100vh - 120px);
+  width: 100%;
+  padding: 30px 100px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 `;
 

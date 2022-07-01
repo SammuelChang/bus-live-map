@@ -4,6 +4,7 @@ import {
   useEffect, useState, useRef, memo,
 } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { parse } from 'wellknown';
 import {
   MapContainer, TileLayer, useMapEvents, FeatureGroup,
@@ -22,7 +23,7 @@ const Wrapper = styled.div`
 
 const MemoMapContainer = memo(MapContainer);
 
-export default function LiveCityLeafletMap() {
+export default function LiveCityLeafletMap({ isDark }) {
   const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(null);
   const featureGroupRef = useRef();
@@ -110,12 +111,23 @@ export default function LiveCityLeafletMap() {
         <FeatureGroup ref={featureGroupRef}>
           {tdxBus && <BusMarker tdxBus={tdxBus} allBus={allBus} />}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.7}
-        />
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+          />
+        )}
       </MemoMapContainer>
     </Wrapper>
   );
 }
+
+LiveCityLeafletMap.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};

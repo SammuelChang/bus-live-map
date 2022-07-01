@@ -15,12 +15,15 @@ import NoMatch from './pages/NoMatch';
 
 function App() {
   const [theme, setTheme] = useState('light');
+  const [isDark, setIsDark] = useState(false);
 
   const toggleTheme = () => {
     if (theme === 'light') {
       setTheme('dark');
+      setIsDark(true);
     } else {
       setTheme('light');
+      setIsDark(false);
     }
   };
 
@@ -32,9 +35,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/live" element={<Live />} />
-          <Route path="/live/route" element={<LiveRoute />} />
-          <Route path="/live/city" element={<LiveCity />} />
-          <Route path="/live/nearbyPath" element={<LiveNearbyPath />} />
+          <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
+          <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
+          <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
           <Route path="/collection" element={<Collection />} />
           {/* <Route path="/advInfo" element={<AdvInfo />} /> */}
           <Route path="*" element={<NoMatch />} />
