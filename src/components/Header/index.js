@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { useState } from 'react';
-import busIcon from '../../images/bus_24_2x.png';
 import GlobalStyle from '../../globalStyles';
 
 const StyleLink = styled(Link)`
@@ -64,49 +63,20 @@ const BrandName = styled.div`
 `;
 
 const Logo = styled.div`
-  background: url(${busIcon});
+  background: url(${({ theme }) => theme.icon});
   background-repeat: no-repeat;
   background-position: center;
+  background-size: contain;
   height: 40px;
   width: 50px;
   animation-iteration-count: 1;
-  animation: bounce-top 0.9s linear both;
-  @keyframes bounce-top {
+  animation: zoom-in 3s ease-out both;
+  @keyframes zoom-in {
     0% {
-      transform: translateY(-45px);
-      animation-timing-function: ease-in;
-      opacity: 1;
-    }
-    24% {
-      opacity: 1;
-    }
-    40% {
-      transform: translateY(-24px);
-      animation-timing-function: ease-in;
-    }
-    65% {
-      transform: translateY(-12px);
-      animation-timing-function: ease-in;
-    }
-    82% {
-      transform: translateY(-6px);
-      animation-timing-function: ease-in;
-    }
-    93% {
-      transform: translateY(-4px);
-      animation-timing-function: ease-in;
-    }
-    25%,
-    55%,
-    75%,
-    87% {
-      transform: translateY(0);
-      animation-timing-function: ease-out;
+      transform: scale(0);
     }
     100% {
-      transform: translateY(0);
-      animation-timing-function: ease-out;
-      opacity: 1;
+      transform: scale(1);
     }
   }
 `;
