@@ -1,12 +1,21 @@
 import styled from 'styled-components/macro';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../utils/api';
+import busStop from '../../images/bus-stop-empty.png';
+import trash from '../../images/trash.png';
+
+const StyleLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+`;
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
   height: calc(100vh - 120px);
   width: 100%;
   padding: 30px 100px;
+  margin-bottom: 100px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -14,61 +23,44 @@ const Wrapper = styled.div`
 `;
 
 const NoDataWarn = styled.div`
-  padding-top: 10px;
+  text-align: center;
+  padding-top: 35px;
+  padding-left: 20px;
   height: 300px;
   width: 300px;
-  border-radius: 50%;
-  background: #ef476f;
+  background: url(${busStop}) no-repeat center;
   color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
+  border: 1px solid
   margin: 15px;
   font-size: 1.5rem;
   font-weight: bold;
-
-  animation: wobble-horizontal-bottom 1s linear both;
-
-  @keyframes wobble-horizontal-bottom {
-    0%,
+  animation: rotate-vertical-center 2s;
+  @keyframes rotate-vertical-center {
+    0% {
+      transform: rotateY(180deg);
+    }
     100% {
-      transform: translateX(0);
-      transform-origin: 50% 50%;
-    }
-    15% {
-      transform: translateX(-30px) rotate(-6deg);
-    }
-    30% {
-      transform: translateX(15px) rotate(6deg);
-    }
-    45% {
-      transform: translateX(-15px) rotate(-3.6deg);
-    }
-    60% {
-      transform: translateX(9px) rotate(2.4deg);
-    }
-    75% {
-      transform: translateX(-6px) rotate(-1.2deg);
+      transform: rotateY(0);
     }
   }
+  & > span{
+    font-size: 1.3rem;
+  }
+
 `;
 
 const InfoCard = styled.div`
-  padding-top: 10px;
-  height: 200px;
-  min-width: 300px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  border-radius: 50px;
-  margin: 15px;
-  background: ${(props) => (props.coming ? '#ef476f' : '#84a98c')};
-  color: ${(props) => (props.coming ? 'white' : 'black')};
-
+  height: 250px;
+  width: 200px;
+  border: 2px solid gray;
+  margin: 20px;
+  & > * {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eef0f0;
+  }
   animation-duration: 10s;
   animation-delay: 1.5s;
   animation-iteration-count: infinite;
@@ -100,36 +92,85 @@ const InfoCard = styled.div`
   }
 `;
 
-const BusName = styled.div`
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px;
-`;
-
-const StopName = styled.div`
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 10px;
-`;
-
-const Direction = styled.div`
+const BusStop = styled.div`
+  height: 20%;
+  width: 100%;
   font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: 10px;
+  font-weight: bold;
+  background: ${(props) => (props.coming ? '#e63946' : '#1299ce')};
+  color: white;
 `;
 
-const TimeContainer = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: 10px;
+const BusRoute = styled.div`
+  height: 40%;
+  width: 100%;
+  justify-content: space-around;
+`;
+
+const BusName = styled.div`
+  width: 40%;
+  padding-left: 10px;
+`;
+
+const BusDirection = styled.div`
+  width: 60%;
+  font-size: 1rem;
+  & > span {
+    font-size: 1.5rem;
+    &::after {
+      content: ' ';
+    }
+  }
+`;
+
+const BusTime = styled.div`
+  height: 30%;
+  font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
+  color: ${(props) => (props.coming ? '#e63946' : 'black')};
+`;
+
+const Function = styled.div`
+  height: 10%;
+  justify-content: flex-end;
+`;
+
+const Remove = styled.div`
+  justify-content: flex-end;
+  cursor: pointer;
+
+  &::after {
+    content: url(${trash});
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 `;
 
 export default function Collection() {
-  const [collectList] = useState(JSON.parse(localStorage.getItem('stopCollect')) || []);
+  const [collectList, setCollectList] = useState(
+    JSON.parse(localStorage.getItem('stopCollect')) || [],
+  );
   const [stops, setStops] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const comingThreshold = 120;
+
+  function removeFn(r, s, d) {
+    const newCollectList = collectList.filter(
+      (i) => i.RouteUID !== r || i.StopUID !== s || i.direction !== d,
+    );
+    setCollectList(newCollectList);
+    localStorage.setItem('stopCollect', JSON.stringify(newCollectList));
+  }
+
+  // function favoriteFn(r, s, d) {
+  //   const newCollectList = collectList;
+  //   const targetIndex = collectList.findIndex(
+  //     (i) => i.RouteUID !== r || i.StopUID !== s || i.direction !== d,
+  //   );
+  //   newCollectList[targetIndex].favorite = !newCollectList[targetIndex].favorite;
+  //   setCollectList(newCollectList);
+  //   localStorage.setItem('stopCollect', JSON.stringify(newCollectList));
+  // }
 
   const stopFilter = collectList
     .map(
@@ -165,13 +206,15 @@ export default function Collection() {
       DepartureStopNameZh: busInfo.find((info) => info.RouteUID === i.RouteUID).DepartureStopNameZh,
     }));
 
-    stopsWithTimeInfo.sort((a, b) => a.RouteName.Zh_tw - b.RouteName.Zh_tw);
+    stopsWithTimeInfo
+      .sort((a, b) => a.RouteName.Zh_tw - b.RouteName.Zh_tw)
+      .sort((a, b) => a.favorite - b.favorite);
     setStops(stopsWithTimeInfo);
   }
 
   useEffect(() => {
     getStops();
-  }, []);
+  }, [collectList]);
 
   useEffect(() => {
     // 初次渲染時設定計時器
@@ -194,24 +237,45 @@ export default function Collection() {
 
   return (
     <Wrapper>
-      {collectList.length === 0 && <NoDataWarn>目前尚未收藏</NoDataWarn>}
+      {collectList.length === 0 && (
+        <NoDataWarn>
+          空空如也
+          <br />
+          <br />
+          <StyleLink to="/live/route/">
+            <span>點我去收藏</span>
+          </StyleLink>
+        </NoDataWarn>
+      )}
       {stops.map((stop) => (
         <InfoCard
           key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}
           coming={stop.EstimateTime < comingThreshold}
         >
-          <BusName>{stop.RouteName.Zh_tw}</BusName>
-          <StopName>{stop.StopName.Zh_tw}</StopName>
-          <Direction>
-            往
-            {stop.Direction === 0 && stop.DestinationStopNameZh}
-            {stop.Direction === 1 && stop.DepartureStopNameZh}
-          </Direction>
-          <TimeContainer>
-            {stop.EstimateTime < comingThreshold && '即將抵達'}
+          <BusStop coming={stop.EstimateTime < comingThreshold}>{stop.StopName.Zh_tw}</BusStop>
+          <BusRoute>
+            <BusName>{stop.RouteName.Zh_tw}</BusName>
+            <BusDirection>
+              <span>往</span>
+              {stop.Direction === 0 && stop.DestinationStopNameZh}
+              {stop.Direction === 1 && stop.DepartureStopNameZh}
+            </BusDirection>
+          </BusRoute>
+          <BusTime coming={stop.EstimateTime < comingThreshold}>
+            {' '}
+            {stop.EstimateTime < comingThreshold / 2 && '將到站'}
+            {stop.EstimateTime > comingThreshold / 2
+              && stop.EstimateTime < comingThreshold
+              && '將到站'}
             {stop.EstimateTime >= comingThreshold && `${Math.floor(stop.EstimateTime / 60)}分`}
             {stop.EstimateTime === undefined && '未發車'}
-          </TimeContainer>
+          </BusTime>
+          <Function>
+            <Remove
+              type="button"
+              onClick={() => removeFn(stop.RouteUID, stop.StopUID, stop.Direction)}
+            />
+          </Function>
         </InfoCard>
       ))}
     </Wrapper>
