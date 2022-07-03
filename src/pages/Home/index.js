@@ -64,7 +64,7 @@ const NextPage = styled.div`
 const Cover = styled.div`
   position: relative;
   background: url(${missing});
-  background-position: center 25%;
+  background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0.9;
@@ -291,6 +291,7 @@ const IntroTitle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
   @media (max-width: 780px) {
     padding-top: 50px;
     font-size: 3rem;
@@ -308,33 +309,61 @@ const IntroContent = styled.div`
 const IntroItem = styled.div`
   height: 400px;
   width: 300px;
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
+  margin: 0 10px;
+  position: relative;
+  border: 5px solid #d3d3d3;
+  z-index: 2;
+
+  &::before {
+    content: '';
+    height: 92%;
+    width: 106%;
+    position: absolute;
+    top: 4%;
+    left: -3%;
+    margin: auto 0;
+    background: ${({ theme }) => theme.background};
+    z-index: -1;
+  }
+  &::after {
+    content: '';
+    height: 106%;
+    width: 90%;
+    position: absolute;
+    top: -3%;
+    left: 5%;
+    margin: auto;
+    background: ${({ theme }) => theme.background};
+    z-index: -1;
+  }
   @media (max-width: 780px) {
     margin-top: 30px;
   }
 `;
 
 const IntroItemTitle = styled.div`
-  height: 20%;
+  height: 15%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1.5rem;
   font-weight: bold;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
+  z-index: 100;
+  padding: 10px 0;
 `;
 
 const IntroItemImg = styled.div`
-  height: 80%;
+  height: 85%;
   width: 100%;
   background: url(${(props) => props.bg}) center center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 5px solid white;
-  border-radius: 50px;
   position: relative;
   cursor: pointer;
+  z-index: 100;
 
   &::before {
     content: url(${info});
@@ -426,9 +455,9 @@ export default function Home() {
     <Wrapper>
       <Cover id="cover">
         <CoverTitle>
-          公車
+          公車也
           <br />
-          難追？
+          欺負你？
         </CoverTitle>
         <Link activeClass="active" to="sub-cover" spy smooth offset={0} duration={1000}>
           <NextPage light />
