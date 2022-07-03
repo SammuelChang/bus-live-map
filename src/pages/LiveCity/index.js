@@ -16,12 +16,27 @@ import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import CityBusState from '../../components/Sidebar/CityBusStats';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
 `;
 
 const MemoMapContainer = memo(MapContainer);
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
 
 export default function LiveCityLeafletMap({ isDark }) {
   const [loading, setLoading] = useState(false);
@@ -99,7 +114,7 @@ export default function LiveCityLeafletMap({ isDark }) {
       <Sidebar>
         <CityBusState tdxBus={tdxBus} />
       </Sidebar>
-      <MemoMapContainer
+      <StyledMemoMapContainer
         center={location}
         zoom={zoomLevel}
         minZoom={11}
@@ -123,7 +138,8 @@ export default function LiveCityLeafletMap({ isDark }) {
             url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
           />
         )}
-      </MemoMapContainer>
+      </StyledMemoMapContainer>
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }

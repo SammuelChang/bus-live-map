@@ -20,12 +20,27 @@ import Sidebar from '../../components/Sidebar';
 import BusShape from '../../components/LeafletMap/BusShape';
 import NearbyPath from '../../components/Sidebar/NearbyPath';
 import './index.css';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
+  position: relative;
 `;
 const MemoMapContainer = memo(MapContainer);
-
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
 Modal.setAppElement('#root');
 
 function AddMarkerToClick({
@@ -99,6 +114,7 @@ BusStop.propTypes = {
 };
 
 export default function LiveNearbyPath({ isDark }) {
+  const [loading, setLoading] = useState(true);
   const featureGroupRef = useRef();
   const [location] = useState([25.049637, 121.525986]);
   const [markers, setMarkers] = useState([]);
@@ -109,6 +125,7 @@ export default function LiveNearbyPath({ isDark }) {
   const [getCurrentPoi, setGetCurrentPoi] = useState(false);
 
   async function getNearby(lon, lat) {
+    setLoading(true);
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
     const token = await api.getToken();
     const result = await api.getNearbyStops('Taipei', token, lon, lat);
@@ -141,6 +158,7 @@ export default function LiveNearbyPath({ isDark }) {
         Geojson: { ...parse(obj.Geometry), properties: { RouteName: obj.RouteName.Zh_tw } },
       }));
       setTdxShape(geoShapeData);
+      setLoading(false);
     }
   }
 
@@ -214,7 +232,7 @@ export default function LiveNearbyPath({ isDark }) {
       <Sidebar>
         <NearbyPath nearby={nearby} routes={routes} markers={markers} />
       </Sidebar>
-      <MemoMapContainer
+      <StyledMemoMapContainer
         center={location}
         minZoom={11}
         maxZoom={16}
@@ -243,7 +261,8 @@ export default function LiveNearbyPath({ isDark }) {
             url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
           />
         )}
-      </MemoMapContainer>
+      </StyledMemoMapContainer>
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }

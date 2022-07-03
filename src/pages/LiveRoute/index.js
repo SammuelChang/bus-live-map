@@ -17,12 +17,28 @@ import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import RouteSearch from '../../components/Sidebar/RouteSearch';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
+  position: relative;
 `;
 
 const MemoMapContainer = memo(MapContainer);
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
 
 export default function LiveRoute({ isDark }) {
   const [loading, setLoading] = useState(false);
@@ -118,10 +134,8 @@ export default function LiveRoute({ isDark }) {
       return;
     }
     console.log('call api');
-
     // removeLayer();
     setLoading(true);
-
     const token = await api.getToken();
 
     const info = await getInfoFn(token, bus);
@@ -138,7 +152,6 @@ export default function LiveRoute({ isDark }) {
 
     const data = await mergeStationHandler(routeData, routeTimeData, info);
     setMergeStation(data);
-
     setLoading(false);
   }
 
@@ -181,7 +194,7 @@ export default function LiveRoute({ isDark }) {
           setDirection={setDirection}
         />
       </Sidebar>
-      <MemoMapContainer
+      <StyledMemoMapContainer
         center={location}
         zoom={zoomLevel}
         minZoom={12}
@@ -189,6 +202,7 @@ export default function LiveRoute({ isDark }) {
         scrollWheelZoom
         style={{ height: 'calc(100vh - 120px)', width: '100%' }}
         ref={setMap}
+        loading={loading}
       >
         <FeatureGroup ref={featureGroupRef}>
           {tdxShape && <BusShape tdxShape={tdxShape} direction={direction} />}
@@ -210,7 +224,8 @@ export default function LiveRoute({ isDark }) {
           />
         )}
         <ZoomListener />
-      </MemoMapContainer>
+      </StyledMemoMapContainer>
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }

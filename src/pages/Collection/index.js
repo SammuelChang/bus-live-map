@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import busStop from '../../images/bus-stop-empty.png';
 import trash from '../../images/trash.png';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const StyleLink = styled(Link)`
   text-decoration: none;
@@ -147,6 +148,7 @@ const Remove = styled.div`
 `;
 
 export default function Collection() {
+  const [loading, setLoading] = useState(false);
   const [collectList, setCollectList] = useState(
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
@@ -187,6 +189,7 @@ export default function Collection() {
     .replace('or (RouteUID', '(RouteUID');
 
   async function getStops() {
+    setLoading(true);
     if (collectList.length === 0) {
       return;
     }
@@ -210,6 +213,7 @@ export default function Collection() {
       .sort((a, b) => a.RouteName.Zh_tw - b.RouteName.Zh_tw)
       .sort((a, b) => a.favorite - b.favorite);
     setStops(stopsWithTimeInfo);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -278,6 +282,7 @@ export default function Collection() {
           </Function>
         </InfoCard>
       ))}
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }

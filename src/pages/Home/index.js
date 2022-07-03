@@ -15,7 +15,7 @@ import featureNearby from '../../images/feature-nearby.png';
 import info from '../../images/info.png';
 
 const Wrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: calc(400vh - 120px);
 `;
 
@@ -187,7 +187,7 @@ const MainLayoutContainer = styled.div`
 
 const MainTextContainer = styled.div`
   display: flex;
-  width: 50vw;
+  width: 50%;
   flex-direction: column;
   align-items: center;
   @media (max-width: 780px) {
@@ -286,14 +286,14 @@ const FeatureIntro = styled.div`
 const IntroTitle = styled.div`
   font-size: 4rem;
   font-weight: bold;
-  margin-bottom: 50px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   width: 50vw;
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   @media (max-width: 780px) {
-    padding-top: 50px;
     font-size: 3rem;
   }
 `;
@@ -304,17 +304,22 @@ const IntroContent = styled.div`
   align-items: center;
   justify-content: center;
   user-select: none;
+  width: 100%;
+  height: 100%;
 `;
 
 const IntroItem = styled.div`
-  height: 400px;
-  width: 300px;
+  height: 350px;
+  width: 250px;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
   margin: 0 10px;
   position: relative;
   border: 5px solid #d3d3d3;
   z-index: 2;
+  @media (max-width: 1080px) {
+    height: 250px;
+  }
 
   &::before {
     content: '';
@@ -360,7 +365,7 @@ const IntroItemImg = styled.div`
   width: 100%;
   background: url(${(props) => props.bg}) center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: ${(props) => (props.cover ? 'cover' : 'contain')};
   position: relative;
   cursor: pointer;
   z-index: 100;
@@ -495,7 +500,7 @@ export default function Home() {
         <IntroContent>
           <IntroItem>
             <IntroItemTitle>路線查詢</IntroItemTitle>
-            <IntroItemImg bg={featureRoute}>
+            <IntroItemImg bg={featureRoute} cover>
               <IntroItemImgHover>
                 <IntroItemImgHoverItem>指定路線，隨心所欲更換</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>站牌、公車、路線一覽無遺</IntroItemImgHoverItem>
@@ -506,7 +511,7 @@ export default function Home() {
           </IntroItem>
           <IntroItem>
             <IntroItemTitle>收藏站牌</IntroItemTitle>
-            <IntroItemImg bg={featureCollection}>
+            <IntroItemImg bg={featureCollection} cover={false}>
               <IntroItemImgHover opacity={0.9}>
                 <IntroItemImgHoverItem>APP老是要你加會員？</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>一指收納常用站牌</IntroItemImgHoverItem>
@@ -517,7 +522,7 @@ export default function Home() {
           </IntroItem>
           <IntroItem>
             <IntroItemTitle>全城動態</IntroItemTitle>
-            <IntroItemImg bg={featureCity}>
+            <IntroItemImg bg={featureCity} cover>
               <IntroItemImgHover>
                 <IntroItemImgHoverItem>社畜當久，也想君臨城上？</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>一雙眼睛掌握台北</IntroItemImgHoverItem>
@@ -528,7 +533,7 @@ export default function Home() {
           </IntroItem>
           <IntroItem>
             <IntroItemTitle>最遠路徑</IntroItemTitle>
-            <IntroItemImg bg={featureNearby}>
+            <IntroItemImg bg={featureNearby} cover>
               <IntroItemImgHover>
                 <IntroItemImgHoverItem>想搬家？租屋？換工作？</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>附近沒捷運？住在荒郊野外？</IntroItemImgHoverItem>
