@@ -248,8 +248,8 @@ const MainImgBus = styled.div`
   width: 70px;
   margin-bottom: 5px;
 
-  animation: scale-up-center 3s infinite linear;
-  @keyframes scale-up-center {
+  animation: zoom-in-bus 3s infinite linear;
+  @keyframes zoom-in-bus {
     0% {
       transform: scale(0);
     }
@@ -464,10 +464,8 @@ export default function Home() {
         </Link>
       </Cover>
       <SubCover id="sub-cover">
-        <SubCoverTitle ref={subCoverRef} isVisible={isVisible}>
-          奪回人生主控權
-        </SubCoverTitle>
-        <SubCoverText isVisible={isVisible}>
+        <SubCoverTitle isVisible={isVisible}>奪回人生主控權</SubCoverTitle>
+        <SubCoverText ref={subCoverRef} isVisible={isVisible}>
           已經在夾縫中求生存了
           <br />
           別讓等公車都如此艱辛
