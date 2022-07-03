@@ -278,6 +278,9 @@ const FeatureIntro = styled.div`
   justify-content: space-evenly;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
+  @media (max-width: 780px) {
+    height: auto;
+  }
 `;
 
 const IntroTitle = styled.div`
@@ -305,6 +308,9 @@ const IntroContent = styled.div`
 const IntroItem = styled.div`
   height: 400px;
   width: 300px;
+  @media (max-width: 780px) {
+    margin-top: 30px;
+  }
 `;
 
 const IntroItemTitle = styled.div`
@@ -328,6 +334,7 @@ const IntroItemImg = styled.div`
   border: 5px solid white;
   border-radius: 50px;
   position: relative;
+  cursor: pointer;
 
   &::before {
     content: url(${info});
@@ -341,6 +348,7 @@ const IntroItemImg = styled.div`
 
   &:hover > * {
     visibility: visible;
+    overflow: hidden;
     animation: slide-rotate-horizontal-bottom 0.4s linear both;
     @keyframes slide-rotate-horizontal-bottom {
       100% {
