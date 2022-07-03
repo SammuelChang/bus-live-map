@@ -51,10 +51,6 @@ const Brand = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-
-  @media (max-width: 780px) {
-    margin: 0 20px;
-  }
 `;
 
 const BrandName = styled.div`
@@ -168,6 +164,7 @@ const SideToggler = styled.div`
   width: 30px;
   background-size: 100%;
   transform: rotate(${(props) => (props.openMenu ? '90deg' : '0deg')});
+  cursor: pointer;
 
   &:active {
     animation: blur-out 0.4s linear;

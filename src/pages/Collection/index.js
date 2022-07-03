@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
   height: calc(100vh - 120px);
   width: 100%;
-  padding: 30px 100px;
+  padding: 30px;
   margin-bottom: 100px;
   display: flex;
   justify-content: center;
@@ -55,6 +55,11 @@ const InfoCard = styled.div`
   width: 200px;
   border: 2px solid gray;
   margin: 20px;
+
+  @media (max-width: 780px) {
+    margin: 10px;
+  }
+
   & > * {
     font-size: 1.5rem;
     display: flex;
@@ -160,8 +165,8 @@ export default function Collection() {
     const newCollectList = collectList.filter(
       (i) => i.RouteUID !== r || i.StopUID !== s || i.direction !== d,
     );
-    setCollectList(newCollectList);
     localStorage.setItem('stopCollect', JSON.stringify(newCollectList));
+    setCollectList(newCollectList);
   }
 
   // function favoriteFn(r, s, d) {
@@ -189,10 +194,11 @@ export default function Collection() {
     .replace('or (RouteUID', '(RouteUID');
 
   async function getStops() {
-    setLoading(true);
     if (collectList.length === 0) {
+      setStops([]);
       return;
     }
+    setLoading(true);
     const token = await api.getToken();
     const stopsWithTime = await api.getAllStationEstimatedTimeOfArrival(
       'Taipei',
@@ -209,9 +215,7 @@ export default function Collection() {
       DepartureStopNameZh: busInfo.find((info) => info.RouteUID === i.RouteUID).DepartureStopNameZh,
     }));
 
-    stopsWithTimeInfo
-      .sort((a, b) => a.RouteName.Zh_tw - b.RouteName.Zh_tw)
-      .sort((a, b) => a.favorite - b.favorite);
+    stopsWithTimeInfo.sort((a, b) => a.RouteName.Zh_tw - b.RouteName.Zh_tw);
     setStops(stopsWithTimeInfo);
     setLoading(false);
   }
@@ -251,37 +255,38 @@ export default function Collection() {
           </StyleLink>
         </NoDataWarn>
       )}
-      {stops.map((stop) => (
-        <InfoCard
-          key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}
-          coming={stop.EstimateTime < comingThreshold}
-        >
-          <BusStop coming={stop.EstimateTime < comingThreshold}>{stop.StopName.Zh_tw}</BusStop>
-          <BusRoute>
-            <BusName>{stop.RouteName.Zh_tw}</BusName>
-            <BusDirection>
-              <span>往</span>
-              {stop.Direction === 0 && stop.DestinationStopNameZh}
-              {stop.Direction === 1 && stop.DepartureStopNameZh}
-            </BusDirection>
-          </BusRoute>
-          <BusTime coming={stop.EstimateTime < comingThreshold}>
-            {' '}
-            {stop.EstimateTime < comingThreshold / 2 && '將到站'}
-            {stop.EstimateTime > comingThreshold / 2
-              && stop.EstimateTime < comingThreshold
-              && '將到站'}
-            {stop.EstimateTime >= comingThreshold && `${Math.floor(stop.EstimateTime / 60)}分`}
-            {stop.EstimateTime === undefined && '未發車'}
-          </BusTime>
-          <Function>
-            <Remove
-              type="button"
-              onClick={() => removeFn(stop.RouteUID, stop.StopUID, stop.Direction)}
-            />
-          </Function>
-        </InfoCard>
-      ))}
+      {collectList.length >= 0
+        && stops.map((stop) => (
+          <InfoCard
+            key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}
+            coming={stop.EstimateTime < comingThreshold}
+          >
+            <BusStop coming={stop.EstimateTime < comingThreshold}>{stop.StopName.Zh_tw}</BusStop>
+            <BusRoute>
+              <BusName>{stop.RouteName.Zh_tw}</BusName>
+              <BusDirection>
+                <span>往</span>
+                {stop.Direction === 0 && stop.DestinationStopNameZh}
+                {stop.Direction === 1 && stop.DepartureStopNameZh}
+              </BusDirection>
+            </BusRoute>
+            <BusTime coming={stop.EstimateTime < comingThreshold}>
+              {' '}
+              {stop.EstimateTime < comingThreshold / 2 && '將到站'}
+              {stop.EstimateTime > comingThreshold / 2
+                && stop.EstimateTime < comingThreshold
+                && '將到站'}
+              {stop.EstimateTime >= comingThreshold && `${Math.floor(stop.EstimateTime / 60)}分`}
+              {stop.EstimateTime === undefined && '未發車'}
+            </BusTime>
+            <Function>
+              <Remove
+                type="button"
+                onClick={() => removeFn(stop.RouteUID, stop.StopUID, stop.Direction)}
+              />
+            </Function>
+          </InfoCard>
+        ))}
       {loading && <LoadingEffect />}
     </Wrapper>
   );

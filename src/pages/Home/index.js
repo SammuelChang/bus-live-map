@@ -286,8 +286,7 @@ const FeatureIntro = styled.div`
 const IntroTitle = styled.div`
   font-size: 4rem;
   font-weight: bold;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 60px 0 50px;
   width: 50vw;
   display: flex;
   align-items: center;
@@ -295,6 +294,7 @@ const IntroTitle = styled.div`
   user-select: none;
   @media (max-width: 780px) {
     font-size: 3rem;
+    margin: 30px 0 20px;
   }
 `;
 
@@ -460,9 +460,9 @@ export default function Home() {
     <Wrapper>
       <Cover id="cover">
         <CoverTitle>
-          公車也
+          又錯過了
           <br />
-          欺負你？
+          一班公車？
         </CoverTitle>
         <Link activeClass="active" to="sub-cover" spy smooth offset={0} duration={1000}>
           <NextPage light />
