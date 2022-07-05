@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import styled from 'styled-components/macro';
+import { useLocation, Link } from 'react-router-dom';
+import styled, { css } from 'styled-components/macro';
 import { useState } from 'react';
 import GlobalStyle from '../../globalStyles';
 
@@ -32,12 +32,6 @@ const NavContainer = styled.div`
   }
 `;
 
-// const HrLine = styled.div`
-//   background: #333131;
-//   height: 20px;
-//   width: 100vw;
-// `;
-
 const Brand = styled.div`
   box-sizing: border-box;
   width: 200px;
@@ -46,7 +40,7 @@ const Brand = styled.div`
   align-items: center;
   font-size: 2rem;
   font-weight: 500;
-  border-bottom: 1px solid gray;
+  border-bottom: 2px solid gray;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -75,17 +69,6 @@ const Logo = styled.div`
       transform: scale(1);
     }
   }
-  &:hover {
-    animation: zoom-out 3s ease-out both;
-    @keyframes zoom-out {
-      0% {
-        transform: scale(1);
-      }
-      100% {
-        transform: scale(0);
-      }
-    }
-  }
 `;
 
 const NavTo = styled.div`
@@ -94,12 +77,21 @@ const NavTo = styled.div`
   font-weight: 500;
   text-align: center;
   margin: 0 20px;
+  cursor: pointer;
+  position: relative;
+
+  ${(props) => props.cur
+    && css`
+      color: ${({ theme }) => theme.headerHoverColor};
+      border-bottom: 1.2px solid gray;
+      padding: 0 5px;
+    `}
 
   &:hover {
     color: ${({ theme }) => theme.headerHoverColor};
-    font-size: 1.2rem;
-    cursor: pointer;
+    border-bottom: 1.2px solid gray;
     transition: all 0.3s linear;
+    padding: 0 5px;
   }
 
   @media (max-width: 780px) {
@@ -107,7 +99,6 @@ const NavTo = styled.div`
 
     &:hover {
       color: ${({ theme }) => theme.hoverColor};
-      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s linear;
@@ -115,42 +106,27 @@ const NavTo = styled.div`
   }
 `;
 
-const ThemeToggler = styled.button`
+const ThemeToggler = styled.div`
   position: absolute;
-  right: 20px;
-  top: 55px;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  border: ${({ theme }) => theme.toggleBorder} 0.5px solid;
-  background: ${({ theme }) => theme.toggleBackground};
+  height: 40px;
+  width: 40px;
+  padding: 10px;
+  border: 2px solid ${({ theme }) => theme.themeToggleBg};
+  border-radius: 10px;
+  background: url(${({ theme }) => theme.themeToggleIcon}) no-repeat center center,
+    ${({ theme }) => theme.themeToggleBg};
+  background-size: ${({ theme }) => theme.themeToggleSz};
+  bottom: 40px;
+  right: 40px;
   cursor: pointer;
 
   &:hover {
-    animation: jello-vertical 0.9s linear both;
-    @keyframes jello-vertical {
-      0% {
-        transform: scale3d(1, 1, 1);
-      }
-      30% {
-        transform: scale3d(0.75, 1.25, 1);
-      }
-      40% {
-        transform: scale3d(1.25, 0.75, 1);
-      }
-      50% {
-        transform: scale3d(0.85, 1.15, 1);
-      }
-      65% {
-        transform: scale3d(1.05, 0.95, 1);
-      }
-      75% {
-        transform: scale3d(0.95, 1.05, 1);
-      }
-      100% {
-        transform: scale3d(1, 1, 1);
-      }
-    }
+    box-shadow: 0px 15px 25px -5px rgba(${({ theme }) => theme.themeToggleBg}, 40%);
+    transform: scale(1.03);
+  }
+  &::active {
+    box-shadow: 0px 4px 8px rgba(${({ theme }) => theme.themeToggleBg}, 30%);
+    transform: scale(0.97);
   }
 `;
 
@@ -196,6 +172,9 @@ const SideNav = styled.div`
   top: 120px;
   z-index: 1000;
   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+  @media (min-width: 781px) {
+    display: none;
+  }
   @media (max-width: 780px) {
     width: 200px;
   }
@@ -212,28 +191,28 @@ const SideContent = styled.div`
 
 // eslint-disable-next-line react/prop-types
 function Header({ toggleTheme }) {
+  const { pathname } = useLocation();
   const [menu, setMenu] = useState(false);
   const handleToggle = () => {
     setMenu(!menu);
   };
 
   return (
-    <Wrapper>
+    <Wrapper id="header">
       <GlobalStyle />
       <SideNav show={menu} onClick={handleToggle}>
-        {/* <SideClose /> */}
         <SideContent>
           <StyleLink to="/live/route">
-            <NavTo>路線查詢</NavTo>
+            <NavTo cur={pathname.includes('route')}>路線查詢</NavTo>
           </StyleLink>
           <StyleLink to="/collection">
-            <NavTo>收藏站牌</NavTo>
+            <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
           </StyleLink>
           <StyleLink to="/live/city">
-            <NavTo>全城動態</NavTo>
+            <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
           </StyleLink>
           <StyleLink to="/live/nearbyPath">
-            <NavTo>最遠路徑</NavTo>
+            <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>
         </SideContent>
       </SideNav>
@@ -246,10 +225,10 @@ function Header({ toggleTheme }) {
       </StyleLink>
       <NavContainer>
         <StyleLink to="/live/route">
-          <NavTo>路線查詢</NavTo>
+          <NavTo cur={pathname.includes('route')}>路線查詢</NavTo>
         </StyleLink>
         <StyleLink to="/collection">
-          <NavTo>收藏站牌</NavTo>
+          <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
         </StyleLink>
         <div
           style={{
@@ -258,10 +237,10 @@ function Header({ toggleTheme }) {
           }}
         />
         <StyleLink to="/live/city">
-          <NavTo>全城動態</NavTo>
+          <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
         </StyleLink>
         <StyleLink to="/live/nearbyPath">
-          <NavTo>最遠路徑</NavTo>
+          <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
         </StyleLink>
       </NavContainer>
       <SideToggler onClick={handleToggle} openMenu={menu} />

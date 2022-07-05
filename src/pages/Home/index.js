@@ -2,9 +2,10 @@
 import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
+import { Parallax } from 'react-scroll-parallax';
 import traffic from '../../images/traffic.jpg';
-import arrowLight from '../../images/arrow-light.png';
-import arrowDark from '../../images/arrow-dark.png';
+import arrowUp from '../../images/arrow-up.png';
+import arrowDown from '../../images/arrow-down.png';
 import missing from '../../images/missing.jpg';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
@@ -13,6 +14,7 @@ import featureCollection from '../../images/feature-collection.png';
 import featureCity from '../../images/feature-city.png';
 import featureNearby from '../../images/feature-nearby.png';
 import info from '../../images/info.png';
+import leadership from '../../images/leadership.png';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -20,16 +22,18 @@ const Wrapper = styled.div`
 `;
 
 const NextPage = styled.div`
-  background: url(${(props) => (props.light ? arrowLight : arrowDark)});
+  background: url(${(props) => (props.down ? arrowDown : arrowUp)});
   background-position: center top;
   background-repeat: no-repeat;
   background-size: contain;
+
   height: 50px;
   width: 50px;
   cursor: pointer;
   position: absolute;
   bottom: 20px;
   margin-left: -25px;
+  z-index: 5;
 
   animation-duration: 10s;
   animation-delay: 5s;
@@ -107,6 +111,7 @@ const SubCover = styled.div`
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
   border: 1px solid white;
+  overflow: hidden;
 `;
 
 const SubCoverTitle = styled.div`
@@ -149,6 +154,7 @@ const SubCoverText = styled.div`
   font-weight: bold;
   text-align: center;
   visibility: visible;
+  z-index: 3;
   animation: ${(props) => (props.isVisible ? 'scale-up-center' : '')} 3s ease-in-out 1;
   @keyframes scale-up-center {
     0% {
@@ -177,8 +183,9 @@ const MainFeature = styled.div`
 `;
 
 const MainLayoutContainer = styled.div`
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   @media (max-width: 780px) {
     flex-direction: column;
@@ -317,6 +324,7 @@ const IntroItem = styled.div`
   position: relative;
   border: 5px solid #d3d3d3;
   z-index: 2;
+  padding: 5px;
   @media (max-width: 1080px) {
     height: 250px;
   }
@@ -429,6 +437,27 @@ const MouseoverNav = styled.div`
   margin: 30px 30px 0 0;
 `;
 
+const RollingBus = styled(Parallax)`
+  position: absolute;
+  bottom: 20vh;
+  left: 20vw;
+  background: url(${busMarker});
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+`;
+
+const Leadership = styled(Parallax)`
+  position: absolute;
+  bottom: 20vh;
+  right: 20vw;
+  background: url(${leadership});
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+  z-index: 2;
+`;
+
 export default function Home() {
   const subCoverRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -465,10 +494,24 @@ export default function Home() {
           一班公車？
         </CoverTitle>
         <Link activeClass="active" to="sub-cover" spy smooth offset={0} duration={1000}>
-          <NextPage light />
+          <NextPage down />
         </Link>
       </Cover>
       <SubCover id="sub-cover">
+        <RollingBus
+          translateX={['-600px', '800px']}
+          translateY={['0px', '50px']}
+          scale={[2, 0]}
+          rotate={[1280, 0]}
+          easing="easeInQuad"
+          rootMargin={{
+            top: 100,
+            right: 100,
+            bottom: 100,
+            left: 600,
+          }}
+        />
+        <Leadership scale={[3, 5]} easing="easeInQuad" />
         <SubCoverTitle isVisible={isVisible}>奪回人生主控權</SubCoverTitle>
         <SubCoverText ref={subCoverRef} isVisible={isVisible}>
           已經在夾縫中求生存了
@@ -476,7 +519,7 @@ export default function Home() {
           別讓等公車都如此艱辛
         </SubCoverText>
         <Link activeClass="active" to="main-feature" spy smooth offset={0} duration={1000}>
-          <NextPage light />
+          <NextPage down />
         </Link>
       </SubCover>
       <MainFeature id="main-feature">
@@ -492,7 +535,7 @@ export default function Home() {
           </MainImgContainer>
         </MainLayoutContainer>
         <Link activeClass="active" to="feature-intro" spy smooth offset={0} duration={1000}>
-          <NextPage light />
+          <NextPage down />
         </Link>
       </MainFeature>
       <FeatureIntro id="feature-intro">
@@ -527,7 +570,7 @@ export default function Home() {
                 <IntroItemImgHoverItem>社畜當久，也想君臨城上？</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>一雙眼睛掌握台北</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>哪裡塞車，立馬現形</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>找到超速公車，開啟尬車模式</IntroItemImgHoverItem>
+                <IntroItemImgHoverItem>找到超速公車，以禮服車</IntroItemImgHoverItem>
               </IntroItemImgHover>
             </IntroItemImg>
           </IntroItem>
@@ -536,12 +579,16 @@ export default function Home() {
             <IntroItemImg bg={featureNearby} cover>
               <IntroItemImgHover>
                 <IntroItemImgHoverItem>想搬家？租屋？換工作？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>附近沒捷運？住在荒郊野外？</IntroItemImgHoverItem>
+                <IntroItemImgHoverItem>附近沒捷運？住在郊外？</IntroItemImgHoverItem>
+                <IntroItemImgHoverItem>厭倦了多次轉車？</IntroItemImgHoverItem>
                 <IntroItemImgHoverItem>一指取得鄰近公車直達終點</IntroItemImgHoverItem>
               </IntroItemImgHover>
             </IntroItemImg>
           </IntroItem>
         </IntroContent>
+        <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
+          <NextPage down={false} />
+        </Link>
       </FeatureIntro>
     </Wrapper>
   );

@@ -57,6 +57,7 @@ export default function BusMarker({ tdxBus, allBus, direction }) {
           >
             <Tooltip>
               <h1 style={{ textAlign: 'center' }}>{i.RouteName.Zh_tw}</h1>
+              <p style={{ textAlign: 'center' }}>{i.PlateNumb}</p>
               時速：
               {i.Speed}
               <br />

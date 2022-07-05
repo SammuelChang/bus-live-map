@@ -114,6 +114,8 @@ BusStop.propTypes = {
 };
 
 export default function LiveNearbyPath({ isDark }) {
+  const lightMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
+  const darkMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
   const [loading, setLoading] = useState(true);
   const featureGroupRef = useRef();
   const [location] = useState([25.049637, 121.525986]);
@@ -252,13 +254,13 @@ export default function LiveNearbyPath({ isDark }) {
         {!isDark && (
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            url={lightMap}
           />
         )}
         {isDark && (
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+            url={darkMap}
           />
         )}
       </StyledMemoMapContainer>

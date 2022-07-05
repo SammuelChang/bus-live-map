@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-
+import { ParallaxProvider } from 'react-scroll-parallax';
 import { lightTheme, darkTheme } from './theme';
 import GlobalStyle from './globalStyles';
 import Header from './components/Header';
@@ -30,19 +30,19 @@ function App() {
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-        <GlobalStyle />
-        <Header toggleTheme={toggleTheme} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/live" element={<Live />} />
-          <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
-          <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
-          <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
-          <Route path="/collection" element={<Collection />} />
-          {/* <Route path="/advInfo" element={<AdvInfo />} /> */}
-          <Route path="*" element={<NoMatch />} />
-        </Routes>
-        {/* <Footer /> */}
+        <ParallaxProvider>
+          <GlobalStyle />
+          <Header toggleTheme={toggleTheme} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/live" element={<Live />} />
+            <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
+            <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
+            <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="*" element={<NoMatch />} />
+          </Routes>
+        </ParallaxProvider>
       </ThemeProvider>
     </Router>
   );

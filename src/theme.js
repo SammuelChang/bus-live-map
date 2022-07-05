@@ -2,15 +2,16 @@ import menuImg from './images/menu.png';
 import menuDarkImg from './images/menu-dark.png';
 import busLight from './images/bus-light.png';
 import busDark from './images/bus-dark.png';
-import arrowLight from './images/arrow-light.png';
-import arrowDark from './images/arrow-dark.png';
+// import arrowLight from './images/arrow-light.png';
+// import arrowDark from './images/arrow-dark.png';
 import mapScreenLight from './images/map-feature-light.png';
 import mapScreenDark from './images/map-feature-dark.png';
+import sun from './images/sun.png';
+import moon from './images/moon.png';
 
 export const lightTheme = {
   text: 'light',
   icon: busLight,
-  arrow: arrowLight,
   mapScreen: mapScreenLight,
   fontWeight: 'normal',
   menu: menuImg,
@@ -18,16 +19,15 @@ export const lightTheme = {
   headerColor: '#878484', // 淺灰
   headerHoverColor: 'black',
   color: 'black',
-  toggleBorder: '#878484', // 淺灰
-  toggleBackground: 'linear-gradient(180deg, white, white 49%, white 49%, #878484 51%, #878484)',
-  map: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-  mapOpacity: '0.7',
+  themeToggleIcon: moon,
+  themeToggleBg: '#363537', // 淺灰
+  themeToggleSz: '20px 20px',
+  border: 'gray',
 };
 
 export const darkTheme = {
   text: 'dark',
   icon: busDark,
-  arrow: arrowDark,
   mapScreen: mapScreenDark,
   fontWeight: 'bold',
   menu: menuDarkImg,
@@ -35,8 +35,8 @@ export const darkTheme = {
   headerColor: 'white',
   headerHoverColor: 'white',
   color: 'white',
-  toggleBorder: 'white',
-  toggleBackground: 'linear-gradient(0deg, white, white 49%, white 49%, #878484 51%, #878484)',
-  map: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
-  mapOpacity: '1',
+  themeToggleIcon: sun,
+  themeToggleBg: 'white',
+  themeToggleSz: '30px 30px',
+  border: 'white',
 };

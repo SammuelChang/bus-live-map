@@ -53,7 +53,7 @@ const NoDataWarn = styled.div`
 const InfoCard = styled.div`
   height: 250px;
   width: 200px;
-  border: 2px solid gray;
+  border: 1.2px solid ${({ theme }) => theme.border};
   margin: 20px;
 
   @media (max-width: 780px) {
