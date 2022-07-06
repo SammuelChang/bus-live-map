@@ -2,12 +2,14 @@ import menuImg from './images/menu.png';
 import menuDarkImg from './images/menu-dark.png';
 import busLight from './images/bus-light.png';
 import busDark from './images/bus-dark.png';
-// import arrowLight from './images/arrow-light.png';
-// import arrowDark from './images/arrow-dark.png';
 import mapScreenLight from './images/map-feature-light.png';
 import mapScreenDark from './images/map-feature-dark.png';
 import sun from './images/sun.png';
 import moon from './images/moon.png';
+import search from './images/search.png';
+import searchDark from './images/search-dark.png';
+import heartLight from './images/heart-light.png';
+import heartDark from './images/heart-dark.png';
 
 export const lightTheme = {
   text: 'light',
@@ -23,6 +25,8 @@ export const lightTheme = {
   themeToggleBg: '#363537', // 淺灰
   themeToggleSz: '20px 20px',
   border: 'gray',
+  search,
+  heart: heartLight,
 };
 
 export const darkTheme = {
@@ -39,4 +43,6 @@ export const darkTheme = {
   themeToggleBg: 'white',
   themeToggleSz: '30px 30px',
   border: 'white',
+  search: searchDark,
+  heart: heartDark,
 };

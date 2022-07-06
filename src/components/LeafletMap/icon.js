@@ -1,15 +1,16 @@
 import L from 'leaflet';
-import busMarker from '../../images/bus-marker.png';
+// import busMarker from '../../images/bus-marker.png';
+import bus from '../../images/bus.png';
 import busStopNormal from '../../images/bus-stop-empty.png';
 import busStopRed from '../../images/bus-stop-red.png';
 
 export const icon = {
   bus: L.icon({
-    iconUrl: busMarker,
-    iconRetinaUrl: busMarker,
-    iconSize: [25, 25],
+    iconUrl: bus,
+    iconRetinaUrl: bus,
+    iconSize: [40, 40],
     shadowSize: [0, 0],
-    iconAnchor: [12.5, 12.5],
+    iconAnchor: [20, 40],
   }),
   busStopNormal4x: L.icon({
     iconUrl: busStopNormal,
@@ -38,19 +39,6 @@ export const icon = {
     iconSize: [15, 20],
     shadowSize: [0, 0],
     // iconAnchor: [10, 30],
-  }),
-  stationIcon: L.icon({
-    iconUrl: busStopNormal,
-    iconSize: [20, 20],
-    shadowSize: [0, 0],
-    iconAnchor: [10, 20],
-  }),
-
-  stationIcon2: L.icon({
-    iconUrl: busStopNormal,
-    iconSize: [30, 30],
-    shadowSize: [0, 0],
-    iconAnchor: [15, 30],
   }),
 };
 

@@ -1,5 +1,6 @@
 import { useLocation, Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import GlobalStyle from '../../globalStyles';
 
@@ -85,13 +86,32 @@ const NavTo = styled.div`
       color: ${({ theme }) => theme.headerHoverColor};
       border-bottom: 1.2px solid gray;
       padding: 0 5px;
+      pointer-events: none;
     `}
 
   &:hover {
     color: ${({ theme }) => theme.headerHoverColor};
-    border-bottom: 1.2px solid gray;
     transition: all 0.3s linear;
     padding: 0 5px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    border-bottom: 1.2px solid gray;
+    ${'' /* border-radius: 4px; */}
+    ${'' /* background-color: #18272f; */}
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  &:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
   }
 
   @media (max-width: 780px) {
@@ -189,7 +209,6 @@ const SideContent = styled.div`
   }
 `;
 
-// eslint-disable-next-line react/prop-types
 function Header({ toggleTheme }) {
   const { pathname } = useLocation();
   const [menu, setMenu] = useState(false);
@@ -244,9 +263,18 @@ function Header({ toggleTheme }) {
         </StyleLink>
       </NavContainer>
       <SideToggler onClick={handleToggle} openMenu={menu} />
-      <ThemeToggler type="button" label="toggleTheme" onClick={() => toggleTheme()} />
+      <ThemeToggler
+        type="button"
+        label="toggleTheme"
+        onClick={() => toggleTheme()}
+        title="切換色彩"
+      />
     </Wrapper>
   );
 }
+
+Header.propTypes = {
+  toggleTheme: PropTypes.func.isRequired,
+};
 
 export default Header;

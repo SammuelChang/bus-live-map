@@ -1,5 +1,6 @@
 import { Marker, Tooltip } from 'react-leaflet';
 import { icon } from './icon';
+import './map.css';
 
 function iconSelector(zoom, estimate) {
   if (zoom >= 15 && estimate <= 120) {
@@ -28,21 +29,15 @@ export default function BusStation({ mergeStation, direction, zoomLevel }) {
         icon={iconSelector(zoomLevel, stop.EstimateTime)}
         zIndexOffset={0}
       >
-        <Tooltip key={`${stop.StopUID}-${stop.RouteUID}-${stop.EstimateTime}`}>
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '0',
-              margin: '0',
-              background: stop.EstimateTime < 60 ? '#f28482' : 'none',
-            }}
-          >
-            <h3>{stop.StopName.Zh_tw}</h3>
-            {stop.EstimateTime < 60 && <p>進站中</p>}
-            {stop.EstimateTime >= 60 && stop.EstimateTime < 120 && <p>將到站</p>}
-            {stop.EstimateTime >= 120 && <p>{`約${Math.floor(stop.EstimateTime / 60)}分後抵達`}</p>}
-            {stop.EstimateTime === null && <p>null</p>}
-          </div>
+        <Tooltip
+          key={`${stop.StopUID}-${stop.RouteUID}-${stop.EstimateTime}`}
+          className={`custom-tooltip  ${stop.EstimateTime < 120 ? 'custom-tooltip-coming' : ''}`}
+        >
+          <h3>{stop.StopName.Zh_tw}</h3>
+          {stop.EstimateTime < 60 && <p>進站中</p>}
+          {stop.EstimateTime >= 60 && stop.EstimateTime < 120 && <p>將到站</p>}
+          {stop.EstimateTime >= 120 && <p>{`約${Math.floor(stop.EstimateTime / 60)}分後抵達`}</p>}
+          {stop.EstimateTime === null && <p>null</p>}
         </Tooltip>
       </Marker>
     ));

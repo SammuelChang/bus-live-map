@@ -11,7 +11,7 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
-import BusMarker from '../../components/LeafletMap/BusMarker';
+import CityBusMarker from '../../components/LeafletMap/CityBusMarker';
 import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
@@ -126,7 +126,7 @@ export default function LiveCityLeafletMap({ isDark }) {
         ref={setMap}
       >
         <FeatureGroup ref={featureGroupRef}>
-          {tdxBus && <BusMarker tdxBus={tdxBus} allBus={allBus} />}
+          {tdxBus && <CityBusMarker tdxBus={tdxBus} allBus={allBus} />}
         </FeatureGroup>
         {!isDark && (
           <TileLayer

@@ -28,11 +28,14 @@ const Circle = styled.div`
 `;
 
 const Status = styled.div`
+  font-size: 1.4rem;
   font-weight: bold;
   font-size: ${(props) => props.sz};
 `;
 
-const Count = styled.div``;
+const Count = styled.div`
+  font-size: 1.1rem;
+`;
 
 // eslint-disable-next-line no-unused-vars
 export default function CityBusState({ tdxBus }) {
@@ -51,7 +54,7 @@ export default function CityBusState({ tdxBus }) {
         <Count>{tdxBus.filter((x) => x.Speed === 0).length}</Count>
       </Circle>
       <Circle bg="#8d99ae">
-        <Status sz="0.8rem">其他非營運狀態</Status>
+        <Status>其他非營運狀態</Status>
         <Count>{tdxBus.filter((x) => x.BusStatus !== 0).length}</Count>
       </Circle>
     </Wrapper>
