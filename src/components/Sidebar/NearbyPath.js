@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import location from '../../images/location.png';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -18,7 +19,26 @@ const Position = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  position: relative;
+  cursor: default;
+`;
+
+const PositionIcon = styled.div`
+  padding-right: 10px;
+  background: url(${location}) no-repeat center center;
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translateY(-50%);
+`;
+const PositionText = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
   font-size: 0.8rem;
 `;
 
@@ -46,14 +66,35 @@ const Result = styled.div`
 `;
 
 const Stops = styled.div`
-  width: 100%;
-  font-size: 0.7rem;
+  width: 130%;
+  font-size: 1rem;
   margin-right: 10px;
 `;
 
 const Route = styled.div`
   width: 100%;
-  font-size: 0.7rem;
+  font-size: 1rem;
+`;
+
+const IconContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding-bottom: 10px;
+`;
+
+const BusIcon = styled.div`
+  background: url(${({ theme }) => theme.nearbyBus}) no-repeat center center;
+  background-size: contain;
+  width: 25px;
+  height: 25px;
+`;
+
+const StopIcon = styled.div`
+  margin-left: 135px;
+  background: url(${({ theme }) => theme.nearbyStop}) no-repeat center center;
+  background-size: contain;
+  width: 25px;
+  height: 25px;
 `;
 
 export default function NearbyPath({ nearby = [], routes = [], markers }) {
@@ -77,13 +118,19 @@ export default function NearbyPath({ nearby = [], routes = [], markers }) {
 
   return (
     <Wrapper>
-      <Position>
-        {markers.length ? '指定位置' : '在地圖上點擊任一處'}
-        <br />
-        {markers.length ? markers[0].lng : ''}
-        <br />
-        {markers.length ? markers[0].lat : ''}
+      <Position title="點選位置">
+        <PositionIcon />
+        <PositionText>
+          {markers.length === 0 && <h2>偵測中</h2>}
+          {markers.length ? markers[0].lng : ''}
+          <br />
+          {markers.length ? markers[0].lat : ''}
+        </PositionText>
       </Position>
+      <IconContainer>
+        <BusIcon />
+        <StopIcon />
+      </IconContainer>
       <Result>
         <Stops>
           {formatNearby.length

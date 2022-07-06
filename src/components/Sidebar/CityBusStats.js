@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import ProgressBar from './ProgressBar';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -8,6 +9,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
   @media (max-width: 780px) {
     width: 100vw;
   }
@@ -37,8 +39,13 @@ const Count = styled.div`
   font-size: 1.1rem;
 `;
 
+const ProgressAdjust = styled.div`
+  width: 90%;
+  position: absolute;
+  bottom: 0;
+`;
 // eslint-disable-next-line no-unused-vars
-export default function CityBusState({ tdxBus }) {
+export default function CityBusState({ tdxBus, loading }) {
   return (
     <Wrapper>
       <Circle bg="#e63946" clr="white">
@@ -57,10 +64,14 @@ export default function CityBusState({ tdxBus }) {
         <Status>其他非營運狀態</Status>
         <Count>{tdxBus.filter((x) => x.BusStatus !== 0).length}</Count>
       </Circle>
+      <ProgressAdjust>
+        <ProgressBar loading={loading} data={tdxBus} />
+      </ProgressAdjust>
     </Wrapper>
   );
 }
 
 CityBusState.propTypes = {
   tdxBus: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  loading: PropTypes.bool.isRequired,
 };

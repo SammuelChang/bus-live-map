@@ -80,7 +80,7 @@ export default function LiveCityLeafletMap({ isDark }) {
 
     const token = await api.getToken();
     const busData = await getBusFn(token, bus);
-    console.log(busData);
+
     setTdxBus(busData);
     setLoading(false);
   }
@@ -114,7 +114,7 @@ export default function LiveCityLeafletMap({ isDark }) {
   return (
     <Wrapper>
       <Sidebar>
-        <CityBusState tdxBus={tdxBus} />
+        <CityBusState tdxBus={tdxBus} loading={loading} />
       </Sidebar>
       <StyledMemoMapContainer
         center={location}

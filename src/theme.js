@@ -10,6 +10,10 @@ import search from './images/search.png';
 import searchDark from './images/search-dark.png';
 import heartLight from './images/heart-light.png';
 import heartDark from './images/heart-dark.png';
+import nearbyBusLight from './images/nearby-bus-light.png';
+import nearbyBusDark from './images/nearby-bus-dark.png';
+import nearbyStopLight from './images/nearby-stop-light.png';
+import nearbyStopDark from './images/nearby-stop-dark.png';
 
 export const lightTheme = {
   text: 'light',
@@ -27,6 +31,8 @@ export const lightTheme = {
   border: 'gray',
   search,
   heart: heartLight,
+  nearbyBus: nearbyBusLight,
+  nearbyStop: nearbyStopLight,
 };
 
 export const darkTheme = {
@@ -45,4 +51,6 @@ export const darkTheme = {
   border: 'white',
   search: searchDark,
   heart: heartDark,
+  nearbyBus: nearbyBusDark,
+  nearbyStop: nearbyStopDark,
 };
