@@ -11,7 +11,7 @@ const StyledRouteName = styled.h3`
 
 export default function BusShape({ tdxShape, nearby }) {
   const geoJsonRef = useRef();
-  const defaultLightStyle = { color: '#6c757d', zIndexOffset: 0, weight: 3 };
+  const defaultLightStyle = { color: '#48a9c5', zIndexOffset: 0, weight: 3 };
   const hieghtLightStyle = { color: '#e63946', zIndexOffset: 1000, weight: 6 };
 
   const onEachClick = (feature, layer) => {

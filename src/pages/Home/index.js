@@ -1,24 +1,27 @@
-/* eslint-disable no-unused-vars */
 import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import traffic from '../../images/traffic.jpg';
 import arrowUp from '../../images/arrow-up.png';
 import arrowDown from '../../images/arrow-down.png';
 import missing from '../../images/missing.jpg';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
-import featureRoute from '../../images/feature-route.png';
-import featureCollection from '../../images/feature-collection.png';
-import featureCity from '../../images/feature-city.png';
-import featureNearby from '../../images/feature-nearby.png';
-import info from '../../images/info.png';
+import featureMap from '../../images/map-feature-light.png';
+import featureRoute from '../../images/featureRouteLight.png';
+import featureCollection from '../../images/featureCollectionLight.png';
+import featureCity from '../../images/featureCityLight.png';
+import featureNearby from '../../images/featureNearbyLight.png';
 import leadership from '../../images/leadership.png';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(400vh - 120px);
+  height: calc(700vh - 120px + 50px + 25px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
 `;
 
 const NextPage = styled.div`
@@ -30,9 +33,8 @@ const NextPage = styled.div`
   height: 50px;
   width: 50px;
   cursor: pointer;
-  position: absolute;
-  bottom: 20px;
-  margin-left: -25px;
+
+  margin-bottom: 40px;
   z-index: 5;
 
   animation-duration: 10s;
@@ -67,37 +69,51 @@ const NextPage = styled.div`
 
 const Cover = styled.div`
   position: relative;
+  width: 100%;
+  height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 780px) {
+    flex-direction: column;
+  }
+`;
+
+const CoverTitle = styled.div`
+  font-size: 4vw;
+  font-weight: bold;
+  height: 30vw;
+  cursor: default;
+  user-select: none;
+  padding: 0 10px 30px;
+  margin-right: 30px;
+
+  display: flex;
+  align-items: flex-top;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 780px) {
+    align-items: center;
+    font-size: 8vw;
+    margin: 0;
+    height: 100px;
+  }
+`;
+
+const CoverImg = styled.div`
   background: url(${missing});
   background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;
+  border-radius: 3px;
+  width: 30vw;
+  height: 30vw;
   opacity: 0.9;
-  box-shadow: 0 5px 5px 0 white inset;
-
-  width: 100%;
-  height: calc(100vh - 120px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-const CoverTitle = styled.div`
-  font-size: 8vw;
-  font-weight: bold;
-  opacity: 0.7;
-  border-radius: 5px;
-  color: #fff;
-  background: black;
-  cursor: default;
-  user-select: none;
-  padding: 20px;
-  margin-left: -50%;
-  margin-top: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: skew(-0.03turn, 10deg);
+  @media (max-width: 780px) {
+    width: 300px;
+    height: 300px;
+  }
 `;
 
 const SubCover = styled.div`
@@ -110,7 +126,6 @@ const SubCover = styled.div`
   justify-content: center;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
-  border: 1px solid white;
   overflow: hidden;
 `;
 
@@ -179,7 +194,7 @@ const MainFeature = styled.div`
   justify-content: center;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
-  border: 1px solid white;
+  overflow: hidden;
 `;
 
 const MainLayoutContainer = styled.div`
@@ -196,10 +211,18 @@ const MainTextContainer = styled.div`
   display: flex;
   width: 50%;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  padding-left: 20px;
   @media (max-width: 780px) {
-    height: 50vh;
     width: 100vw;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    br {
+      display: none;
+    }
   }
 `;
 
@@ -208,30 +231,34 @@ const MainTitle = styled.div`
   font-weight: bold;
   margin-bottom: 50px;
   @media (max-width: 780px) {
-    padding-top: 50px;
+    padding-top: 25px;
     font-size: 3rem;
+    margin-bottom: 25px;
   }
 `;
 
 const MainText = styled.div`
   font-size: 2rem;
   font-weight: bold;
-  text-align: center;
   @media (max-width: 780px) {
     font-size: 1.5rem;
   }
 `;
 
 const MainImgMap = styled.div`
-  background: url(${({ theme }) => theme.mapScreen});
+  background: url(${featureMap});
   background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 100vh;
-  width: 50vw;
+  border-radius: 50%;
+  min-height: 50vw;
+  min-width: 50vw;
+  margin-left: 10vw;
+  border: ${({ theme }) => theme.border} 1px solid;
   @media (max-width: 780px) {
-    width: 100vw;
-    height: 50vh;
+    height: 50vw;
+    width: 50vw;
+    margin-left: 0;
   }
 `;
 
@@ -275,168 +302,6 @@ const MainImgStop = styled.div`
   width: 150px;
 `;
 
-const FeatureIntro = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
-  @media (max-width: 780px) {
-    height: auto;
-  }
-`;
-
-const IntroTitle = styled.div`
-  font-size: 4rem;
-  font-weight: bold;
-  margin: 60px 0 50px;
-  width: 50vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  @media (max-width: 780px) {
-    font-size: 3rem;
-    margin: 30px 0 20px;
-  }
-`;
-
-const IntroContent = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  width: 100%;
-  height: 100%;
-`;
-
-const IntroItem = styled.div`
-  height: 350px;
-  width: 250px;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
-  margin: 0 10px;
-  position: relative;
-  border: 5px solid #d3d3d3;
-  z-index: 2;
-  padding: 5px;
-  @media (max-width: 1080px) {
-    height: 250px;
-  }
-
-  &::before {
-    content: '';
-    height: 92%;
-    width: 106%;
-    position: absolute;
-    top: 4%;
-    left: -3%;
-    margin: auto 0;
-    background: ${({ theme }) => theme.background};
-    z-index: -1;
-  }
-  &::after {
-    content: '';
-    height: 106%;
-    width: 90%;
-    position: absolute;
-    top: -3%;
-    left: 5%;
-    margin: auto;
-    background: ${({ theme }) => theme.background};
-    z-index: -1;
-  }
-  @media (max-width: 780px) {
-    margin-top: 30px;
-  }
-`;
-
-const IntroItemTitle = styled.div`
-  height: 15%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  z-index: 100;
-  padding: 10px 0;
-`;
-
-const IntroItemImg = styled.div`
-  height: 85%;
-  width: 100%;
-  background: url(${(props) => props.bg}) center center;
-  background-repeat: no-repeat;
-  background-size: ${(props) => (props.cover ? 'cover' : 'contain')};
-  position: relative;
-  cursor: pointer;
-  z-index: 100;
-
-  &::before {
-    content: url(${info});
-    position: absolute;
-    background-size: contain;
-    height: 20px;
-    width: 20px;
-    top: 20px;
-    right: 25px;
-  }
-
-  &:hover > * {
-    visibility: visible;
-    overflow: hidden;
-    animation: slide-rotate-horizontal-bottom 0.4s linear both;
-    @keyframes slide-rotate-horizontal-bottom {
-      100% {
-        transform: translateY(0) rotateX(0deg);
-      }
-      0% {
-        transform: translateY(-150px) rotateX(90deg);
-      }
-    }
-  }
-`;
-
-const IntroItemImgHover = styled.div`
-  visibility: hidden;
-  height: 100%;
-  width: 100%;
-  z-index: -1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  background: rgba(255, 255, 255, ${(props) => props.opacity ?? 0.75});
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-`;
-
-const IntroItemImgHoverItem = styled.div`
-  width: 100%;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: black;
-`;
-
-const MouseoverNav = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  text-align: right;
-  height: auto;
-  width: auto;
-  margin: 30px 30px 0 0;
-`;
-
 const RollingBus = styled(Parallax)`
   position: absolute;
   bottom: 20vh;
@@ -456,6 +321,63 @@ const Leadership = styled(Parallax)`
   height: 100px;
   width: 100px;
   z-index: 2;
+`;
+
+const Feature = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 780px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    & > * {
+      margin: 0;
+      text-align: center;
+    }
+  }
+`;
+
+const FeatureImg = styled.div`
+  background: url(${(props) => props.img}) no-repeat center center;
+  background-size: contain;
+  width: 40%;
+  height: 100%;
+  margin: ${(props) => props.margin};
+
+  @media (max-width: 780px) {
+    width: 50vw;
+    height: 50vw;
+    margin: 0;
+  }
+`;
+
+const FeatureIntro = styled.div`
+  margin: ${(props) => props.margin};
+  text-align: ${(props) => props.text};
+  justify-content: flex-start;
+  > * {
+    font-weight: bold;
+  }
+
+  @media (max-width: 780px) {
+    margin: 0;
+    justify-content: center;
+    text-align: center;
+    order: 2;
+  }
+`;
+const FeatureTitle = styled.div`
+  font-size: 4rem;
+`;
+const FeatureText = styled.div`
+  font-size: 2rem;
+  opacity: 0.5;
 `;
 
 export default function Home() {
@@ -488,14 +410,8 @@ export default function Home() {
   return (
     <Wrapper>
       <Cover id="cover">
-        <CoverTitle>
-          又錯過了
-          <br />
-          一班公車？
-        </CoverTitle>
-        <Link activeClass="active" to="sub-cover" spy smooth offset={0} duration={1000}>
-          <NextPage down />
-        </Link>
+        <CoverTitle>這是你每天的生活嗎？</CoverTitle>
+        <CoverImg />
       </Cover>
       <SubCover id="sub-cover">
         <RollingBus
@@ -518,78 +434,75 @@ export default function Home() {
           <br />
           別讓等公車都如此艱辛
         </SubCoverText>
-        <Link activeClass="active" to="main-feature" spy smooth offset={0} duration={1000}>
-          <NextPage down />
-        </Link>
       </SubCover>
       <MainFeature id="main-feature">
         <MainLayoutContainer>
           <MainImgMap />
           <MainTextContainer>
-            <MainTitle>用公車動態改變局勢</MainTitle>
-            <MainText>讓公車自動奔來，而非我們追趕公車</MainText>
+            <MainTitle>
+              用公車動態
+              <br />
+              改變局勢
+            </MainTitle>
+            <MainText>
+              讓公車自動奔來
+              <br />
+              而非我們追趕公車
+            </MainText>
           </MainTextContainer>
           <MainImgContainer>
             <MainImgBus />
             <MainImgStop />
           </MainImgContainer>
         </MainLayoutContainer>
-        <Link activeClass="active" to="feature-intro" spy smooth offset={0} duration={1000}>
-          <NextPage down />
-        </Link>
       </MainFeature>
-      <FeatureIntro id="feature-intro">
-        <IntroTitle>主要功能</IntroTitle>
-        <IntroContent>
-          <IntroItem>
-            <IntroItemTitle>路線查詢</IntroItemTitle>
-            <IntroItemImg bg={featureRoute} cover>
-              <IntroItemImgHover>
-                <IntroItemImgHoverItem>指定路線，隨心所欲更換</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>站牌、公車、路線一覽無遺</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>一鍵切換去程/返程</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>進站站牌特別標註</IntroItemImgHoverItem>
-              </IntroItemImgHover>
-            </IntroItemImg>
-          </IntroItem>
-          <IntroItem>
-            <IntroItemTitle>收藏站牌</IntroItemTitle>
-            <IntroItemImg bg={featureCollection} cover={false}>
-              <IntroItemImgHover opacity={0.9}>
-                <IntroItemImgHoverItem>APP老是要你加會員？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>一指收納常用站牌</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>進站特別提示</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>盡情使用無收藏上限</IntroItemImgHoverItem>
-              </IntroItemImgHover>
-            </IntroItemImg>
-          </IntroItem>
-          <IntroItem>
-            <IntroItemTitle>全城動態</IntroItemTitle>
-            <IntroItemImg bg={featureCity} cover>
-              <IntroItemImgHover>
-                <IntroItemImgHoverItem>社畜當久，也想君臨城上？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>一雙眼睛掌握台北</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>哪裡塞車，立馬現形</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>找到超速公車，以禮服車</IntroItemImgHoverItem>
-              </IntroItemImgHover>
-            </IntroItemImg>
-          </IntroItem>
-          <IntroItem>
-            <IntroItemTitle>最遠路徑</IntroItemTitle>
-            <IntroItemImg bg={featureNearby} cover>
-              <IntroItemImgHover>
-                <IntroItemImgHoverItem>想搬家？租屋？換工作？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>附近沒捷運？住在郊外？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>厭倦了多次轉車？</IntroItemImgHoverItem>
-                <IntroItemImgHoverItem>一指取得鄰近公車直達終點</IntroItemImgHoverItem>
-              </IntroItemImgHover>
-            </IntroItemImg>
-          </IntroItem>
-        </IntroContent>
-        <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
-          <NextPage down={false} />
-        </Link>
-      </FeatureIntro>
+      <Feature>
+        <FeatureImg img={featureRoute} margin="0 0 0 100px" />
+        <FeatureIntro margin="0 0 0 50px" text="left">
+          <FeatureTitle>
+            無需下載
+            <br />
+            即開即用
+          </FeatureTitle>
+          <FeatureText>路線動態全掌握、進站特別提示</FeatureText>
+        </FeatureIntro>
+      </Feature>
+      <Feature>
+        <FeatureIntro margin="0 0 0 100px" text="right">
+          <FeatureTitle>
+            無料收藏
+            <br />
+            不限數量
+          </FeatureTitle>
+          <FeatureText>一鍵收納</FeatureText>
+        </FeatureIntro>
+        <FeatureImg img={featureCollection} margin="0 0 0 50px" />
+      </Feature>
+      <Feature>
+        <FeatureImg img={featureCity} margin="0 0 0 100px" />
+        <FeatureIntro margin="0 0 0 50px" text="left">
+          <FeatureTitle>
+            全市區公車
+            <br />
+            盡在眼裡
+          </FeatureTitle>
+          <FeatureText>居高臨下的體驗感</FeatureText>
+        </FeatureIntro>
+      </Feature>
+      <Feature>
+        <FeatureIntro margin="0 0 0 100px" text="right">
+          <FeatureTitle>
+            一班公車
+            <br />
+            即刻出走
+          </FeatureTitle>
+          <FeatureText>三秒鐘知道最遠去處</FeatureText>
+        </FeatureIntro>
+        <FeatureImg img={featureNearby} margin="0 0 0 50px" />
+      </Feature>
+      <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
+        <NextPage down={false} />
+      </Link>
     </Wrapper>
   );
 }

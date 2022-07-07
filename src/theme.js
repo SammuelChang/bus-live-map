@@ -14,6 +14,14 @@ import nearbyBusLight from './images/nearby-bus-light.png';
 import nearbyBusDark from './images/nearby-bus-dark.png';
 import nearbyStopLight from './images/nearby-stop-light.png';
 import nearbyStopDark from './images/nearby-stop-dark.png';
+import featureRouteLight from './images/featureRouteLight.png';
+import featureRouteDark from './images/featureRouteDark.png';
+import featureCollectionLight from './images/featureCollectionLight.png';
+import featureCollectionDark from './images/featureCollectionDark.png';
+import featureCityLight from './images/featureCityLight.png';
+import featureCityDark from './images/featureCityDark.png';
+import featureNearbyLight from './images/featureNearbyLight.png';
+import featureNearbyDark from './images/featureNearbyDark.png';
 
 export const lightTheme = {
   text: 'light',
@@ -33,6 +41,10 @@ export const lightTheme = {
   heart: heartLight,
   nearbyBus: nearbyBusLight,
   nearbyStop: nearbyStopLight,
+  featureRoute: featureRouteLight,
+  featureCollection: featureCollectionLight,
+  featureCity: featureCityLight,
+  featureNearby: featureNearbyLight,
 };
 
 export const darkTheme = {
@@ -53,4 +65,8 @@ export const darkTheme = {
   heart: heartDark,
   nearbyBus: nearbyBusDark,
   nearbyStop: nearbyStopDark,
+  featureRoute: featureRouteDark,
+  featureCollection: featureCollectionDark,
+  featureCity: featureCityDark,
+  featureNearby: featureNearbyDark,
 };

@@ -227,9 +227,9 @@ function Header({ toggleTheme }) {
           <StyleLink to="/collection">
             <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
           </StyleLink>
-          <StyleLink to="/live/city">
+          {/* <StyleLink to="/live/city">
             <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
-          </StyleLink>
+          </StyleLink> */}
           <StyleLink to="/live/nearbyPath">
             <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>
