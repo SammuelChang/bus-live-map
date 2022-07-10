@@ -2,8 +2,6 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import arrowUp from '../../images/arrow-up.png';
-import arrowDown from '../../images/arrow-down.png';
 import missing from '../../images/missing.jpg';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
@@ -25,13 +23,13 @@ const Wrapper = styled.div`
 `;
 
 const NextPage = styled.div`
-  background: url(${(props) => (props.down ? arrowDown : arrowUp)});
+  background: url(${({ theme }) => theme.backToTop});
   background-position: center top;
   background-repeat: no-repeat;
   background-size: contain;
 
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
   cursor: pointer;
 
   margin-bottom: 40px;
@@ -267,9 +265,11 @@ const MainImgContainer = styled.div`
   align-items: flex-end;
   position: absolute;
   left: calc(25% - 25px);
+  margin-left: 10vw;
   @media (max-width: 780px) {
     left: calc(50% - 50px);
     top: calc(25% - 50px);
+    margin-left: 0;
   }
 `;
 
@@ -501,7 +501,7 @@ export default function Home() {
         <FeatureImg img={featureNearby} margin="0 0 0 50px" />
       </Feature>
       <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
-        <NextPage down={false} />
+        <NextPage down={false} title="回到頂端" />
       </Link>
     </Wrapper>
   );

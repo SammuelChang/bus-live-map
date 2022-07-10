@@ -22,8 +22,13 @@ import featureCityLight from './images/featureCityLight.png';
 import featureCityDark from './images/featureCityDark.png';
 import featureNearbyLight from './images/featureNearbyLight.png';
 import featureNearbyDark from './images/featureNearbyDark.png';
+import backTopLight from './images/backTopLight.png';
+import backTopDark from './images/backTopDark.png';
 
 export const lightTheme = {
+  main: 'white',
+  primary: 'black',
+  secondary: '#878484', // 淺灰
   text: 'light',
   icon: busLight,
   mapScreen: mapScreenLight,
@@ -45,9 +50,13 @@ export const lightTheme = {
   featureCollection: featureCollectionLight,
   featureCity: featureCityLight,
   featureNearby: featureNearbyLight,
+  backToTop: backTopLight,
 };
 
 export const darkTheme = {
+  main: 'black',
+  primary: 'white',
+  secondary: '#363537', // 淺黑
   text: 'dark',
   icon: busDark,
   mapScreen: mapScreenDark,
@@ -69,4 +78,5 @@ export const darkTheme = {
   featureCollection: featureCollectionDark,
   featureCity: featureCityDark,
   featureNearby: featureNearbyDark,
+  backToTop: backTopDark,
 };

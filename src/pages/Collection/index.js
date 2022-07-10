@@ -13,10 +13,9 @@ const StyleLink = styled(Link)`
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
-  height: calc(100vh - 120px);
+  height: 100%;
   width: 100%;
   padding: 30px;
-  margin-bottom: 100px;
   display: flex;
   justify-content: center;
   align-items: flex-start;

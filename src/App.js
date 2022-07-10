@@ -12,6 +12,7 @@ import LiveRoute from './pages/LiveRoute';
 import LiveCity from './pages/LiveCity';
 import LiveNearbyPath from './pages/LiveNearbyPath';
 import NoMatch from './pages/NoMatch';
+// import InBusTrack from './pages/InBusTrack';
 
 function App() {
   const [theme, setTheme] = useState('light');
@@ -40,6 +41,7 @@ function App() {
             <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
             <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
             <Route path="/collection" element={<Collection />} />
+            {/* <Route path="/in-bus-track" element={<InBusTrack />} /> */}
             <Route path="*" element={<NoMatch />} />
           </Routes>
         </ParallaxProvider>

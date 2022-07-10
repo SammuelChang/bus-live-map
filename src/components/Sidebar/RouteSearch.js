@@ -104,20 +104,40 @@ const Direction = styled.div`
   & * {
     width: 100%;
     height: 40px;
-    line-height: 40px;
+    padding: 10px;
     text-align: center;
     font-weight: bold;
     cursor: pointer;
     color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 1s;
   }
 `;
 
 const Depart = styled.div`
-  background: #ccd5ae;
+  background: ${({ theme }) => theme.primary};
+  color: ${({ theme }) => theme.main};
+  ${(props) => props.directionNow === false
+    && css`
+      width: 30%;
+      padding: 0;
+      font-size: 0.5rem;
+      opacity: 0.5;
+    `};
 `;
 
 const Destination = styled.div`
-  background: #e9c46a;
+  background: ${({ theme }) => theme.primary};
+  color: ${({ theme }) => theme.main};
+  ${(props) => props.directionNow === false
+    && css`
+      width: 30%;
+      padding: 0;
+      font-size: 0.5rem;
+      opacity: 0.5;
+    `};
 `;
 
 const Stops = styled.div`
@@ -321,7 +341,7 @@ export default function RouteSearch({
       localStorage.setItem('stopCollect', JSON.stringify(collect));
     }
   }
-
+  console.log(!direction);
   return (
     <Wrapper>
       <SearchContainer>
@@ -347,11 +367,11 @@ export default function RouteSearch({
       <Status>{wrongInput && '查無路線資訊'}</Status>
       {!!mergeStation.length && (
         <Direction>
-          <Depart onClick={() => setDirection(0)}>
+          <Depart onClick={() => setDirection(0)} directionNow={direction === 0}>
             往
             {mergeStation.length ? mergeStation[0].DestinationStopNameZh : '終點站'}
           </Depart>
-          <Destination onClick={() => setDirection(1)}>
+          <Destination onClick={() => setDirection(1)} directionNow={direction === 1}>
             往
             {mergeStation.length ? mergeStation[0].DepartureStopNameZh : '起點站'}
           </Destination>

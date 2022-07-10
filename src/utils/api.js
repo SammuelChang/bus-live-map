@@ -67,6 +67,26 @@ const api = {
       .catch((error) => console.log('error', error));
   },
 
+  getAllRealTimeNearStop(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
+    const myHeaders = new Headers();
+    myHeaders.append('accept', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/RealTimeNearStop/City/${city}${busCode}?%24orderby=RouteID&%24top=999&%24format=JSON`,
+      requestOptions,
+    )
+      .then((response) => response.json())
+      .then((result) => result)
+      .catch((error) => console.log('error', error));
+  },
+
   getAllStation(city, token) {
     const myHeaders = new Headers();
     myHeaders.append('accept', 'application/json');
