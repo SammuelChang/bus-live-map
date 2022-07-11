@@ -26,6 +26,25 @@ const Wrapper = styled.div`
   display: flex;
   position: relative;
 `;
+
+const UserMemo = styled.div`
+  width: 250px;
+  height: 60px;
+  background: white;
+  z-index: 100;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 15px;
+  user-select: none;
+`;
+
 const MemoMapContainer = memo(MapContainer);
 const StyledMemoMapContainer = styled(MemoMapContainer)`
   visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
@@ -234,6 +253,11 @@ export default function LiveNearbyPath({ isDark }) {
       <Sidebar>
         <NearbyPath nearby={nearby} routes={routes} markers={markers} />
       </Sidebar>
+      <UserMemo>
+        點擊地圖任意位置
+        <br />
+        查看500公尺內行經公車路線
+      </UserMemo>
       <StyledMemoMapContainer
         center={location}
         minZoom={11}

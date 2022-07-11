@@ -160,6 +160,10 @@ const SubCoverTitle = styled.div`
   @media (max-width: 780px) {
     font-size: 4rem;
   }
+
+  @media (max-width: 600px) {
+    font-size: 2.5rem;
+  }
 `;
 
 const SubCoverText = styled.div`
@@ -179,6 +183,9 @@ const SubCoverText = styled.div`
   }
   @media (max-width: 780px) {
     font-size: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    font-size: 1rem;
   }
 `;
 
@@ -218,9 +225,11 @@ const MainTextContainer = styled.div`
     text-align: center;
     align-items: center;
     justify-content: center;
-    br {
+    ${
+  '' /* br {
       display: none;
-    }
+    } */
+}
   }
 `;
 
@@ -233,6 +242,9 @@ const MainTitle = styled.div`
     font-size: 3rem;
     margin-bottom: 25px;
   }
+  @media (max-width: 600px) {
+    font-size: 2rem;
+  }
 `;
 
 const MainText = styled.div`
@@ -240,6 +252,9 @@ const MainText = styled.div`
   font-weight: bold;
   @media (max-width: 780px) {
     font-size: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    font-size: 1rem;
   }
 `;
 
@@ -464,7 +479,7 @@ export default function Home() {
             <br />
             即開即用
           </FeatureTitle>
-          <FeatureText>路線動態全掌握、進站特別提示</FeatureText>
+          <FeatureText>動態全掌握+特別提示</FeatureText>
         </FeatureIntro>
       </Feature>
       <Feature>

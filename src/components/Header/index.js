@@ -1,10 +1,15 @@
 import { useLocation, Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GlobalStyle from '../../globalStyles';
 
 const StyleLink = styled(Link)`
+  text-decoration: none;
+  color: ${({ theme }) => theme.headerColor};
+`;
+
+const StyleA = styled.a`
   text-decoration: none;
   color: ${({ theme }) => theme.headerColor};
 `;
@@ -22,13 +27,13 @@ const Wrapper = styled.div`
 const NavContainer = styled.div`
   box-sizing: border-box;
   height: 100%;
-  width: 80vw;
+  width: 90vw;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   padding-bottom: 40px;
 
-  @media (max-width: 780px) {
+  @media (max-width: 1000px) {
     display: none;
   }
 `;
@@ -77,7 +82,7 @@ const NavTo = styled.div`
   font-size: 1rem;
   font-weight: 500;
   text-align: center;
-  margin: 0 20px;
+  margin: 0 10px;
   cursor: pointer;
   position: relative;
 
@@ -114,7 +119,7 @@ const NavTo = styled.div`
     transform: scaleX(1);
   }
 
-  @media (max-width: 780px) {
+  @media (max-width: 1000px) {
     margin: 0 10px;
 
     &:hover {
@@ -137,7 +142,7 @@ const ThemeToggler = styled.div`
     ${({ theme }) => theme.themeToggleBg};
   background-size: ${({ theme }) => theme.themeToggleSz};
   bottom: 40px;
-  right: 40px;
+  right: 20px;
   cursor: pointer;
 
   &:hover {
@@ -155,12 +160,13 @@ const SideToggler = styled.div`
   display: none;
   position: absolute;
   left: 20px;
-  top: 55px;
+  bottom: 40px;
   height: 30px;
   width: 30px;
   background-size: 100%;
   transform: rotate(${(props) => (props.openMenu ? '90deg' : '0deg')});
   cursor: pointer;
+  z-index: 10000;
 
   &:active {
     animation: blur-out 0.4s linear;
@@ -175,7 +181,7 @@ const SideToggler = styled.div`
     }
   }
 
-  @media (max-width: 780px) {
+  @media (max-width: 1000px) {
     display: block;
   }
 `;
@@ -185,17 +191,18 @@ const SideNav = styled.div`
   width: 20vw;
   min-width: 200px;
   margin: 0;
-  border-top: ${({ theme }) => theme.toggleBorder} 0.1px solid;
+  border: ${({ theme }) => theme.toggleBorder} 0.1px solid;
   background: ${({ theme }) => theme.background};
   left: 0;
-  position: fixed;
-  top: 120px;
+  position: absolute;
+  top: 0px;
+  padding: 120px 0 0 35px;
   z-index: 1000;
   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-  @media (min-width: 781px) {
+  @media (min-width: 1000px) {
     display: none;
   }
-  @media (max-width: 780px) {
+  @media (max-width: 1000px) {
     width: 200px;
   }
 `;
@@ -215,11 +222,16 @@ function Header({ toggleTheme }) {
   const handleToggle = () => {
     setMenu(!menu);
   };
+  const handleScroll = () => setMenu(false);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <Wrapper id="header">
       <GlobalStyle />
-      <SideNav show={menu} onClick={handleToggle}>
+      <SideNav show={menu} onClick={() => handleToggle(setMenu)}>
         <SideContent>
           <StyleLink to="/live/route">
             <NavTo cur={pathname.includes('route')}>路線查詢</NavTo>
@@ -227,12 +239,21 @@ function Header({ toggleTheme }) {
           <StyleLink to="/collection">
             <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
           </StyleLink>
+          <StyleLink to="/in-bus-track">
+            <NavTo cur={pathname.includes('in-bus-track')}>乘車監測</NavTo>
+          </StyleLink>
           {/* <StyleLink to="/live/city">
             <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
           </StyleLink> */}
           <StyleLink to="/live/nearbyPath">
             <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>
+          <StyleA
+            href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
+            target="_blank"
+          >
+            <NavTo>意見提供</NavTo>
+          </StyleA>
         </SideContent>
       </SideNav>
       <StyleLink to="/">
@@ -249,9 +270,12 @@ function Header({ toggleTheme }) {
         <StyleLink to="/collection">
           <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
         </StyleLink>
+        <StyleLink to="/in-bus-track">
+          <NavTo cur={pathname.includes('in-bus-track')}>乘車監測</NavTo>
+        </StyleLink>
         <div
           style={{
-            width: '300px',
+            minWidth: '250px',
             height: '100px',
           }}
         />
@@ -261,6 +285,12 @@ function Header({ toggleTheme }) {
         <StyleLink to="/live/nearbyPath">
           <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
         </StyleLink>
+        <StyleA
+          href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
+          target="_blank"
+        >
+          <NavTo>意見提供</NavTo>
+        </StyleA>
       </NavContainer>
       <SideToggler onClick={handleToggle} openMenu={menu} />
       <ThemeToggler

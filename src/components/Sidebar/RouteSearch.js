@@ -57,7 +57,7 @@ const SearchText = styled.input`
   color: ${({ theme }) => theme.color};
   font-size: 1.8rem;
   font-weight: bold;
-  padding: 15px 15px 15px 0;
+  padding: 15px 15px 20px 0;
   margin-left: 15px;
   resize: none;
   border: none;
@@ -117,26 +117,36 @@ const Direction = styled.div`
 `;
 
 const Depart = styled.div`
-  background: ${({ theme }) => theme.primary};
-  color: ${({ theme }) => theme.main};
+  background: ${({ theme }) => theme.third};
+  color: ${({ theme }) => theme.primary};
   ${(props) => props.directionNow === false
     && css`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.5;
+      opacity: 0.7;
+      &:hover {
+        width: 100%;
+        padding: 0;
+        font-size: 1rem;
+      }
     `};
 `;
 
 const Destination = styled.div`
-  background: ${({ theme }) => theme.primary};
-  color: ${({ theme }) => theme.main};
+  background: ${({ theme }) => theme.third};
+  color: ${({ theme }) => theme.primary};
   ${(props) => props.directionNow === false
     && css`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.5;
+      opacity: 0.7;
+      &:hover {
+        width: 100%;
+        padding: 0;
+        font-size: 1rem;
+      }
     `};
 `;
 
@@ -147,7 +157,8 @@ const Stops = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
 
-  &::-webkit-scrollbar-track {
+  ${
+  '' /* &::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     background-color: ${({ theme }) => theme.background};
@@ -155,7 +166,6 @@ const Stops = styled.div`
 
   &::-webkit-scrollbar {
     width: 6px;
-    border-radius: 10px;
     background-color: ${({ theme }) => theme.background};
   }
 
@@ -163,7 +173,8 @@ const Stops = styled.div`
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: ${({ theme }) => theme.headerColor};
-  }
+  } */
+}
 `;
 
 const Stop = styled.div`
@@ -341,7 +352,7 @@ export default function RouteSearch({
       localStorage.setItem('stopCollect', JSON.stringify(collect));
     }
   }
-  console.log(!direction);
+
   return (
     <Wrapper>
       <SearchContainer>

@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
-import location from '../../images/location.png';
+// import location from '../../images/location.png';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -8,46 +8,20 @@ const Wrapper = styled.div`
   flex-direction: column;
   padding: 0 10px;
   min-width: 300px;
+  user-select: none;
   @media (max-width: 780px) {
     display: none;
   }
-`;
-
-const Position = styled.div`
-  min-height: 100px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  cursor: default;
-`;
-
-const PositionIcon = styled.div`
-  padding-right: 10px;
-  background: url(${location}) no-repeat center center;
-  background-size: contain;
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  top: 50%;
-  left: 40px;
-  transform: translateY(-50%);
-`;
-const PositionText = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: left;
-  font-size: 0.8rem;
 `;
 
 const Result = styled.div`
   display: flex;
   overflow: scroll;
   overflow-x: auto;
+  margin-bottom: 10px;
 
-  &::-webkit-scrollbar-track {
+  ${
+  '' /* &::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     background-color: #f5f5f5;
@@ -62,42 +36,52 @@ const Result = styled.div`
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #555;
-  }
+  } */
+}
 `;
 
 const Stops = styled.div`
   width: 130%;
   font-size: 1rem;
   margin-right: 10px;
+  > * {
+    height: 20px;
+    margin-bottom: 10px;
+  }
 `;
 
 const Route = styled.div`
   width: 100%;
   font-size: 1rem;
+  > * {
+    height: 20px;
+    margin-bottom: 10px;
+  }
 `;
 
 const IconContainer = styled.div`
   display: flex;
   justify-content: flex-start;
-  padding-bottom: 10px;
+  align-items: flex-end;
+  padding: 30px 0;
 `;
 
 const BusIcon = styled.div`
   background: url(${({ theme }) => theme.nearbyBus}) no-repeat center center;
   background-size: contain;
-  width: 25px;
-  height: 25px;
+  margin-left: 140px;
+  width: 20px;
+  height: 20px;
 `;
 
 const StopIcon = styled.div`
-  margin-left: 135px;
   background: url(${({ theme }) => theme.nearbyStop}) no-repeat center center;
   background-size: contain;
   width: 25px;
   height: 25px;
 `;
 
-export default function NearbyPath({ nearby = [], routes = [], markers }) {
+export default function NearbyPath({ nearby = [], routes = [] }) {
   const formatNearby = nearby
     ? nearby
       .reduce((acc, cur) => {
@@ -118,18 +102,9 @@ export default function NearbyPath({ nearby = [], routes = [], markers }) {
 
   return (
     <Wrapper>
-      <Position title="點選位置">
-        <PositionIcon />
-        <PositionText>
-          {markers.length === 0 && <h2>偵測中</h2>}
-          {markers.length ? markers[0].lng : ''}
-          <br />
-          {markers.length ? markers[0].lat : ''}
-        </PositionText>
-      </Position>
       <IconContainer>
-        <BusIcon />
-        <StopIcon />
+        <StopIcon title="行經站牌" />
+        <BusIcon title="行經路線" />
       </IconContainer>
       <Result>
         <Stops>
@@ -151,5 +126,5 @@ export default function NearbyPath({ nearby = [], routes = [], markers }) {
 NearbyPath.propTypes = {
   nearby: PropTypes.oneOfType([PropTypes.array]).isRequired,
   routes: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  markers: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  // markers: PropTypes.oneOfType([PropTypes.array]).isRequired,
 };

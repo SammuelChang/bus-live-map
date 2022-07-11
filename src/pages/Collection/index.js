@@ -52,7 +52,7 @@ const NoDataWarn = styled.div`
 const InfoCard = styled.div`
   height: 250px;
   width: 200px;
-  border: 1.2px solid ${({ theme }) => theme.border};
+  border: 1px solid ${({ theme }) => theme.border};
   margin: 20px;
 
   @media (max-width: 780px) {
@@ -120,8 +120,19 @@ const BusName = styled.div`
 const BusDirection = styled.div`
   width: 60%;
   font-size: 1rem;
-  & > span {
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  & > span:first-child {
     font-size: 1.5rem;
+    padding-right: 10px;
+    &::after {
+      content: ' ';
+    }
+  }
+  & > span:last-child {
+    font-size: 1rem;
     &::after {
       content: ' ';
     }
@@ -265,8 +276,10 @@ export default function Collection() {
               <BusName>{stop.RouteName.Zh_tw}</BusName>
               <BusDirection>
                 <span>往</span>
-                {stop.Direction === 0 && stop.DestinationStopNameZh}
-                {stop.Direction === 1 && stop.DepartureStopNameZh}
+                <span>
+                  {stop.Direction === 0 && stop.DestinationStopNameZh}
+                  {stop.Direction === 1 && stop.DepartureStopNameZh}
+                </span>
               </BusDirection>
             </BusRoute>
             <BusTime coming={stop.EstimateTime < comingThreshold}>

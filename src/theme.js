@@ -29,6 +29,7 @@ export const lightTheme = {
   main: 'white',
   primary: 'black',
   secondary: '#878484', // 淺灰
+  third: '#bcb8b1',
   text: 'light',
   icon: busLight,
   mapScreen: mapScreenLight,
@@ -57,6 +58,7 @@ export const darkTheme = {
   main: 'black',
   primary: 'white',
   secondary: '#363537', // 淺黑
+  third: '#6c757d',
   text: 'dark',
   icon: busDark,
   mapScreen: mapScreenDark,
