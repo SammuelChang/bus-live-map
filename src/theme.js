@@ -24,6 +24,8 @@ import featureNearbyLight from './images/featureNearbyLight.png';
 import featureNearbyDark from './images/featureNearbyDark.png';
 import backTopLight from './images/backTopLight.png';
 import backTopDark from './images/backTopDark.png';
+import dropDownLight from './images/dropDownLight.png';
+import dropDownDark from './images/dropDownDark.png';
 
 export const lightTheme = {
   main: 'white',
@@ -52,6 +54,7 @@ export const lightTheme = {
   featureCity: featureCityLight,
   featureNearby: featureNearbyLight,
   backToTop: backTopLight,
+  dropDown: dropDownLight,
 };
 
 export const darkTheme = {
@@ -81,4 +84,5 @@ export const darkTheme = {
   featureCity: featureCityDark,
   featureNearby: featureNearbyDark,
   backToTop: backTopDark,
+  dropDown: dropDownDark,
 };
