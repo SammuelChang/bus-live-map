@@ -240,7 +240,7 @@ function Header({ toggleTheme }) {
             <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
           </StyleLink>
           <StyleLink to="/in-bus-track">
-            <NavTo cur={pathname.includes('in-bus-track')}>乘車監測</NavTo>
+            <NavTo cur={pathname.includes('in-bus-track')}>乘車快報</NavTo>
           </StyleLink>
           {/* <StyleLink to="/live/city">
             <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
@@ -271,7 +271,7 @@ function Header({ toggleTheme }) {
           <NavTo cur={pathname.includes('collection')}>收藏站牌</NavTo>
         </StyleLink>
         <StyleLink to="/in-bus-track">
-          <NavTo cur={pathname.includes('in-bus-track')}>乘車監測</NavTo>
+          <NavTo cur={pathname.includes('in-bus-track')}>乘車快報</NavTo>
         </StyleLink>
         <div
           style={{

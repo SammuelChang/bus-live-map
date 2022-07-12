@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components/macro';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
+// import LoadingEffect from '../../components/LoadingEffect';
 
 const ProgressAdjust = styled.div`
   z-index: 100;
@@ -70,7 +71,7 @@ const Block = styled.div`
 
 const Label = styled.h5`
   min-width: 100px;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-right: 10px;
   ${(props) => props.unChosen
     && css`
@@ -104,9 +105,9 @@ const Route = styled.div`
 const RouteInput = styled.input`
   width: 100%;
   height: 100%;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 500;
-  padding-left: 15px;
+  padding-left: 5px;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
 `;
@@ -136,7 +137,7 @@ const Select = styled.select`
   appearance: none;
   margin: 20px 0;
   padding: 15px 0;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 500;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.color};
@@ -303,7 +304,6 @@ export default function InBusTrack() {
       const arr2 = list.filter((i) => i.StopName === off && i.Direction === 0);
       if (!arr1[0] || !arr2[0]) {
         // 往返站牌可能不同，當上下車站牌之間無法找到關聯時，提早結束
-        console.log('getDirection');
         setError(true);
         return null;
       }
@@ -344,19 +344,11 @@ export default function InBusTrack() {
         && i.A2EventType >= 0,
     );
 
-    setBusCurrentStop(busFilter !== undefined ? busFilter : undefined);
+    setBusCurrentStop(busFilter);
     setLoading(false);
   }
 
   async function changeInfo() {
-    // if (stopLists.length === 0 || userOnStop === userOffStop) {
-    //   console.log(tdxBuses.length, stopLists.length, userOnStop, userOffStop);
-    //   console.log(tdxBuses.length, stopLists.length, userOnStop === userOffStop);
-    //   setError(true);
-    //   console.log('changeInfo2');
-    //   return;
-    // }
-
     const direction = getDirection(stopLists, userOnStop, userOffStop);
     setUserDirection(direction);
 
@@ -366,8 +358,8 @@ export default function InBusTrack() {
     const filterRoute = stopLists.filter(
       (i) => i.Direction === direction && i.StopSequence >= onStop && i.StopSequence <= offStop,
     );
-
     setUserRoute(filterRoute);
+
     setError(false);
   }
 
@@ -455,11 +447,11 @@ export default function InBusTrack() {
   return (
     <Wrapper>
       <UserInfo routeData={userPlate}>
-        <UserInfoBanner>乘車資訊</UserInfoBanner>
+        <UserInfoBanner>目前搭乘公車</UserInfoBanner>
         <Route>
           <Label>路線名稱</Label>
           <RouteInput
-            placeholder="路線名稱，如306"
+            placeholder="306"
             onChange={(e) => {
               setBus(e.target.value);
             }}
@@ -535,7 +527,7 @@ export default function InBusTrack() {
       </UserInfo>
       {userPlate && (
         <RouteContainer>
-          <RouteInfoBanner>實時公車路線圖</RouteInfoBanner>
+          <RouteInfoBanner>即時路線圖</RouteInfoBanner>
           <RouteInfo>
             {tdxBuses.length ? tdxBuses[0].RouteName.Zh_tw : ''}
             <span>{userPlate || ''}</span>
