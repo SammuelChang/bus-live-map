@@ -14,6 +14,7 @@ const StyleLink = styled(Link)`
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
   height: 100%;
+  min-height: calc(100vh - 120px);
   width: 100%;
   padding: 30px;
   display: flex;
@@ -98,16 +99,19 @@ const InfoCard = styled.div`
 `;
 
 const BusStop = styled.div`
-  height: 20%;
+  height: 25%;
   width: 100%;
   font-size: 1.2rem;
   font-weight: bold;
   background: ${(props) => (props.coming ? '#e63946' : '#1299ce')};
   color: white;
+  padding: 5px;
+  white-space: pre;
+  text-align: center;
 `;
 
 const BusRoute = styled.div`
-  height: 40%;
+  height: 35%;
   width: 100%;
   justify-content: space-around;
 `;
@@ -133,6 +137,7 @@ const BusDirection = styled.div`
   }
   & > span:last-child {
     font-size: 1rem;
+    white-space: pre;
     &::after {
       content: ' ';
     }
@@ -143,6 +148,19 @@ const BusTime = styled.div`
   height: 30%;
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
   color: ${(props) => (props.coming ? '#e63946' : 'black')};
+  white-space: pre;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 20px;
+
+  div {
+    text-align: center;
+  }
+
+  span {
+    text-align: center;
+    font-size: 1rem;
+  }
 `;
 
 const Function = styled.div`
@@ -271,23 +289,33 @@ export default function Collection() {
             key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}
             coming={stop.EstimateTime < comingThreshold}
           >
-            <BusStop coming={stop.EstimateTime < comingThreshold}>{stop.StopName.Zh_tw}</BusStop>
+            <BusStop coming={stop.EstimateTime < comingThreshold}>
+              {stop.StopName.Zh_tw.replace('(', ' \n(')}
+            </BusStop>
             <BusRoute>
               <BusName>{stop.RouteName.Zh_tw}</BusName>
               <BusDirection>
                 <span>往</span>
                 <span>
-                  {stop.Direction === 0 && stop.DestinationStopNameZh}
-                  {stop.Direction === 1 && stop.DepartureStopNameZh}
+                  {stop.Direction === 0 && stop.DestinationStopNameZh.replace('(', ' \n(')}
+                  {stop.Direction === 1 && stop.DepartureStopNameZh.replace('(', ' \n(')}
                 </span>
               </BusDirection>
             </BusRoute>
             <BusTime coming={stop.EstimateTime < comingThreshold}>
               {' '}
-              {stop.EstimateTime < comingThreshold / 2 && '將到站'}
-              {stop.EstimateTime > comingThreshold / 2
-                && stop.EstimateTime < comingThreshold
-                && '將到站'}
+              {stop.EstimateTime < comingThreshold / 2 && (
+                <div>
+                  <div>進站中</div>
+                  <span>(1分內)</span>
+                </div>
+              )}
+              {stop.EstimateTime > comingThreshold / 2 && stop.EstimateTime < comingThreshold && (
+                <div>
+                  <div>將到站</div>
+                  <span>(2分內)</span>
+                </div>
+              )}
               {stop.EstimateTime >= comingThreshold && `${Math.floor(stop.EstimateTime / 60)}分`}
               {stop.EstimateTime === undefined && '未發車'}
             </BusTime>
