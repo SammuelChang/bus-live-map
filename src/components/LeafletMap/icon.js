@@ -1,31 +1,44 @@
 import L from 'leaflet';
+// import busMarker from '../../images/bus-marker.png';
+import bus from '../../images/bus.png';
+import busStopNormal from '../../images/bus-stop-empty.png';
+import busStopRed from '../../images/bus-stop-red.png';
 
 export const icon = {
-  arrowIcon: L.icon({
-    iconUrl: 'https://www.svgrepo.com/show/97377/right-arrow-in-circular-button.svg',
-    iconSize: [20, 20],
-    shadowSize: [0, 0],
-    iconAnchor: [12.5, 12.5],
-  }),
   bus: L.icon({
-    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/MTS_Bus_icon.svg',
-    iconRetinaUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/MTS_Bus_icon.svg',
-    iconSize: [25, 25],
+    iconUrl: bus,
+    iconRetinaUrl: bus,
+    iconSize: [40, 40],
     shadowSize: [0, 0],
-    iconAnchor: [12.5, 12.5],
+    iconAnchor: [20, 40],
   }),
-  stationIcon: L.icon({
-    iconUrl: 'https://www.svgrepo.com/show/312735/orange-circle.svg',
-    iconSize: [10, 10],
+  busStopNormal4x: L.icon({
+    iconUrl: busStopNormal,
+    iconRetinaUrl: busStopNormal,
+    iconSize: [20, 30],
     shadowSize: [0, 0],
-    iconAnchor: [5, 5],
+    // iconAnchor: [0, 50],
   }),
-
-  stationIcon2: L.icon({
-    iconUrl: 'https://www.svgrepo.com/show/312735/orange-circle.svg',
-    iconSize: [20, 20],
+  busStopRed4x: L.icon({
+    iconUrl: busStopRed,
+    iconRetinaUrl: busStopRed,
+    iconSize: [20, 30],
     shadowSize: [0, 0],
-    iconAnchor: [10, 10],
+    // iconAnchor: [60, 60],
+  }),
+  busStopNormal2x: L.icon({
+    iconUrl: busStopNormal,
+    iconRetinaUrl: busStopNormal,
+    iconSize: [15, 20],
+    shadowSize: [0, 0],
+    // iconAnchor: [10, 30],
+  }),
+  busStopRed2x: L.icon({
+    iconUrl: busStopRed,
+    iconRetinaUrl: busStopRed,
+    iconSize: [15, 20],
+    shadowSize: [0, 0],
+    // iconAnchor: [10, 30],
   }),
 };
 

@@ -1,4 +1,5 @@
 const api = {
+  top: 10000,
   host: 'https://tdx.transportdata.tw',
   getToken() {
     const myHeaders = new Headers();
@@ -39,7 +40,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=999${filterCode}&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/Shape/City/${city}${busCode}?%24orderby=RouteID&%24top=${this.top}${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -59,7 +60,27 @@ const api = {
       redirect: 'follow',
     };
     return fetch(
-      `${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=999&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/RealTimeByFrequency/City/${city}${busCode}?%24orderby=RouteID&%24top=${this.top}&%24format=JSON`,
+      requestOptions,
+    )
+      .then((response) => response.json())
+      .then((result) => result)
+      .catch((error) => console.log('error', error));
+  },
+
+  getAllRealTimeNearStop(city, token, bus = '') {
+    const busCode = bus ? `/${bus}` : '';
+    const myHeaders = new Headers();
+    myHeaders.append('accept', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+    return fetch(
+      `${this.host}/api/basic/v2/Bus/RealTimeNearStop/City/${city}${busCode}?%24orderby=RouteID&%24top=${this.top}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -79,7 +100,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=999&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/Station/City/${city}?%24orderby=StationID&%24top=${this.top}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -101,7 +122,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=999${filterCode}&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/EstimatedTimeOfArrival/City/${city}${busCode}?%24top=${this.top}${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -122,7 +143,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=999${filterCode}&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/StopOfRoute/City/${city}${busCode}?%24top=${this.top}${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -141,7 +162,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/V3/Map/Bus/Network/Stop/City/${city}/Nearby/LocationX/${lon}/LocationY/${lat}/Radius/500?%24top=999&%24format=GEOJSON`,
+      `${this.host}/api/basic/V3/Map/Bus/Network/Stop/City/${city}/Nearby/LocationX/${lon}/LocationY/${lat}/Radius/500?%24top=${this.top}&%24format=GEOJSON`,
       requestOptions,
     )
       .then((response) => response.text())
@@ -163,7 +184,7 @@ const api = {
     };
 
     return fetch(
-      `${this.host}/api/basic/v2/Bus/Route/City/${city}${busCode}?%24top=999${filterCode}&%24format=JSON`,
+      `${this.host}/api/basic/v2/Bus/Route/City/${city}${busCode}?%24top=${this.top}${filterCode}&%24format=JSON`,
       requestOptions,
     )
       .then((response) => response.json())

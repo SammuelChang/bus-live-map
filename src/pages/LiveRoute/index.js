@@ -1,12 +1,15 @@
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable no-unused-vars */
 import {
   useEffect, useState, useRef, memo,
 } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
 import {
-  MapContainer, TileLayer, useMapEvents, FeatureGroup,
+  MapContainer,
+  TileLayer,
+  useMapEvents,
+  FeatureGroup, // useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
@@ -15,25 +18,56 @@ import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import RouteSearch from '../../components/Sidebar/RouteSearch';
+// import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
+  position: relative;
 `;
 
 const MemoMapContainer = memo(MapContainer);
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
 
-export default function LeafletMap() {
+export default function LiveRoute({ isDark }) {
+  const lightMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
+  const darkMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
   const [loading, setLoading] = useState(false);
-  const [map, setMap] = useState(null);
+  const mapRef = useRef(null);
   const featureGroupRef = useRef();
   const [location] = useState([25.049637, 121.525986]);
-  const [zoomLevel, setZoomLevel] = useState(13);
+  const [zoomLevel, setZoomLevel] = useState(12);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxBus, setTdxBus] = useState([]);
-  const [tdxInfo, setTdxInfo] = useState([]);
+  // const [tdxBusInfo, setTdxBusInfo] = useState([]);
   const [mergeStation, setMergeStation] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const [displayBus, setDisplayBus] = useState('');
+  const [direction, setDirection] = useState(0);
+  const [boundry, setBoundry] = useState([]);
+  // const preBusInfo = useRef(null);
+  const [wrongInput, setWrongInput] = useState(false);
+
+  // function SetBoundsRectangles() {
+  //   if (boundry.length && preBusInfo.current !== tdxBusInfo) {
+  //     const map = useMap();
+  //     map.fitBounds(boundry);
+  //     console.log('bounds done');
+  //   }
+  //   return null;
+  // }
 
   function ZoomListener() {
     const mapEvents = useMapEvents({
@@ -106,23 +140,24 @@ export default function LeafletMap() {
     return routeMerge;
   }
 
-  function removeLayer() {
-    featureGroupRef.current?.clearLayers();
-  }
-
   async function assignRouteHandler(bus) {
     if (loading) {
       return;
     }
-    console.log('call api');
-
-    // removeLayer();
     setLoading(true);
-
     const token = await api.getToken();
-
     const info = await getInfoFn(token, bus);
-    setTdxInfo(info);
+    // setTdxBusInfo(info);
+
+    if (!info.length) {
+      setLoading(false);
+      setWrongInput(true);
+      setTdxShape([]);
+      setTdxBus([]);
+      setMergeStation([]);
+      featureGroupRef.current?.clearLayers();
+      return;
+    }
 
     const shapeData = await getShapeFn(token, bus);
     setTdxShape(shapeData);
@@ -132,11 +167,17 @@ export default function LeafletMap() {
 
     const routeData = await getRouteStationFn(token, bus);
     const routeTimeData = await getRouteStationTimeFn(token, bus);
-
     const data = await mergeStationHandler(routeData, routeTimeData, info);
     setMergeStation(data);
 
+    const resultRoute = [];
+    Object.values(data).forEach((i) => {
+      resultRoute.push([i.StopPosition.PositionLat, i.StopPosition.PositionLon]);
+    });
+    setBoundry(resultRoute);
+
     setLoading(false);
+    setWrongInput(false);
   }
 
   function searchRoute(route) {
@@ -152,7 +193,6 @@ export default function LeafletMap() {
   }, []);
 
   useEffect(() => {
-    console.log(routeTimer);
     // 根據計時狀況與是否輸入路線，重置計時器並呼叫api
     if (routeTimer < 0) {
       setRouteTimer(10);
@@ -166,6 +206,10 @@ export default function LeafletMap() {
     setRouteTimer(10);
   }, [displayBus]);
 
+  // useEffect(() => {
+  //   preBusInfo.current = tdxBusInfo;
+  // }, [tdxBusInfo]);
+
   return (
     <Wrapper>
       <Sidebar>
@@ -174,29 +218,50 @@ export default function LeafletMap() {
           setDisplayBus={setDisplayBus}
           searchRoute={searchRoute}
           mergeStation={Object.values(mergeStation)}
+          direction={direction}
+          setDirection={setDirection}
+          wrongInput={wrongInput}
+          loading={loading}
         />
       </Sidebar>
-      <MemoMapContainer
-        center={location}
-        zoom={zoomLevel}
+      <StyledMemoMapContainer
+        center={mapRef.current ? null : location}
+        zoom={mapRef.current ? null : zoomLevel}
+        bounds={mapRef.current ? boundry : null}
         minZoom={12}
-        maxZoom={16}
+        maxZoom={15}
         scrollWheelZoom
         style={{ height: 'calc(100vh - 120px)', width: '100%' }}
-        ref={setMap}
+        ref={mapRef}
+        loading={loading}
       >
         <FeatureGroup ref={featureGroupRef}>
-          {tdxShape && <BusShape tdxShape={tdxShape} />}
-          {tdxBus && <BusMarker tdxBus={tdxBus} />}
-          {mergeStation && <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} />}
+          {tdxShape && <BusShape tdxShape={tdxShape} direction={direction} />}
+          {tdxBus && <BusMarker tdxBus={tdxBus} direction={direction} />}
+          {mergeStation && zoomLevel >= 14 && (
+            <BusStation mergeStation={mergeStation} zoomLevel={zoomLevel} direction={direction} />
+          )}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.7}
-        />
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={lightMap}
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={darkMap}
+          />
+        )}
         <ZoomListener />
-      </MemoMapContainer>
+        {/* <SetBoundsRectangles /> */}
+      </StyledMemoMapContainer>
+      {/* {loading && <LoadingEffect />} */}
     </Wrapper>
   );
 }
+
+LiveRoute.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};

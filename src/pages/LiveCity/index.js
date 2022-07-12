@@ -4,25 +4,43 @@ import {
   useEffect, useState, useRef, memo,
 } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { parse } from 'wellknown';
 import {
   MapContainer, TileLayer, useMapEvents, FeatureGroup,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
-import BusMarker from '../../components/LeafletMap/BusMarker';
+import CityBusMarker from '../../components/LeafletMap/CityBusMarker';
 import BusShape from '../../components/LeafletMap/BusShape';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import CityBusState from '../../components/Sidebar/CityBusStats';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
 `;
 
 const MemoMapContainer = memo(MapContainer);
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
 
-export default function LiveCityLeafletMap() {
+export default function LiveCityLeafletMap({ isDark }) {
+  const lightMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
+  const darkMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
   const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(null);
   const featureGroupRef = useRef();
@@ -62,7 +80,7 @@ export default function LiveCityLeafletMap() {
 
     const token = await api.getToken();
     const busData = await getBusFn(token, bus);
-    console.log(busData);
+
     setTdxBus(busData);
     setLoading(false);
   }
@@ -96,9 +114,9 @@ export default function LiveCityLeafletMap() {
   return (
     <Wrapper>
       <Sidebar>
-        <CityBusState tdxBus={tdxBus} />
+        <CityBusState tdxBus={tdxBus} loading={loading} />
       </Sidebar>
-      <MemoMapContainer
+      <StyledMemoMapContainer
         center={location}
         zoom={zoomLevel}
         minZoom={11}
@@ -108,14 +126,26 @@ export default function LiveCityLeafletMap() {
         ref={setMap}
       >
         <FeatureGroup ref={featureGroupRef}>
-          {tdxBus && <BusMarker tdxBus={tdxBus} allBus={allBus} />}
+          {tdxBus && <CityBusMarker tdxBus={tdxBus} allBus={allBus} />}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.7}
-        />
-      </MemoMapContainer>
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={lightMap}
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={darkMap}
+          />
+        )}
+      </StyledMemoMapContainer>
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }
+
+LiveCityLeafletMap.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};

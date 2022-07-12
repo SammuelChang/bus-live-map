@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
 import {
   useState, useRef, memo, useEffect,
 } from 'react';
@@ -9,7 +7,6 @@ import {
   TileLayer,
   useMapEvents,
   FeatureGroup,
-  Marker,
   Circle,
   Tooltip,
   Popup,
@@ -17,23 +14,65 @@ import {
 import 'leaflet/dist/leaflet.css';
 import { parse } from 'wellknown';
 import styled from 'styled-components';
-import L from 'leaflet';
+import Modal from 'react-modal';
 import api from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import BusShape from '../../components/LeafletMap/BusShape';
 import NearbyPath from '../../components/Sidebar/NearbyPath';
+import './index.css';
+import LoadingEffect from '../../components/LoadingEffect';
 
 const Wrapper = styled.div`
   display: flex;
+  position: relative;
 `;
-const MemoMapContainer = memo(MapContainer);
 
-function AddMarkerToClick({ markers, setMarkers }) {
+const UserMemo = styled.div`
+  width: 250px;
+  height: 60px;
+  background: white;
+  z-index: 100;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 15px;
+  user-select: none;
+`;
+
+const MemoMapContainer = memo(MapContainer);
+const StyledMemoMapContainer = styled(MemoMapContainer)`
+  visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
+  animation: blur-in 0.4s linear both;
+  @keyframes blur-in {
+    0% {
+      filter: blur(12px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+`;
+Modal.setAppElement('#root');
+
+function AddMarkerToClick({
+  markers, setMarkers, getCurrentPoi, setGetCurrentPoi,
+}) {
   const circleOption = { color: 'gray', fillColor: 'gray' };
-  const map = useMapEvents({
+  const circleOptionCurrent = { color: '#e9c46a', fillColor: '#e9c46a' };
+
+  useMapEvents({
     click(e) {
       const newMarker = e.latlng;
       setMarkers([newMarker]);
+      setGetCurrentPoi(false);
     },
   });
 
@@ -43,7 +82,7 @@ function AddMarkerToClick({ markers, setMarkers }) {
         <Circle
           key={`${marker}_${Date.now()}`}
           center={marker}
-          pathOptions={circleOption}
+          pathOptions={getCurrentPoi ? circleOptionCurrent : circleOption}
           fillOpacity={0.3}
           weight={3}
           radius={500}
@@ -63,6 +102,8 @@ function AddMarkerToClick({ markers, setMarkers }) {
 AddMarkerToClick.propTypes = {
   markers: PropTypes.oneOfType([PropTypes.array]).isRequired,
   setMarkers: PropTypes.func.isRequired,
+  getCurrentPoi: PropTypes.bool.isRequired,
+  setGetCurrentPoi: PropTypes.func.isRequired,
 };
 
 function BusStop({ nearby }) {
@@ -91,15 +132,21 @@ BusStop.propTypes = {
   nearby: PropTypes.oneOfType([PropTypes.array]).isRequired,
 };
 
-export default function LiveNearbyPath() {
+export default function LiveNearbyPath({ isDark }) {
+  const lightMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
+  const darkMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
+  const [loading, setLoading] = useState(true);
   const featureGroupRef = useRef();
   const [location] = useState([25.049637, 121.525986]);
   const [markers, setMarkers] = useState([]);
   const [nearby, setNearby] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [tdxShape, setTdxShape] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [getCurrentPoi, setGetCurrentPoi] = useState(false);
 
   async function getNearby(lon, lat) {
+    setLoading(true);
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
     const token = await api.getToken();
     const result = await api.getNearbyStops('Taipei', token, lon, lat);
@@ -126,10 +173,13 @@ export default function LiveNearbyPath() {
         .map((i) => `or RouteUID eq '${i}'`)
         .join('')
         .replace('or RouteUID', 'RouteUID');
-
       const shapeData = await api.getAllShape('Taipei', token, '', routeSets);
-      const geoShapeData = shapeData.map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }));
+      const geoShapeData = shapeData.map((obj) => ({
+        ...obj,
+        Geojson: { ...parse(obj.Geometry), properties: { RouteName: obj.RouteName.Zh_tw } },
+      }));
       setTdxShape(geoShapeData);
+      setLoading(false);
     }
   }
 
@@ -147,12 +197,68 @@ export default function LiveNearbyPath() {
     }
   }, [markers]);
 
+  function locatePosition() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
+      setGetCurrentPoi(true);
+    });
+  }
+
+  useEffect(() => {
+    locatePosition();
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 3000);
+  }, [getCurrentPoi]);
+
   return (
     <Wrapper>
+      {getCurrentPoi && (
+        <Modal
+          closeTimeoutMS={500}
+          isOpen={isOpen}
+          onRequestClose={() => setIsOpen(false)}
+          contentLabel="modal"
+          style={{
+            content: {
+              textAlign: 'center',
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              transition: '.5s',
+              width: '90%',
+              maxHeight: '600px',
+              overflow: 'auto',
+              padding: '40px',
+              maxWidth: '500px',
+              borderRadius: '10px',
+              boxShadow: '0px 0px 15px 1px gray',
+            },
+            overlay: {
+              zIndex: '1000',
+              top: '120px',
+            },
+          }}
+        >
+          <div>已自動定位您所在位置，三秒後自動關閉視窗</div>
+        </Modal>
+      )}
       <Sidebar>
         <NearbyPath nearby={nearby} routes={routes} markers={markers} />
       </Sidebar>
-      <MemoMapContainer
+      <UserMemo>
+        點擊地圖任意位置
+        <br />
+        查看500公尺內行經公車路線
+      </UserMemo>
+      <StyledMemoMapContainer
         center={location}
         minZoom={11}
         maxZoom={16}
@@ -160,16 +266,33 @@ export default function LiveNearbyPath() {
         style={{ height: 'calc(100vh - 120px)', width: '100%' }}
       >
         <FeatureGroup ref={featureGroupRef}>
-          <AddMarkerToClick markers={markers} setMarkers={setMarkers} />
-          {tdxShape !== undefined && <BusShape tdxShape={tdxShape} />}
+          <AddMarkerToClick
+            markers={markers}
+            setMarkers={setMarkers}
+            getCurrentPoi={getCurrentPoi}
+            setGetCurrentPoi={setGetCurrentPoi}
+          />
+          {tdxShape !== undefined && <BusShape tdxShape={tdxShape} nearby={nearby} />}
           {nearby !== undefined && <BusStop nearby={nearby} />}
         </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          opacity={0.9}
-        />
-      </MemoMapContainer>
+        {!isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={lightMap}
+          />
+        )}
+        {isDark && (
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url={darkMap}
+          />
+        )}
+      </StyledMemoMapContainer>
+      {loading && <LoadingEffect />}
     </Wrapper>
   );
 }
+
+LiveNearbyPath.propTypes = {
+  isDark: PropTypes.bool.isRequired,
+};
