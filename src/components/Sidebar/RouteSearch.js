@@ -112,7 +112,8 @@ const Direction = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 1s;
+    transition: all 0.3s;
+    border: 1px solid ${({ theme }) => theme.third};
   }
 `;
 
@@ -124,7 +125,8 @@ const Depart = styled.div`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.7;
+      background: none;
+      opacity: 0.5;
       &:hover {
         width: 100%;
         padding: 0;
@@ -141,7 +143,8 @@ const Destination = styled.div`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.7;
+      background: none;
+      opacity: 0.5;
       &:hover {
         width: 100%;
         padding: 0;

@@ -290,7 +290,7 @@ export default function Collection() {
             coming={stop.EstimateTime < comingThreshold}
           >
             <BusStop coming={stop.EstimateTime < comingThreshold}>
-              {stop.StopName.Zh_tw.replace('(', ' \n(')}
+              {stop.StopName.Zh_tw.replace('/', ' /\n').replace('(', ' \n(')}
             </BusStop>
             <BusRoute>
               <BusName>{stop.RouteName.Zh_tw}</BusName>
