@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Circle = styled.div`
+const BusStatus = styled.div`
   height: 100px;
   width: 200px;
   border-radius: 5px;
@@ -27,6 +27,10 @@ const Circle = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  user-select: none;
+  > * {
+    margin-bottom: 2px;
+  }
 `;
 
 const Status = styled.div`
@@ -44,26 +48,33 @@ const ProgressAdjust = styled.div`
   position: absolute;
   bottom: 0;
 `;
-// eslint-disable-next-line no-unused-vars
 export default function CityBusState({ tdxBus, loading }) {
   return (
     <Wrapper>
-      <Circle bg="#e63946" clr="white">
+      <BusStatus bg="#e63946" clr="white">
         <Status>飆速中</Status>
         <Count>{tdxBus.filter((x) => x.Speed > 40).length}</Count>
-      </Circle>
-      <Circle bg="#2a9d8f">
+        <br />
+        <span style={{ fontSize: '0.5rem' }}>時速大於40數量</span>
+      </BusStatus>
+      <BusStatus bg="#2a9d8f">
         <Status>移動中</Status>
         <Count>{tdxBus.filter((x) => x.Speed > 0).length}</Count>
-      </Circle>
-      <Circle bg="#e9c46a">
+        <br />
+        <span style={{ fontSize: '0.5rem' }}>時速大於0數量</span>
+      </BusStatus>
+      <BusStatus bg="#e9c46a">
         <Status>未移動</Status>
         <Count>{tdxBus.filter((x) => x.Speed === 0).length}</Count>
-      </Circle>
-      <Circle bg="#8d99ae">
+        <br />
+        <span style={{ fontSize: '0.5rem' }}>時速等於0數量</span>
+      </BusStatus>
+      <BusStatus bg="#8d99ae">
         <Status>其他非營運狀態</Status>
         <Count>{tdxBus.filter((x) => x.BusStatus !== 0).length}</Count>
-      </Circle>
+        <br />
+        <span style={{ fontSize: '0.5rem' }}>出租、緊急事件或非營運中數量</span>
+      </BusStatus>
       <ProgressAdjust>
         <ProgressBar loading={loading} data={tdxBus} />
       </ProgressAdjust>

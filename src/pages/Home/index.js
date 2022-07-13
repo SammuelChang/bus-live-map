@@ -10,11 +10,12 @@ import featureRoute from '../../images/featureRouteLight.png';
 import featureCollection from '../../images/featureCollectionLight.png';
 import featureCity from '../../images/featureCityLight.png';
 import featureNearby from '../../images/featureNearbyLight.png';
+import featureInBus from '../../images/featureInBus.png';
 import leadership from '../../images/leadership.png';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(700vh - 120px + 50px + 25px);
+  height: calc(800vh - 120px + 50px + 25px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,6 +129,7 @@ const SubCover = styled.div`
 `;
 
 const SubCoverTitle = styled.div`
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
   font-size: 6rem;
   font-weight: bold;
   margin-bottom: 50px;
@@ -136,7 +138,7 @@ const SubCoverTitle = styled.div`
   transition: 1.5s ease;
   @keyframes scale {
     0% {
-      transform: scale(0.5);
+      transform: scale(0);
     }
     100% {
       transform: scale(1);
@@ -167,10 +169,10 @@ const SubCoverTitle = styled.div`
 `;
 
 const SubCoverText = styled.div`
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
   font-size: 2rem;
   font-weight: bold;
   text-align: center;
-  visibility: visible;
   z-index: 3;
   animation: ${(props) => (props.isVisible ? 'scale-up-center' : '')} 3s ease-in-out 1;
   @keyframes scale-up-center {
@@ -514,6 +516,17 @@ export default function Home() {
           <FeatureText>三秒鐘知道最遠去處</FeatureText>
         </FeatureIntro>
         <FeatureImg img={featureNearby} margin="0 0 0 50px" />
+      </Feature>
+      <Feature>
+        <FeatureImg img={featureInBus} margin="0 0 0 100px" />
+        <FeatureIntro margin="0 0 0 50px" text="left">
+          <FeatureTitle>
+            即便車廂擁擠
+            <br />
+            從此不再坐過站
+          </FeatureTitle>
+          <FeatureText>搭乘中車輛即時資訊</FeatureText>
+        </FeatureIntro>
       </Feature>
       <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
         <NextPage down={false} title="回到頂端" />

@@ -105,8 +105,6 @@ const NavTo = styled.div`
     position: absolute;
     width: 100%;
     border-bottom: 1.2px solid gray;
-    ${'' /* border-radius: 4px; */}
-    ${'' /* background-color: #18272f; */}
     bottom: 0;
     left: 0;
     transform-origin: right;
