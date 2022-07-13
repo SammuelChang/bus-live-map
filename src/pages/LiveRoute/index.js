@@ -181,7 +181,7 @@ export default function LiveRoute({ isDark }) {
   }
 
   function searchRoute(route) {
-    assignRouteHandler(route || '299');
+    assignRouteHandler(route);
   }
 
   useEffect(() => {

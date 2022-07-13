@@ -80,7 +80,7 @@ const Status = styled.div`
   color: #e63946;
   height: 30px;
   width: 100%;
-  padding: 5px 5px;
+  margin-left: 15px;
   animation: blur-in-expand 0.4s linear both;
   @keyframes blur-in-expand {
     0% {
@@ -355,7 +355,6 @@ export default function RouteSearch({
       localStorage.setItem('stopCollect', JSON.stringify(collect));
     }
   }
-
   return (
     <Wrapper>
       <SearchContainer>
@@ -378,7 +377,7 @@ export default function RouteSearch({
           }}
         />
       </SearchContainer>
-      <Status>{wrongInput && '查無路線資訊'}</Status>
+      <Status>{wrongInput && '查無資訊，目前僅限行經北市者'}</Status>
       {!!mergeStation.length && (
         <Direction>
           <Depart onClick={() => setDirection(0)} directionNow={direction === 0}>
@@ -398,8 +397,8 @@ export default function RouteSearch({
             <Stop key={stop.StopUID}>
               <StopName>{stop.StopName.Zh_tw}</StopName>
               <StopTime coming={stop.EstimateTime <= 120}>
-                {stop.EstimateTime == null && '未發車'}
-                {stop.EstimateTime > 0 && stop.EstimateTime <= 60 && '進站中'}
+                {stop.EstimateTime === undefined && '未發車'}
+                {stop.EstimateTime >= 0 && stop.EstimateTime <= 60 && '進站中'}
                 {stop.EstimateTime > 60 && stop.EstimateTime <= 120 && '將進站'}
                 {stop.EstimateTime > 120 && Math.floor(stop.EstimateTime / 60)}
               </StopTime>
