@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
 import {
   useEffect, useState, useRef, memo,
 } from 'react';
@@ -61,7 +60,7 @@ export default function LiveRoute({ isDark }) {
     if (bunds.length && preBusInfo.current[0]?.RouteName.Zh_tw !== tdxBusInfo[0]?.RouteName.Zh_tw) {
       const map = useMap();
       map.fitBounds(bunds);
-      map.setView(map.getCenter(), 12);
+      map.setView(map.getCenter(), 10);
     }
     return null;
   }
@@ -214,7 +213,7 @@ export default function LiveRoute({ isDark }) {
         <RouteSearch
           displayBus={displayBus}
           setDisplayBus={setDisplayBus}
-          searchRoute={searchRoute}
+          searchRoute={() => searchRoute}
           mergeStation={Object.values(mergeStation)}
           direction={direction}
           setDirection={setDirection}

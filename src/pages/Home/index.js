@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import missing from '../../images/missing.jpeg';
+import missing from '../../images/missing.png';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
 import featureMap from '../../images/map-feature-light.png';
@@ -428,7 +428,7 @@ export default function Home() {
     <Wrapper>
       <Cover id="cover">
         <CoverTitle>這是你每天的生活嗎？</CoverTitle>
-        <CoverImg />
+        <CoverImg loading="lazy" />
       </Cover>
       <SubCover id="sub-cover">
         <RollingBus

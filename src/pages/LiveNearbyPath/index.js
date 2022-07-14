@@ -14,7 +14,8 @@ import {
 import 'leaflet/dist/leaflet.css';
 import { parse } from 'wellknown';
 import styled from 'styled-components';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import BusShape from '../../components/LeafletMap/BusShape';
@@ -60,7 +61,7 @@ const StyledMemoMapContainer = styled(MemoMapContainer)`
     }
   }
 `;
-Modal.setAppElement('#root');
+// Modal.setAppElement('#root');
 
 function AddMarkerToClick({
   markers, setMarkers, getCurrentPoi, setGetCurrentPoi,
@@ -142,7 +143,7 @@ export default function LiveNearbyPath({ isDark }) {
   const [nearby, setNearby] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [tdxShape, setTdxShape] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(true);
   const [getCurrentPoi, setGetCurrentPoi] = useState(false);
 
   async function getNearby(lon, lat) {
@@ -197,11 +198,24 @@ export default function LiveNearbyPath({ isDark }) {
     }
   }, [markers]);
 
+  function successLocate(position) {
+    setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
+    setGetCurrentPoi(true);
+  }
+
+  function failedLocate() {
+    setMarkers([
+      {
+        lat: location[0],
+        lng: location[1],
+      },
+    ]);
+    setGetCurrentPoi(false);
+    setLoading(false);
+  }
+
   function locatePosition() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
-      setGetCurrentPoi(true);
-    });
+    navigator.geolocation.getCurrentPosition(successLocate, failedLocate);
   }
 
   useEffect(() => {
@@ -209,15 +223,17 @@ export default function LiveNearbyPath({ isDark }) {
   }, []);
 
   useEffect(() => {
-    setIsOpen(true);
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 3000);
+    if (!getCurrentPoi) return;
+    Swal.fire({
+      title: '已自動偵測您現在位置',
+      showConfirmButton: false,
+      timer: 1500,
+    });
   }, [getCurrentPoi]);
 
   return (
     <Wrapper>
-      {getCurrentPoi && (
+      {/* {getCurrentPoi && (
         <Modal
           closeTimeoutMS={500}
           isOpen={isOpen}
@@ -249,7 +265,7 @@ export default function LiveNearbyPath({ isDark }) {
         >
           <div>已自動定位您所在位置，三秒後自動關閉視窗</div>
         </Modal>
-      )}
+      )} */}
       <Sidebar>
         <NearbyPath nearby={nearby} routes={routes} markers={markers} />
       </Sidebar>
