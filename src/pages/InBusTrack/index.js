@@ -19,9 +19,10 @@ const Wrapper = styled.div`
   align-items: flex-start;
   height: 100%;
   min-height: calc(100vh - 120px);
-  width: 100vw;
+  max-width: 100vw;
   padding: 50px 0;
   user-select: none;
+
   > * {
     color: ${({ theme }) => theme.color};
   }
@@ -35,7 +36,7 @@ const UserInfo = styled.form`
   width: 400px;
   height: 100%;
   display: flex;
-  margin-right: ${(props) => (props.routeData ? '100px' : '0')};
+  margin-right: ${(props) => (props.routeData ? '80px' : '0')};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,16 +68,45 @@ const Block = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
+  color: ${(props) => props.color};
+
+  &::before {
+    content: '${(props) => props.userOrder}';
+    min-width: 30px;
+    min-height: 30px;
+    color: ${({ theme }) => theme.main};
+    background: ${({ theme }) => theme.primary};
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    visibility: ${(props) => (props.noDot ? 'hidden' : 'visible')};
+  }
 `;
 
 const Label = styled.h5`
-  min-width: 100px;
-  font-size: 1.2rem;
+  min-width: 80px;
+  font-size: 1rem;
+  text-align: center;
   margin-right: 10px;
+
   ${(props) => props.unChosen
     && css`
       color: #e63946;
     `};
+`;
+
+const Remind = styled.table`
+  color: gray;
+  font-size: 0.8rem;
+  margin-left: 5px;
+
+  tr {
+    width: 100%;
+  }
 `;
 
 const Route = styled.div`
@@ -84,15 +114,29 @@ const Route = styled.div`
   display: flex;
   align-items: center;
   padding: 15px 5px 15px 0;
-  margin: 20px 15px;
+  margin-top: 15px;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.color};
 
-  &:focus-within {
-    outline: none;
-    border-bottom: 2px solid ${({ theme }) => theme.color};
-    margin: 20px 15px 19px 15px;
+  &::before {
+    content: '1';
+    min-width: 30px;
+    min-height: 30px;
+    color: ${({ theme }) => theme.main};
+    background: ${({ theme }) => theme.primary};
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
   }
+`;
+const RouteInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
+  border-bottom: 1px solid ${({ theme }) => theme.color};
 
   > * {
     border: none;
@@ -100,11 +144,18 @@ const Route = styled.div`
       outline: none;
     }
   }
+
+  &:focus-within {
+    outline: none;
+    border-bottom: 2px solid ${({ theme }) => theme.color};
+    margin-bottom: -1px;
+  }
 `;
 
 const RouteInput = styled.input`
   width: 100%;
   height: 100%;
+  min-height: 40px;
   font-size: 1rem;
   font-weight: 500;
   padding-left: 5px;
@@ -143,6 +194,7 @@ const Select = styled.select`
   border-bottom: 1px solid ${({ theme }) => theme.color};
   color: ${({ theme }) => theme.color};
   cursor: pointer;
+  position: relative;
 
   &:focus {
     outline: none;
@@ -204,12 +256,13 @@ const RouteStatus = styled.div`
 
 const RouteBackground = styled.div`
   height: 100%;
-  width: 200px;
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  margin-right: 50px;
 
   &::before {
     content: '';
@@ -232,9 +285,11 @@ const Stop = styled.div`
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  border: 2px solid grey;
+  border: 4px solid grey;
   position: relative;
   margin: 5px 0 5px 0;
+  display: flex;
+  align-items: center;
 
   ${(props) => props.pre
     && css`
@@ -269,9 +324,9 @@ const Stop = styled.div`
     content: '${(props) => props.name}';
     display: block;
     margin-left: 40px;
-    margin-top: -2.5px;
     width: 100px;
     height: 30px;
+    margin-top: 7px;
     white-space: nowrap;
   }
 
@@ -296,6 +351,60 @@ export default function InBusTrack() {
   const [error, setError] = useState(false);
   const [busCurrentStop, setBusCurrentStop] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userStopPlate, setUserStopPlate] = useState('');
+
+  const locateCurrentPosition = () => new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve(position.coords);
+      },
+      (e) => {
+        reject(e);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000,
+      },
+    );
+  });
+
+  async function getUserNearbyStop(stops, userBuses) {
+    const userPosition = await locateCurrentPosition();
+
+    if (userPosition === undefined) {
+      return null;
+    }
+
+    let userCurrentStop;
+    let userCurrentStopToNearbyStop = Math.sqrt(
+      (stops[0].PositionLat - userPosition.latitude) ** 2
+        + (stops[0].PositionLon - userPosition.longitude) ** 2,
+    );
+
+    stops.forEach((i) => {
+      if (
+        Math.sqrt(
+          (i.PositionLat - userPosition.latitude) ** 2
+            + (i.PositionLon - userPosition.longitude) ** 2,
+        ) < userCurrentStopToNearbyStop
+      ) {
+        userCurrentStop = i.StopName;
+        userCurrentStopToNearbyStop = Math.sqrt(
+          (i.PositionLat - userPosition.latitude) ** 2
+            + (i.PositionLon - userPosition.longitude) ** 2,
+        );
+      }
+    });
+    const result = [
+      userCurrentStop,
+      userBuses
+        .filter((a) => a.Direction === userDirection)
+        .find((i) => i.StopName.Zh_tw === userCurrentStop)?.PlateNumb,
+    ];
+    console.log(result);
+    return result;
+  }
 
   function getDirection(list, on, off) {
     // 判斷去程、返程
@@ -378,19 +487,23 @@ export default function InBusTrack() {
 
     const stops = filterRoute.reduce((acc, cur) => {
       cur.Stops.forEach((stop) => {
-        acc[`${stop.StopUID}-${stop.Direction}`] = {};
-        acc[`${stop.StopUID}-${stop.Direction}`].StationID = stop.StationID;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopUID = stop.StopUID;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopName = stop.StopName.Zh_tw;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopSequence = stop.StopSequence;
-        acc[`${stop.StopUID}-${stop.Direction}`].Direction = cur.Direction;
-        acc[`${stop.StopUID}-${stop.Direction}`].SubRouteUID = cur.SubRouteUID;
-        acc[`${stop.StopUID}-${stop.Direction}`].idx = `${cur.Direction}${stop.StopSequence}`;
+        const key = `${stop.StopUID}-${stop.Direction}`;
+        acc[key] = {};
+        acc[key].StationID = stop.StationID;
+        acc[key].StopUID = stop.StopUID;
+        acc[key].StopName = stop.StopName.Zh_tw;
+        acc[key].StopSequence = stop.StopSequence;
+        acc[key].Direction = cur.Direction;
+        acc[key].SubRouteUID = cur.SubRouteUID;
+        acc[key].idx = `${cur.Direction}${stop.StopSequence}`;
+        acc[key].PositionLat = stop.StopPosition.PositionLat;
+        acc[key].PositionLon = stop.StopPosition.PositionLon;
       });
       return acc;
     }, {});
     const result = Object.values(stops).sort((a, b) => b.Direction - a.Direction);
     setStopLists(result);
+    console.log(result);
 
     const show = Object.values(
       result.reduce((acc, cur) => {
@@ -444,30 +557,40 @@ export default function InBusTrack() {
     }
   }, [error]);
 
+  useEffect(() => {
+    if (userRoute.length > 0 && tdxBuses.length > 0) {
+      getUserNearbyStop(userRoute, tdxBuses).then((p) => {
+        setUserStopPlate(p[1]);
+      });
+    }
+  }, [userRoute, tdxBuses]);
+
   return (
     <Wrapper>
       <UserInfo routeData={userPlate}>
         <UserInfoBanner>目前搭乘公車</UserInfoBanner>
         <Route>
           <Label>路線名稱</Label>
-          <RouteInput
-            placeholder="306"
-            onChange={(e) => {
-              setBus(e.target.value);
-            }}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
+          <RouteInputContainer>
+            <RouteInput
+              placeholder="306"
+              onChange={(e) => {
+                setBus(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  getData(e);
+                }
+              }}
+            />
+            <RouteBtn
+              onClick={(e) => {
                 getData(e);
-              }
-            }}
-          />
-          <RouteBtn
-            onClick={(e) => {
-              getData(e);
-            }}
-          />
+              }}
+            />
+          </RouteInputContainer>
         </Route>
-        <Block>
+        <Block userOrder="2">
           <Label>上車站牌</Label>
           <Select
             onChange={(e) => {
@@ -486,7 +609,7 @@ export default function InBusTrack() {
               ))}
           </Select>
         </Block>
-        <Block>
+        <Block userOrder="3">
           <Label>下車站牌</Label>
           <Select
             onChange={(e) => {
@@ -505,7 +628,7 @@ export default function InBusTrack() {
               ))}
           </Select>
         </Block>
-        <Block>
+        <Block userOrder="4">
           <Label unChosen={userPlate.length === 0 && tdxBuses.length > 0}>車牌號碼</Label>
           <Select
             onChange={(e) => {
@@ -520,9 +643,28 @@ export default function InBusTrack() {
                 .map((i) => (
                   <Option key={i.PlateNumb} value={i.PlateNumb}>
                     {i.PlateNumb}
+                    {i.PlateNumb === userStopPlate ? ' 您可能搭乘的車輛' : ''}
                   </Option>
                 ))}
           </Select>
+        </Block>
+        <Block noDot>
+          <Remind>
+            <tr>
+              <td style={{ width: '120px' }}>您可能搭乘的車輛</td>
+              <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
+            </tr>
+            <tr>
+              <td style={{ width: '120px' }}>常見車牌位置</td>
+              <td>
+                1.駕駛座右上方中央看板
+                <br />
+                2.車內側門正上方
+                <br />
+                3.車外正前方、正後方
+              </td>
+            </tr>
+          </Remind>
         </Block>
       </UserInfo>
       {userPlate && (
