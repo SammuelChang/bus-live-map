@@ -438,7 +438,7 @@ export default function InBusTrack() {
     if (bus.length > 0 && busWithTime.length === 0) {
       Swal.fire({
         title: '請輸入正確的路線名稱',
-        footer: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        text: 'Sorry...目前僅能搜尋行經台北市區之公車',
         confirmButtonColor: '#3085d6',
       });
       return;
@@ -479,6 +479,14 @@ export default function InBusTrack() {
 
   async function getData(e) {
     e.preventDefault();
+    if (bus.length === 0) {
+      Swal.fire({
+        title: '請輸入路線名稱',
+        confirmButtonColor: '#3085d6',
+        width: '350px',
+      });
+      return;
+    }
 
     const token = await api.getToken();
     const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
@@ -486,7 +494,7 @@ export default function InBusTrack() {
     if (bus.length > 0 && busWithTime.length === 0) {
       Swal.fire({
         title: '請輸入正確的路線名稱',
-        footer: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        text: 'Sorry...目前僅能搜尋行經台北市區之公車',
         confirmButtonColor: '#3085d6',
       });
       return;
@@ -637,7 +645,10 @@ export default function InBusTrack() {
           </Select>
         </Block>
         <Block userOrder="4">
-          <Label unChosen={userPlate.length === 0 && tdxBuses.length > 0}>車牌號碼</Label>
+          <Label>
+            {/* unChosen={userPlate.length === 0 && tdxBuses.length > 0} */}
+            車牌號碼
+          </Label>
           <Select
             onChange={(e) => {
               setUserPlate(e.target.value);
@@ -659,17 +670,17 @@ export default function InBusTrack() {
         <Block noDot>
           <Remind>
             <tr>
-              <td style={{ width: '120px' }}>您可能搭乘的車輛</td>
+              <td style={{ width: '120px' }}>※ 您可能搭乘的車輛</td>
               <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
             </tr>
             <tr>
-              <td style={{ width: '120px' }}>常見車牌位置</td>
+              <td style={{ width: '120px' }}>※ 常見車牌位置</td>
               <td>
                 1.駕駛座右上方中央看板
                 <br />
-                2.車內側門正上方
+                2.車內乘客後門正上方
                 <br />
-                3.車外正前方、正後方
+                3.車外正前方、正後方、右側後方
               </td>
             </tr>
           </Remind>

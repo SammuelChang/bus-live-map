@@ -6,10 +6,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
 import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  FeatureGroup, // useMap,
+  MapContainer, TileLayer, useMapEvents, FeatureGroup, useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
@@ -51,23 +48,23 @@ export default function LiveRoute({ isDark }) {
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxBus, setTdxBus] = useState([]);
-  // const [tdxBusInfo, setTdxBusInfo] = useState([]);
+  const [tdxBusInfo, setTdxBusInfo] = useState([]);
   const [mergeStation, setMergeStation] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const [displayBus, setDisplayBus] = useState('');
   const [direction, setDirection] = useState(0);
-  const [boundry, setBoundry] = useState([]);
-  // const preBusInfo = useRef(null);
+  const [bunds, setBunds] = useState([]);
+  const preBusInfo = useRef(null);
   const [wrongInput, setWrongInput] = useState(false);
 
-  // function SetBoundsRectangles() {
-  //   if (boundry.length && preBusInfo.current !== tdxBusInfo) {
-  //     const map = useMap();
-  //     map.fitBounds(boundry);
-  //     console.log('bounds done');
-  //   }
-  //   return null;
-  // }
+  function SetBoundsComponent() {
+    if (bunds.length && preBusInfo.current[0]?.RouteName.Zh_tw !== tdxBusInfo[0]?.RouteName.Zh_tw) {
+      const map = useMap();
+      map.fitBounds(bunds);
+      map.setView(map.getCenter(), 12);
+    }
+    return null;
+  }
 
   function ZoomListener() {
     const mapEvents = useMapEvents({
@@ -147,7 +144,8 @@ export default function LiveRoute({ isDark }) {
     setLoading(true);
     const token = await api.getToken();
     const info = await getInfoFn(token, bus);
-    // setTdxBusInfo(info);
+
+    setTdxBusInfo(info);
 
     if (!info.length) {
       setLoading(false);
@@ -174,7 +172,7 @@ export default function LiveRoute({ isDark }) {
     Object.values(data).forEach((i) => {
       resultRoute.push([i.StopPosition.PositionLat, i.StopPosition.PositionLon]);
     });
-    setBoundry(resultRoute);
+    setBunds(resultRoute);
 
     setLoading(false);
     setWrongInput(false);
@@ -206,9 +204,9 @@ export default function LiveRoute({ isDark }) {
     setRouteTimer(10);
   }, [displayBus]);
 
-  // useEffect(() => {
-  //   preBusInfo.current = tdxBusInfo;
-  // }, [tdxBusInfo]);
+  useEffect(() => {
+    preBusInfo.current = tdxBusInfo;
+  }, [tdxBusInfo]);
 
   return (
     <Wrapper>
@@ -227,7 +225,7 @@ export default function LiveRoute({ isDark }) {
       <StyledMemoMapContainer
         center={mapRef.current ? null : location}
         zoom={mapRef.current ? null : zoomLevel}
-        bounds={mapRef.current ? boundry : null}
+        bounds={mapRef.current ? bunds : null}
         minZoom={12}
         maxZoom={15}
         scrollWheelZoom
@@ -255,7 +253,7 @@ export default function LiveRoute({ isDark }) {
           />
         )}
         <ZoomListener />
-        {/* <SetBoundsRectangles /> */}
+        <SetBoundsComponent />
       </StyledMemoMapContainer>
       {/* {loading && <LoadingEffect />} */}
     </Wrapper>

@@ -212,9 +212,13 @@ const Stop = styled.div`
 const StopName = styled.div`
   text-align: left;
   width: 60%;
-  white-space: nowrap;
   font-weight: bold;
   padding-left: 5px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: auto 0;
 `;
 
 const StopTime = styled.div`
@@ -279,7 +283,8 @@ const Progress = styled.div`
   height: 5px;
   position: relative;
 
-  ${(props) => props.loading
+  ${
+  '' /* ${(props) => props.loading
     && css`
       background: #e63946;
       animation: shine 0.5s linear forwards infinite;
@@ -291,7 +296,8 @@ const Progress = styled.div`
           opacity: 0;
         }
       }
-    `}
+    `} */
+}
 `;
 
 const ProgressValue = styled.div`
