@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const api = {
   top: 10000,
   host: 'https://tdx.transportdata.tw',

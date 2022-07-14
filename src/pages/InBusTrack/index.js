@@ -1,5 +1,7 @@
+/* eslint-disable no-alert */
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components/macro';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
 // import LoadingEffect from '../../components/LoadingEffect';
@@ -402,7 +404,6 @@ export default function InBusTrack() {
         .filter((a) => a.Direction === userDirection)
         .find((i) => i.StopName.Zh_tw === userCurrentStop)?.PlateNumb,
     ];
-    console.log(result);
     return result;
   }
 
@@ -435,7 +436,11 @@ export default function InBusTrack() {
     const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
 
     if (bus.length > 0 && busWithTime.length === 0) {
-      alert('請輸入正確的路線名稱');
+      Swal.fire({
+        title: '請輸入正確的路線名稱',
+        footer: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
 
@@ -479,7 +484,11 @@ export default function InBusTrack() {
     const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
 
     if (bus.length > 0 && busWithTime.length === 0) {
-      alert('請輸入正確的路線名稱');
+      Swal.fire({
+        title: '請輸入正確的路線名稱',
+        footer: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
     const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
@@ -503,7 +512,6 @@ export default function InBusTrack() {
     }, {});
     const result = Object.values(stops).sort((a, b) => b.Direction - a.Direction);
     setStopLists(result);
-    console.log(result);
 
     const show = Object.values(
       result.reduce((acc, cur) => {

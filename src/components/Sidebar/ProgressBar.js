@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
+// import { css } from 'styled-components/macro';
 
 const ProgressContainer = styled.div`
   height: 20px;
@@ -18,7 +19,8 @@ const Progress = styled.div`
   height: 5px;
   position: relative;
 
-  ${(props) => props.loading
+  ${
+  '' /* ${(props) => props.loading
     && css`
       background: #e63946;
       animation: shine 0.5s linear forwards infinite;
@@ -30,7 +32,8 @@ const Progress = styled.div`
           opacity: 0;
         }
       }
-    `}
+    `} */
+}
 `;
 
 const ProgressValue = styled.div`

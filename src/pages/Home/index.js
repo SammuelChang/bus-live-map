@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import missing from '../../images/missing.jpg';
+import missing from '../../images/missing.jpeg';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
 import featureMap from '../../images/map-feature-light.png';
@@ -525,7 +525,7 @@ export default function Home() {
             <br />
             從此不再坐過站
           </FeatureTitle>
-          <FeatureText>搭乘中車輛即時資訊</FeatureText>
+          <FeatureText>乘坐車輛偵測+路線實況</FeatureText>
         </FeatureIntro>
       </Feature>
       <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
