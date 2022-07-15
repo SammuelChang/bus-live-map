@@ -7,6 +7,10 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     }
 
+    html {
+    background: ${({ theme }) => theme.background};
+    }
+
     ::placeholder {
     color: ${({ theme }) => theme.color};
     opacity: 0.7;

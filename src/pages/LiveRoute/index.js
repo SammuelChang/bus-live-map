@@ -19,6 +19,8 @@ import RouteSearch from '../../components/Sidebar/RouteSearch';
 const Wrapper = styled.div`
   display: flex;
   position: relative;
+  width: 100vw;
+  overflow: hidden;
 `;
 
 const MemoMapContainer = memo(MapContainer);

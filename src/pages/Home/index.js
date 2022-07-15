@@ -366,6 +366,7 @@ const FeatureImg = styled.div`
   background-size: contain;
   width: 40%;
   height: 100%;
+  max-height: 400px;
   margin: ${(props) => props.margin};
 
   @media (max-width: 780px) {

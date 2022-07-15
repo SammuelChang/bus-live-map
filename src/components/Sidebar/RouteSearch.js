@@ -77,13 +77,15 @@ const SearchContainer = styled.form`
 
 const StyledSelect = styled(Select)`
   width: 100%;
+  .react-select__placeholder {
+    color: ${({ theme }) => theme.primary};
+  }
   .react-select__control {
     background: ${({ theme }) => theme.background};
     color: ${({ theme }) => theme.color};
     opacity: 1;
     z-index: 5;
   }
-
   .react-select__menu {
     background: ${({ theme }) => theme.background};
     color: ${({ theme }) => theme.color};
@@ -95,12 +97,21 @@ const StyledSelect = styled(Select)`
   .react-select__option--is-selected {
     color: ${({ theme }) => theme.primary};
   }
+  .react-select__option--is-hovered {
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+  }
   .react-select__control {
     outline: none;
     border: none;
     border-radius: 0px;
     border-bottom: 1px solid ${({ theme }) => theme.color};
     box-shadow: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    input {
+      color: unset;
+      color: ${({ theme }) => theme.primary} !important;
+    }
     &:hover {
       border-bottom: 1px solid ${({ theme }) => theme.color};
     }
@@ -111,8 +122,15 @@ const StyledSelect = styled(Select)`
   .react-select__single-value {
     color: ${({ theme }) => theme.primary};
   }
-  .react-select__placeholder {
-    color: ${({ theme }) => theme.primary};
+  .react-select__value-container {
+    padding: 0;
+  }
+  .react-select__option--is-focused {
+    background: none;
+  }
+  .react-select__option--is-selected {
+    background: #ffc94a;
+    color: #363537;
   }
 `;
 
@@ -122,7 +140,6 @@ const Status = styled.div`
   color: #e63946;
   height: 30px;
   width: 100%;
-  margin-left: 15px;
   animation: blur-in-expand 0.4s linear both;
   @keyframes blur-in-expand {
     0% {
