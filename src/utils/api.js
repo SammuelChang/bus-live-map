@@ -17,7 +17,6 @@ const api = {
       body: urlencoded,
       redirect: 'follow',
     };
-
     return fetch(
       `${this.host}/auth/realms/TDXConnect/protocol/openid-connect/token`,
       requestOptions,

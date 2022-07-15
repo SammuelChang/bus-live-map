@@ -2,6 +2,7 @@ import { useLocation, Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import GlobalStyle from '../../globalStyles';
 
 const StyleLink = styled(Link)`
@@ -221,6 +222,7 @@ function Header({ toggleTheme }) {
     setMenu(!menu);
   };
   const handleScroll = () => setMenu(false);
+  const isMediaMatch = useMediaQuery({ query: '(max-width: 780px)' });
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -240,9 +242,11 @@ function Header({ toggleTheme }) {
           <StyleLink to="/in-bus-track">
             <NavTo cur={pathname.includes('in-bus-track')}>乘車快報</NavTo>
           </StyleLink>
-          {/* <StyleLink to="/live/city">
-            <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
-          </StyleLink> */}
+          {!isMediaMatch && (
+            <StyleLink to="/live/city">
+              <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
+            </StyleLink>
+          )}
           <StyleLink to="/live/nearbyPath">
             <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>

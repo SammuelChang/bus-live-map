@@ -35,7 +35,7 @@ const Wrapper = styled.div`
 `;
 
 const UserInfo = styled.form`
-  width: 400px;
+  width: 300px;
   height: 100%;
   display: flex;
   margin-right: ${(props) => (props.routeData ? '80px' : '0')};
@@ -67,6 +67,7 @@ const UserInfoBanner = styled.div`
 `;
 
 const Block = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -669,20 +670,22 @@ export default function InBusTrack() {
         </Block>
         <Block noDot>
           <Remind>
-            <tr>
-              <td style={{ width: '120px' }}>※ 您可能搭乘的車輛</td>
-              <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
-            </tr>
-            <tr>
-              <td style={{ width: '120px' }}>※ 常見車牌位置</td>
-              <td>
-                1.駕駛座右上方中央看板
-                <br />
-                2.車內乘客後門正上方
-                <br />
-                3.車外正前方、正後方、右側後方
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td style={{ width: '120px' }}>※ 您可能搭乘的車輛</td>
+                <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
+              </tr>
+              <tr>
+                <td style={{ width: '120px' }}>※ 常見車牌位置</td>
+                <td>
+                  1.司機右上方中央看板
+                  <br />
+                  2.車內乘客後門正上方
+                  <br />
+                  3.車外正前方、正後方、右側後方
+                </td>
+              </tr>
+            </tbody>
           </Remind>
         </Block>
       </UserInfo>

@@ -21,6 +21,7 @@ const Wrapper = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
+  overflow: hidden;
 `;
 
 const NextPage = styled.div`
@@ -68,7 +69,7 @@ const NextPage = styled.div`
 
 const Cover = styled.div`
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: calc(100vh - 120px);
   display: flex;
   justify-content: center;
@@ -369,7 +370,9 @@ const FeatureImg = styled.div`
 
   @media (max-width: 780px) {
     width: 50vw;
+    min-width: 300px;
     height: 50vw;
+    min-height: 300px;
     margin: 0;
   }
 `;
@@ -387,14 +390,22 @@ const FeatureIntro = styled.div`
     justify-content: center;
     text-align: center;
     order: 2;
+    margin-bottom: 30px;
   }
 `;
 const FeatureTitle = styled.div`
-  font-size: 4rem;
+  font-size: 3.2rem;
+  @media (max-width: 780px) {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
 `;
 const FeatureText = styled.div`
   font-size: 2rem;
   opacity: 0.5;
+  @media (max-width: 780px) {
+    font-size: 1.5rem;
+  }
 `;
 
 export default function Home() {

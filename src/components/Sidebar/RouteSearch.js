@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 import styled, { css } from 'styled-components/macro';
 import heart from '../../images/heart.png';
 
@@ -28,49 +29,90 @@ const SearchContainer = styled.form`
   width: 100%;
 `;
 
-const SearchButton = styled.div`
-  background: url(${({ theme }) => theme.search}) no-repeat center center;
-  background-size: contain;
-  height: 40px;
-  width: 40px;
-  border: none;
-  margin-right: 10px;
-  cursor: pointer;
-  position: relative;
+// const SearchButton = styled.div`
+//   background: url(${({ theme }) => theme.search}) no-repeat center center;
+//   background-size: contain;
+//   height: 40px;
+//   width: 40px;
+//   border: none;
+//   margin-right: 10px;
+//   cursor: pointer;
+//   position: relative;
 
-  &:hover {
-    transform: scale(1.3);
-    transition: transform 0.1s;
-  }
-  &::active {
-    transform: scale(0.7);
-    transition: transform 0.1s;
-  }
-`;
+//   &:hover {
+//     transform: scale(1.3);
+//     transition: transform 0.1s;
+//   }
+//   &::active {
+//     transform: scale(0.7);
+//     transition: transform 0.1s;
+//   }
+// `;
 
-const SearchText = styled.input`
-  background: none;
-  border: none;
+// const SearchText = styled.input`
+//   background: none;
+//   border: none;
+//   width: 100%;
+//   height: 50%;
+//   max-height: 100px;
+//   color: ${({ theme }) => theme.color};
+//   font-size: 1.8rem;
+//   font-weight: bold;
+//   padding: 15px 15px 20px 0;
+//   margin-left: 15px;
+//   resize: none;
+//   border: none;
+//   overflow: hidden;
+//   outline: none;
+//   white-space: nowrap;
+//   display: flex;
+//   align-items: center;
+//   border-bottom: 0.5px solid ${({ theme }) => theme.background};
+
+//   &:focus-within {
+//     border-bottom: 0.5px solid gray;
+//     transition: border-bottom 0.25s linear;
+//   }
+// `;
+
+const StyledSelect = styled(Select)`
   width: 100%;
-  height: 50%;
-  max-height: 100px;
-  color: ${({ theme }) => theme.color};
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 15px 15px 20px 0;
-  margin-left: 15px;
-  resize: none;
-  border: none;
-  overflow: hidden;
-  outline: none;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  border-bottom: 0.5px solid ${({ theme }) => theme.background};
+  .react-select__control {
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+    opacity: 1;
+    z-index: 5;
+  }
 
-  &:focus-within {
-    border-bottom: 0.5px solid gray;
-    transition: border-bottom 0.25s linear;
+  .react-select__menu {
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+  }
+  .react-select__option--is-focused {
+    border: none;
+    outline: none;
+  }
+  .react-select__option--is-selected {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__control {
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+    box-shadow: none;
+    &:hover {
+      border-bottom: 1px solid ${({ theme }) => theme.color};
+    }
+  }
+  .react-select__indicator-separator {
+    display: none;
+  }
+  .react-select__single-value {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__placeholder {
+    color: ${({ theme }) => theme.primary};
   }
 `;
 
@@ -327,6 +369,7 @@ export default function RouteSearch({
   setDirection,
   wrongInput,
   loading,
+  cityRouteLists,
 }) {
   const busRef = useRef('');
   const [collectList, setCollectList] = useState(
@@ -361,27 +404,37 @@ export default function RouteSearch({
       localStorage.setItem('stopCollect', JSON.stringify(collect));
     }
   }
+
   return (
     <Wrapper>
       <SearchContainer>
-        <SearchText
-          placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
+        <StyledSelect
+          classNamePrefix="react-select"
+          placeholder={displayBus ? `${displayBus}` : '請選擇路線'}
+          options={cityRouteLists}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
           ref={busRef}
           type="text"
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              searchRoute(busRef.current.value);
-              setDisplayBus(busRef.current.value);
-            }
+          onChange={(e) => {
+            searchRoute(e.value);
+            setDisplayBus(e.value);
           }}
+          // onKeyPress={(e) => {
+          //   if (e.key === 'Enter') {
+          //     e.preventDefault();
+          //     searchRoute(e.value);
+          //     setDisplayBus(e.value);
+          //   }
+          // }}
         />
-        <SearchButton
+        {/* <SearchButton
           onClick={() => {
             searchRoute(busRef.current.value);
             setDisplayBus(busRef.current.value);
           }}
-        />
+        /> */}
       </SearchContainer>
       <Status>{wrongInput && '查無資訊，目前僅限行經北市者'}</Status>
       {!!mergeStation.length && (
@@ -420,7 +473,7 @@ export default function RouteSearch({
           ))}
       </Stops>
       <ProgressContainer>
-        <Progress loading={loading ? true : undefined}>
+        <Progress loading={loading ? 1 : undefined}>
           <ProgressValue run={!loading && mergeStation.length !== 0} />
         </Progress>
       </ProgressContainer>
@@ -437,4 +490,5 @@ RouteSearch.propTypes = {
   setDirection: PropTypes.func.isRequired,
   wrongInput: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
+  cityRouteLists: PropTypes.oneOfType([PropTypes.array]).isRequired,
 };

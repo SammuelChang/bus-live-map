@@ -57,7 +57,7 @@ const ProgressValue = styled.div`
 export default function ProgressBar({ loading, data }) {
   return (
     <ProgressContainer>
-      <Progress loading={loading ? true : undefined}>
+      <Progress loading={loading ? 1 : 0}>
         <ProgressValue run={!loading && data.length !== 0} />
       </Progress>
     </ProgressContainer>

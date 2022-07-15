@@ -55,12 +55,26 @@ export default function LiveRoute({ isDark }) {
   const [bunds, setBunds] = useState([]);
   const preBusInfo = useRef(null);
   const [wrongInput, setWrongInput] = useState(false);
+  const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
+
+  useEffect(() => {
+    api
+      .getToken()
+      .then((token) => api.getRouteInfo('Taipei', token))
+      .then((result) => result
+        .map((i) => ({
+          value: i.RouteName.Zh_tw,
+          label: i.RouteName.Zh_tw,
+        }))
+        .sort((a, b) => a.value.localeCompare(b.value)))
+      .then((result) => setCityRouteLists(result));
+  }, [cityRouteLists]);
 
   function SetBoundsComponent() {
     if (bunds.length && preBusInfo.current[0]?.RouteName.Zh_tw !== tdxBusInfo[0]?.RouteName.Zh_tw) {
       const map = useMap();
       map.fitBounds(bunds);
-      map.setView(map.getCenter(), 10);
+      map.setView(map.getCenter(), 12);
     }
     return null;
   }
@@ -219,6 +233,7 @@ export default function LiveRoute({ isDark }) {
           setDirection={setDirection}
           wrongInput={wrongInput}
           loading={loading}
+          cityRouteLists={cityRouteLists}
         />
       </Sidebar>
       <StyledMemoMapContainer
