@@ -44,7 +44,7 @@ const Brand = styled.div`
   width: 200px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   font-size: 2rem;
   font-weight: 500;
   border-bottom: 2px solid gray;
@@ -57,6 +57,8 @@ const Brand = styled.div`
 const BrandName = styled.div`
   display: flex;
   align-items: flex-end;
+  margin-bottom: -5px;
+  font-family: 'Oswald', sans-serif;
 `;
 
 const Logo = styled.div`
@@ -250,10 +252,7 @@ function Header({ toggleTheme }) {
           <StyleLink to="/live/nearbyPath">
             <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>
-          <StyleA
-            href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
-            target="_blank"
-          >
+          <StyleA href="https://pse.is/4baf7f" target="_blank">
             <NavTo>意見提供</NavTo>
           </StyleA>
         </SideContent>
@@ -287,10 +286,7 @@ function Header({ toggleTheme }) {
         <StyleLink to="/live/nearbyPath">
           <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
         </StyleLink>
-        <StyleA
-          href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
-          target="_blank"
-        >
+        <StyleA href="https://pse.is/4baf7f" target="_blank">
           <NavTo>意見提供</NavTo>
         </StyleA>
       </NavContainer>

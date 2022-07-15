@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 const BusStatus = styled.div`
-  height: 100px;
+  height: 110px;
   width: 200px;
   border-radius: 5px;
   background: ${(props) => props.bg};
@@ -28,6 +28,7 @@ const BusStatus = styled.div`
   align-items: center;
   justify-content: center;
   user-select: none;
+  padding: 5px 0;
   > * {
     margin-bottom: 2px;
   }

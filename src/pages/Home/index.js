@@ -2,7 +2,8 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import missing from '../../images/missing.png';
+import busMove from '../../images/bus_move.png';
+import grab from '../../images/grab.png';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
 import featureMap from '../../images/map-feature-light.png';
@@ -72,6 +73,7 @@ const Cover = styled.div`
   width: 100vw;
   height: calc(100vh - 120px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   @media (max-width: 780px) {
@@ -82,15 +84,13 @@ const Cover = styled.div`
 const CoverTitle = styled.div`
   font-size: 4vw;
   font-weight: bold;
-  height: 30vw;
+  height: 100px;
   cursor: default;
   user-select: none;
   padding: 0 10px 30px;
-  margin-right: 30px;
 
   display: flex;
-  align-items: flex-top;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   @media (max-width: 780px) {
     align-items: center;
@@ -100,19 +100,71 @@ const CoverTitle = styled.div`
   }
 `;
 
-const CoverImg = styled.div`
-  background: url(${missing});
-  background-position: center top;
+const CoverImgContainer = styled.div`
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  > * {
+    display: flex;
+    align-items: flex-end;
+  }
+`;
+
+const Grab = styled.div`
+  background: url(${grab});
+  background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   border-radius: 3px;
-  width: 30vw;
-  height: 30vw;
-  opacity: 0.9;
-  transform: skew(-0.03turn, 10deg);
-  @media (max-width: 780px) {
-    width: 300px;
-    height: 300px;
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  animation: shake-left-right 0.8s 3s ease-in-out 13;
+  @keyframes shake-left-right {
+    0%,
+    100% {
+      transform: rotate(0deg);
+      transform-origin: 50% 50%;
+    }
+    10% {
+      transform: rotate(8deg);
+    }
+    20%,
+    40%,
+    60% {
+      transform: rotate(-10deg);
+    }
+    30%,
+    50%,
+    70% {
+      transform: rotate(10deg);
+    }
+    80% {
+      transform: rotate(-8deg);
+    }
+    90% {
+      transform: rotate(8deg);
+    }
+  }
+`;
+
+const BusMove = styled.div`
+  background: url(${busMove});
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 250px;
+  height: 150px;
+  position: relative;
+  animation: moving-bus 5s 3s 2;
+  @keyframes moving-bus {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(60vw);
+    }
   }
 `;
 
@@ -439,8 +491,11 @@ export default function Home() {
   return (
     <Wrapper>
       <Cover id="cover">
-        <CoverTitle>這是你每天的生活嗎？</CoverTitle>
-        <CoverImg loading="lazy" />
+        <CoverTitle>這是你每天的生活嗎</CoverTitle>
+        <CoverImgContainer>
+          <Grab />
+          <BusMove />
+        </CoverImgContainer>
       </Cover>
       <SubCover id="sub-cover">
         <RollingBus

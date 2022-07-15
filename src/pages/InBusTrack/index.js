@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components/macro';
 import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
-// import LoadingEffect from '../../components/LoadingEffect';
 
 const ProgressAdjust = styled.div`
   z-index: 100;
@@ -712,9 +711,9 @@ export default function InBusTrack() {
                 ))}
           </RouteBackground>
           <RouteStatus>
-            {busCurrentStop === undefined ? '指定車牌尚未行經區間站牌內' : ''}
+            {!loading && busCurrentStop === undefined ? '指定車牌尚未行經區間站牌內' : ''}
             <br />
-            {busCurrentStop === undefined ? '請確認乘坐車牌是否正確' : ''}
+            {!loading && busCurrentStop === undefined ? '請確認乘坐車牌是否正確' : ''}
             {busCurrentStop !== undefined && tdxBuses.length
               ? `車機更新時間：${busCurrentStop.SrcUpdateTime.replace('T', ' ').replace(
                 '+08:00',
