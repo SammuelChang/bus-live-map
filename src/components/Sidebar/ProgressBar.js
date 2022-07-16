@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 // import { css } from 'styled-components/macro';
 
 const ProgressContainer = styled.div`
-  height: 20px;
+  height: 10px;
   width: 100%;
   z-index: 100;
   margin: auto 0;

@@ -319,10 +319,11 @@ const MainImgMap = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 50%;
-  min-height: 50vw;
-  min-width: 50vw;
+  min-height: 40vw;
+  min-width: 40vw;
   margin-left: 10vw;
   border: ${({ theme }) => theme.border} 1px solid;
+  position: relative;
   @media (max-width: 780px) {
     height: 50vw;
     width: 50vw;
@@ -334,13 +335,10 @@ const MainImgContainer = styled.div`
   display: flex;
   align-items: flex-end;
   position: absolute;
-  left: calc(25% - 25px);
-  margin-left: 10vw;
-  @media (max-width: 780px) {
-    left: calc(50% - 50px);
-    top: calc(25% - 50px);
-    margin-left: 0;
-  }
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-25%, -50%);
 `;
 
 const MainImgBus = styled.div`
@@ -521,7 +519,12 @@ export default function Home() {
       </SubCover>
       <MainFeature id="main-feature">
         <MainLayoutContainer>
-          <MainImgMap />
+          <MainImgMap>
+            <MainImgContainer>
+              <MainImgBus />
+              <MainImgStop />
+            </MainImgContainer>
+          </MainImgMap>
           <MainTextContainer>
             <MainTitle>
               用公車動態
@@ -534,10 +537,6 @@ export default function Home() {
               而非我們追趕公車
             </MainText>
           </MainTextContainer>
-          <MainImgContainer>
-            <MainImgBus />
-            <MainImgStop />
-          </MainImgContainer>
         </MainLayoutContainer>
       </MainFeature>
       <Feature>

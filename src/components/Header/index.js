@@ -127,7 +127,10 @@ const NavTo = styled.div`
       color: ${({ theme }) => theme.hoverColor};
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s linear;
+      transition: none;
+    }
+    &::before {
+      visibility: hidden;
     }
   }
 `;

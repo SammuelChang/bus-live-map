@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 `;
 
 const UserMemo = styled.div`
-  width: 250px;
+  width: 270px;
   height: 60px;
   background: white;
   z-index: 100;
@@ -272,7 +272,7 @@ export default function LiveNearbyPath({ isDark }) {
       <UserMemo>
         點擊地圖任意位置
         <br />
-        查看500公尺內行經公車路線
+        查看500公尺內行經公車最遠範圍
       </UserMemo>
       <StyledMemoMapContainer
         center={location}

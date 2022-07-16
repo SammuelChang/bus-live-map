@@ -58,11 +58,12 @@ export default function LiveRoute({ isDark }) {
   const preBusInfo = useRef(null);
   const [wrongInput, setWrongInput] = useState(false);
   const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
+  const [onRunCity] = useState('Taipei');
 
   useEffect(() => {
     api
       .getToken()
-      .then((token) => api.getRouteInfo('Taipei', token))
+      .then((token) => api.getRouteInfo(onRunCity, token))
       .then((result) => result
         .map((i) => ({
           value: i.RouteName.Zh_tw,
@@ -91,13 +92,13 @@ export default function LiveRoute({ isDark }) {
   }
 
   async function getInfoFn(token, bus) {
-    const info = await api.getRouteInfo('Taipei', token, bus);
+    const info = await api.getRouteInfo(onRunCity, token, bus);
     const filterInfo = await info.filter((a) => a.RouteName.Zh_tw === bus);
     return filterInfo;
   }
 
   async function getShapeFn(token, bus) {
-    const shape = await api.getAllShape('Taipei', token, bus);
+    const shape = await api.getAllShape(onRunCity, token, bus);
     const geoShape = await shape
       .map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }))
       .filter((a) => a.RouteName.Zh_tw === bus);
@@ -105,18 +106,18 @@ export default function LiveRoute({ isDark }) {
   }
 
   async function getBusFn(token, bus = '') {
-    const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
+    const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
     const filterBusWithTime = await busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
     return filterBusWithTime;
   }
 
   async function getRouteStationFn(token, bus = '') {
-    const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
+    const route = await api.getAllStationStopOfRoute(onRunCity, token, bus);
     const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
     return filterRoute;
   }
   async function getRouteStationTimeFn(token, bus = '') {
-    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival('Taipei', token, bus);
+    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival(onRunCity, token, bus);
     const filterRouteWithTime = await routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
     return filterRouteWithTime;
   }
@@ -236,6 +237,8 @@ export default function LiveRoute({ isDark }) {
           wrongInput={wrongInput}
           loading={loading}
           cityRouteLists={cityRouteLists}
+          // setOnRunCity={setOnRunCity}
+          // onRunCity={onRunCity}
         />
       </Sidebar>
       <StyledMemoMapContainer

@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   height: 100%;
   min-height: calc(100vh - 120px);
   max-width: 100vw;
-  padding: 50px 0;
+  padding: 10px 0;
   user-select: none;
 
   > * {
@@ -92,8 +92,9 @@ const Block = styled.div`
 const Label = styled.h5`
   min-width: 80px;
   font-size: 1rem;
-  text-align: center;
+  text-align: left;
   margin-right: 10px;
+  padding-left: 10px;
 
   ${(props) => props.unChosen
     && css`
@@ -101,13 +102,70 @@ const Label = styled.h5`
     `};
 `;
 
-const Remind = styled.table`
+const Remind = styled(Block)`
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  ::before {
+    display: none;
+  }
+`;
+
+const DetectInfo = styled.div`
+  padding: 10px 0 10px 0px;
+  margin: 10px 0 10px 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: ${(props) => (props.detectStatus ? `${({ theme }) => theme.main}` : 'gray')};
+`;
+// ${({ theme }) => theme.main}
+const NoDetectBtn = styled.button`
+  background: ${(props) => (props.detectStatus ? '#e63946' : '#2a9d8f')};
+  color: white;
+  padding: 5px;
+  margin: 0;
+  border: none;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  box-shadow: 0 4px #999;
+  outline: 0.5px solid transparent;
+
+  :active {
+    background-color: #3e8e41;
+    box-shadow: 0 2px #666;
+    transform: translateY(2px);
+  }
+  :hover {
+    outline: 0.5px solid ${({ theme }) => theme.background};
+  }
+`;
+
+const Note = styled.table`
   color: gray;
   font-size: 0.8rem;
   margin-left: 5px;
 
+  tbody {
+    width: 100%;
+  }
   tr {
     width: 100%;
+  }
+  td {
+    vertical-align: top;
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
   }
 `;
 
@@ -253,7 +311,8 @@ const RouteStatus = styled.div`
   color: ${({ theme }) => theme.color};
   font-size: 1rem;
   text-align: center;
-  margin: 0px auto 15px;
+  margin: 5px auto 15px;
+  white-space: pre;
 `;
 
 const RouteBackground = styled.div`
@@ -325,7 +384,7 @@ const Stop = styled.div`
   &::after {
     content: '${(props) => props.name}';
     display: block;
-    margin-left: 40px;
+    margin-left: 25px;
     width: 100px;
     height: 30px;
     margin-top: 7px;
@@ -333,7 +392,8 @@ const Stop = styled.div`
   }
 
   &:last-child::after {
-    margin-left: 50px;
+    margin-left: 45px;
+    margin-bottom: 5px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -354,6 +414,7 @@ export default function InBusTrack() {
   const [busCurrentStop, setBusCurrentStop] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userStopPlate, setUserStopPlate] = useState('');
+  const [detectable, setDetectable] = useState(true);
 
   const locateCurrentPosition = () => new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -372,6 +433,10 @@ export default function InBusTrack() {
   });
 
   async function getUserNearbyStop(stops, userBuses) {
+    if (!detectable) {
+      return null;
+    }
+
     const userPosition = await locateCurrentPosition();
 
     if (userPosition === undefined) {
@@ -576,7 +641,7 @@ export default function InBusTrack() {
   useEffect(() => {
     if (userRoute.length > 0 && tdxBuses.length > 0) {
       getUserNearbyStop(userRoute, tdxBuses).then((p) => {
-        setUserStopPlate(p[1]);
+        setUserStopPlate(p !== null ? p[1] : undefined);
       });
     }
   }, [userRoute, tdxBuses]);
@@ -662,31 +727,56 @@ export default function InBusTrack() {
                 .map((i) => (
                   <Option key={i.PlateNumb} value={i.PlateNumb}>
                     {i.PlateNumb}
-                    {i.PlateNumb === userStopPlate ? ' 您可能搭乘的車輛' : ''}
+                    {/* {i.PlateNumb === userStopPlate ? ' 可能搭乘中' : ''} */}
                   </Option>
                 ))}
           </Select>
         </Block>
-        <Block noDot>
-          <Remind>
+        <Remind noDot>
+          <DetectInfo detectStatus={detectable}>
+            可能搭乘的車輛：
+            {detectable && userStopPlate?.length > 0 && `${userStopPlate}`}
+            {detectable && !userStopPlate?.length > 0 && '偵測中'}
+            {!detectable && '暫停偵測'}
+            <NoDetectBtn
+              detectStatus={detectable}
+              onClick={(e) => {
+                e.preventDefault();
+                setDetectable(!detectable);
+              }}
+            >
+              {detectable ? '暫停偵測' : '開始偵測'}
+            </NoDetectBtn>
+          </DetectInfo>
+          <Note>
             <tbody>
-              <tr>
+              {/* <tr>
                 <td style={{ width: '120px' }}>※ 您可能搭乘的車輛</td>
                 <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
+              </tr> */}
+              <tr>
+                <td colSpan="2" style={{ width: '120px' }}>
+                  ※ 可手動關閉位置偵測，避免電力損失
+                </td>
               </tr>
               <tr>
                 <td style={{ width: '120px' }}>※ 常見車牌位置</td>
                 <td>
-                  1.司機右上方中央看板
-                  <br />
-                  2.車內乘客後門正上方
-                  <br />
-                  3.車外正前方、正後方、右側後方
+                  <ol>
+                    <li>司機右上方中央看板</li>
+                    <li>車內乘客後門正上方</li>
+                    <li>車外正前方、正後方、右後方</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan="2" style={{ width: '120px' }}>
+                  ※ 紅色實心圓為公車最新到站站牌
                 </td>
               </tr>
             </tbody>
-          </Remind>
-        </Block>
+          </Note>
+        </Remind>
       </UserInfo>
       {userPlate && (
         <RouteContainer>
@@ -711,9 +801,9 @@ export default function InBusTrack() {
                 ))}
           </RouteBackground>
           <RouteStatus>
-            {!loading && busCurrentStop === undefined ? '指定車牌尚未行經區間站牌內' : ''}
-            <br />
-            {!loading && busCurrentStop === undefined ? '請確認乘坐車牌是否正確' : ''}
+            {!loading && busCurrentStop === undefined
+              ? '該車牌未行經區間內，請確認乘坐車牌是否正確。\r\n兩站牌間距較長時，可能短暫無法取得車牌資訊。'
+              : ''}
             {busCurrentStop !== undefined && tdxBuses.length
               ? `車機更新時間：${busCurrentStop.SrcUpdateTime.replace('T', ' ').replace(
                 '+08:00',

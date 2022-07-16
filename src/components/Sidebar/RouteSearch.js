@@ -29,52 +29,6 @@ const SearchContainer = styled.form`
   width: 100%;
 `;
 
-// const SearchButton = styled.div`
-//   background: url(${({ theme }) => theme.search}) no-repeat center center;
-//   background-size: contain;
-//   height: 40px;
-//   width: 40px;
-//   border: none;
-//   margin-right: 10px;
-//   cursor: pointer;
-//   position: relative;
-
-//   &:hover {
-//     transform: scale(1.3);
-//     transition: transform 0.1s;
-//   }
-//   &::active {
-//     transform: scale(0.7);
-//     transition: transform 0.1s;
-//   }
-// `;
-
-// const SearchText = styled.input`
-//   background: none;
-//   border: none;
-//   width: 100%;
-//   height: 50%;
-//   max-height: 100px;
-//   color: ${({ theme }) => theme.color};
-//   font-size: 1.8rem;
-//   font-weight: bold;
-//   padding: 15px 15px 20px 0;
-//   margin-left: 15px;
-//   resize: none;
-//   border: none;
-//   overflow: hidden;
-//   outline: none;
-//   white-space: nowrap;
-//   display: flex;
-//   align-items: center;
-//   border-bottom: 0.5px solid ${({ theme }) => theme.background};
-
-//   &:focus-within {
-//     border-bottom: 0.5px solid gray;
-//     transition: border-bottom 0.25s linear;
-//   }
-// `;
-
 const StyledSelect = styled(Select)`
   width: 100%;
   .react-select__placeholder {
@@ -106,7 +60,7 @@ const StyledSelect = styled(Select)`
     border-radius: 0px;
     border-bottom: 1px solid ${({ theme }) => theme.color};
     box-shadow: none;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     input {
       color: unset;
@@ -133,6 +87,14 @@ const StyledSelect = styled(Select)`
     color: #363537;
   }
 `;
+
+// const CityStyledSelect = styled(StyledSelect)`
+//   width: 150px;
+//   .react-select__control {
+//     font-size: 1rem;
+//     font-weight: normal;
+//   }
+// `;
 
 const Status = styled.div`
   font-size: 1rem;
@@ -218,25 +180,6 @@ const Stops = styled.div`
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-
-  ${
-  '' /* &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.background};
-  }
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: ${({ theme }) => theme.background};
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: ${({ theme }) => theme.headerColor};
-  } */
-}
 `;
 
 const Stop = styled.div`
@@ -287,6 +230,11 @@ const StopTime = styled.div`
   color: ${({ theme }) => theme.color};
   color: ${(props) => (props.coming ? '#e63946' : '')};
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
+
+  span {
+    font-size: 0.5rem;
+    margin-left: 5px;
+  }
 `;
 
 const Collect = styled.button`
@@ -387,6 +335,8 @@ export default function RouteSearch({
   wrongInput,
   loading,
   cityRouteLists,
+  // setOnRunCity,
+  // onRunCity,
 }) {
   const busRef = useRef('');
   const [collectList, setCollectList] = useState(
@@ -425,9 +375,18 @@ export default function RouteSearch({
   return (
     <Wrapper>
       <SearchContainer>
+        {/* <CityStyledSelect
+          classNamePrefix="react-select"
+          options={[
+            { value: 'Taipei', label: '台北市' },
+            { value: 'NewTaipei', label: '新北市' },
+          ]}
+          defaultValue={{ value: 'Taipei', label: '台北市' }}
+          placeholder="City"
+        /> */}
         <StyledSelect
           classNamePrefix="react-select"
-          placeholder={displayBus ? `${displayBus}` : '請選擇路線'}
+          placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
           options={cityRouteLists}
           styles={{
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
@@ -476,7 +435,12 @@ export default function RouteSearch({
                 {stop.EstimateTime === undefined && '未發車'}
                 {stop.EstimateTime >= 0 && stop.EstimateTime <= 60 && '進站中'}
                 {stop.EstimateTime > 60 && stop.EstimateTime <= 120 && '將進站'}
-                {stop.EstimateTime > 120 && Math.floor(stop.EstimateTime / 60)}
+                {stop.EstimateTime > 120 && (
+                  <>
+                    {Math.floor(stop.EstimateTime / 60)}
+                    <span>分</span>
+                  </>
+                )}
               </StopTime>
               <Collect
                 onClick={() => clickHandler(stop.RouteUID, stop.StopUID)}
@@ -508,4 +472,6 @@ RouteSearch.propTypes = {
   wrongInput: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
   cityRouteLists: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  // setOnRunCity: PropTypes.func.isRequired,
+  // onRunCity: PropTypes.string.isRequired,
 };
