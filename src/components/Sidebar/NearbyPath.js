@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 `;
 const CityContainer = styled.div`
   width: 200px;
-  margin: 50px 0 30px 20px;
+  margin: 20px 20px 10px;
   display: flex;
   justify-content: space-between;
   position: relative;

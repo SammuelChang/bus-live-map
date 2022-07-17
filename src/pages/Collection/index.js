@@ -183,6 +183,7 @@ const Remove = styled.div`
 
 export default function Collection() {
   const [loading, setLoading] = useState(false);
+  const [firstLoading, setFirstLoading] = useState(true);
   const [collectList, setCollectList] = useState(
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
@@ -282,6 +283,12 @@ export default function Collection() {
     }
   }, [routeTimer]);
 
+  useEffect(() => {
+    if (!loading && stops.length > 0) {
+      setFirstLoading(false);
+    }
+  }, [stops]);
+
   return (
     <Wrapper>
       {/* {collectList.length === 0 && (
@@ -338,14 +345,16 @@ export default function Collection() {
             </Function>
           </InfoCard>
         ))}
-      <StyleLink to="/live/route/">
-        <InfoCard>
-          <BusStop style={{ background: '#878484' }}>收藏更多</BusStop>
-          <BusRoute />
-          <BusTime>立即前往</BusTime>
-          <Function />
-        </InfoCard>
-      </StyleLink>
+      {(!firstLoading || collectList.length === 0) && (
+        <StyleLink to="/live/route/">
+          <InfoCard>
+            <BusStop style={{ background: '#878484' }}>收藏更多</BusStop>
+            <BusRoute />
+            <BusTime>立即前往</BusTime>
+            <Function />
+          </InfoCard>
+        </StyleLink>
+      )}
       <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
