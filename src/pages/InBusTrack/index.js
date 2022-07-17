@@ -276,14 +276,14 @@ const RouteContainer = styled.div`
   margin-bottom: 20px;
   @media (max-width: 780px) {
     order: -1;
-    animation: slide-left 0.4s linear both;
     min-height: calc(100vh - 140px);
-    @keyframes slide-left {
+    animation: scale-up-center 0.4s;
+    @keyframes scale-up-center {
       0% {
-        transform: translateX(50vh);
+        transform: scale(0.5);
       }
       100% {
-        transform: translateX(0px);
+        transform: scale(1);
       }
     }
   }

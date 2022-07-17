@@ -115,9 +115,14 @@ const Result = styled.div`
 `;
 
 const Stops = styled.div`
-  width: 100%;
+  width: 200px;
   font-size: 1rem;
   margin-bottom: 20px;
+  background: ${({ theme }) => theme.adjBackground};
+  border-radius: 10px;
+  padding: 10px;
+  color: ${({ theme }) => theme.primary};
+
   > * {
     height: 20px;
     width: 100%;
@@ -130,8 +135,13 @@ const Stops = styled.div`
 `;
 
 const Route = styled.div`
-  width: 100%;
+  width: 200px;
   font-size: 1rem;
+  background: ${({ theme }) => theme.adjBackground};
+  border-radius: 10px;
+  padding: 10px;
+  color: ${({ theme }) => theme.primary};
+
   > * {
     height: 20px;
     width: 100%;
