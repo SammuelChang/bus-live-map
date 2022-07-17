@@ -151,14 +151,19 @@ export default function LiveNearbyPath({ isDark }) {
   const [tdxShape, setTdxShape] = useState([]);
   // const [isOpen, setIsOpen] = useState(true);
   const [getCurrentPoi, setGetCurrentPoi] = useState(false);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
   async function getNearby(lon, lat) {
     setLoading(true);
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
     const token = await api.getToken();
-    const result = await api.getNearbyStops('Taipei', token, lon, lat);
+    const result = await api.getNearbyStops(onRunCity, token, lon, lat);
     setNearby(result.features ?? []);
 
+    if (Object.keys(result).length === 0) {
+      setLoading(false);
+      return;
+    }
     if ((await Object.keys(result).length) !== 0) {
       const stationFilter = result.features
         .reduce((acc, cur) => {
@@ -169,7 +174,7 @@ export default function LiveNearbyPath({ isDark }) {
         .join('')
         .replace('or Stops', 'Stops');
 
-      const routeData = await api.getAllStationStopOfRoute('Taipei', token, '', stationFilter);
+      const routeData = await api.getAllStationStopOfRoute(onRunCity, token, '', stationFilter);
       setRoutes(routeData);
 
       const routeSets = routeData
@@ -180,7 +185,7 @@ export default function LiveNearbyPath({ isDark }) {
         .map((i) => `or RouteUID eq '${i}'`)
         .join('')
         .replace('or RouteUID', 'RouteUID');
-      const shapeData = await api.getAllShape('Taipei', token, '', routeSets);
+      const shapeData = await api.getAllShape(onRunCity, token, '', routeSets);
       const geoShapeData = shapeData.map((obj) => ({
         ...obj,
         Geojson: { ...parse(obj.Geometry), properties: { RouteName: obj.RouteName.Zh_tw } },
@@ -202,7 +207,7 @@ export default function LiveNearbyPath({ isDark }) {
       setTdxShape([]);
       getNearby(markers[0].lng, markers[0].lat);
     }
-  }, [markers]);
+  }, [markers, onRunCity]);
 
   function successLocate(position) {
     setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
@@ -273,7 +278,14 @@ export default function LiveNearbyPath({ isDark }) {
         </Modal>
       )} */}
       <Sidebar>
-        <NearbyPath nearby={nearby} routes={routes} markers={markers} />
+        <NearbyPath
+          nearby={nearby}
+          routes={routes}
+          markers={markers}
+          onRunCity={onRunCity}
+          setOnRunCity={setOnRunCity}
+          loading={loading}
+        />
       </Sidebar>
       <UserMemo>
         點擊地圖任意位置

@@ -54,9 +54,10 @@ export default function LiveCityLeafletMap({ isDark }) {
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tdxBus, setTdxBus] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
   async function getBusFn(token, bus = '') {
-    const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
+    const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
     return busWithTime;
   }
 
@@ -103,7 +104,6 @@ export default function LiveCityLeafletMap({ isDark }) {
   }, []);
 
   useEffect(() => {
-    console.log(routeTimer);
     // 根據計時狀況，重置計時器並呼叫api
     if (routeTimer === 0) {
       setRouteTimer(10);
@@ -114,12 +114,22 @@ export default function LiveCityLeafletMap({ isDark }) {
     }
   }, [routeTimer]);
 
+  useEffect(() => {
+    assignRouteHandler();
+    setRouteTimer(10);
+  }, [onRunCity]);
+
   const allBus = true;
 
   return (
     <Wrapper>
       <Sidebar>
-        <CityBusState tdxBus={tdxBus} loading={loading} />
+        <CityBusState
+          tdxBus={tdxBus}
+          loading={loading}
+          setOnRunCity={setOnRunCity}
+          onRunCity={onRunCity}
+        />
       </Sidebar>
       <StyledMemoMapContainer
         center={location}
