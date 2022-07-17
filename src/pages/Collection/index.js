@@ -11,16 +11,25 @@ const StyleLink = styled(Link)`
   color: black;
 `;
 
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 20px;
+  right: 15px;
+`;
+
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
   height: 100%;
   min-height: calc(100vh - 120px);
   width: 100%;
-  padding: 30px;
+  ${'' /* padding: 30px; */}
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+  position: relative;
 `;
 
 const NoDataWarn = styled.div`
@@ -35,15 +44,6 @@ const NoDataWarn = styled.div`
   margin: 15px;
   font-size: 1.5rem;
   font-weight: bold;
-  animation: rotate-vertical-center 2s;
-  @keyframes rotate-vertical-center {
-    0% {
-      transform: rotateY(180deg);
-    }
-    100% {
-      transform: rotateY(0);
-    }
-  }
   & > span{
     font-size: 1.3rem;
   }
@@ -227,15 +227,25 @@ export default function Collection() {
       return;
     }
     setLoading(true);
+    const cityAbrLists = [...new Set(collectList.map((i) => i.RouteUID.substring(0, 3)))];
     const token = await api.getToken();
-    const stopsWithTime = await api.getAllStationEstimatedTimeOfArrival(
-      'Taipei',
-      token,
-      '',
-      stopFilter,
-    );
 
-    const busInfo = await api.getRouteInfo('Taipei', token, '', routeFilter);
+    const stopsWithTimeNWT = cityAbrLists.includes('NWT')
+      ? await api.getAllStationEstimatedTimeOfArrival('NewTaipei', token, '', stopFilter)
+      : [];
+    const busInfoNWT = cityAbrLists.includes('NWT')
+      ? await api.getRouteInfo('NewTaipei', token, '', routeFilter)
+      : [];
+    const stopsWithTimeTPE = cityAbrLists.includes('TPE')
+      ? await api.getAllStationEstimatedTimeOfArrival('Taipei', token, '', stopFilter)
+      : [];
+    const busInfoTPE = cityAbrLists.includes('TPE')
+      ? await api.getRouteInfo('Taipei', token, '', routeFilter)
+      : [];
+
+    const stopsWithTime = [...(stopsWithTimeTPE || []), ...(stopsWithTimeNWT || [])];
+    const busInfo = [...(busInfoTPE || []), ...(busInfoNWT || [])];
+
     const stopsWithTimeInfo = stopsWithTime.map((i) => ({
       ...i,
       DestinationStopNameZh: busInfo.find((info) => info.RouteUID === i.RouteUID)
@@ -327,7 +337,7 @@ export default function Collection() {
             </Function>
           </InfoCard>
         ))}
-      {loading && <LoadingEffect />}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }

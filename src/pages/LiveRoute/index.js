@@ -58,7 +58,7 @@ export default function LiveRoute({ isDark }) {
   const preBusInfo = useRef(null);
   const [wrongInput, setWrongInput] = useState(false);
   const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
-  const [onRunCity] = useState('Taipei');
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
   useEffect(() => {
     api
@@ -237,8 +237,8 @@ export default function LiveRoute({ isDark }) {
           wrongInput={wrongInput}
           loading={loading}
           cityRouteLists={cityRouteLists}
-          // setOnRunCity={setOnRunCity}
-          // onRunCity={onRunCity}
+          setOnRunCity={setOnRunCity}
+          onRunCity={onRunCity}
         />
       </Sidebar>
       <StyledMemoMapContainer

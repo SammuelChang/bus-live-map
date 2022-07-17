@@ -41,7 +41,7 @@ const NavContainer = styled.div`
 
 const Brand = styled.div`
   box-sizing: border-box;
-  width: 200px;
+  width: 170px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -262,9 +262,9 @@ function Header({ toggleTheme }) {
       </SideNav>
       <StyleLink to="/">
         <Brand>
-          <BrandName>Live</BrandName>
+          <BrandName>BUS</BrandName>
           <Logo />
-          <BrandName>Bus</BrandName>
+          <BrandName>LIVE</BrandName>
         </Brand>
       </StyleLink>
       <NavContainer>

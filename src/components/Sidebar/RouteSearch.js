@@ -35,6 +35,7 @@ const StyledSelect = styled(Select)`
     color: ${({ theme }) => theme.primary};
   }
   .react-select__control {
+    cursor: pointer;
     background: ${({ theme }) => theme.background};
     color: ${({ theme }) => theme.color};
     opacity: 1;
@@ -47,9 +48,11 @@ const StyledSelect = styled(Select)`
   .react-select__option--is-focused {
     border: none;
     outline: none;
+    background: none;
   }
   .react-select__option--is-selected {
-    color: ${({ theme }) => theme.primary};
+    background: #ffc94a;
+    color: #363537;
   }
   .react-select__option--is-hovered {
     border-bottom: 1px solid ${({ theme }) => theme.color};
@@ -61,13 +64,10 @@ const StyledSelect = styled(Select)`
     border-bottom: 1px solid ${({ theme }) => theme.color};
     box-shadow: none;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: normal;
     input {
       color: unset;
       color: ${({ theme }) => theme.primary} !important;
-    }
-    &:hover {
-      border-bottom: 1px solid ${({ theme }) => theme.color};
     }
   }
   .react-select__indicator-separator {
@@ -79,22 +79,15 @@ const StyledSelect = styled(Select)`
   .react-select__value-container {
     padding: 0;
   }
-  .react-select__option--is-focused {
-    background: none;
-  }
-  .react-select__option--is-selected {
-    background: #ffc94a;
-    color: #363537;
-  }
 `;
 
-// const CityStyledSelect = styled(StyledSelect)`
-//   width: 150px;
-//   .react-select__control {
-//     font-size: 1rem;
-//     font-weight: normal;
-//   }
-// `;
+const CityStyledSelect = styled(StyledSelect)`
+  width: 130px;
+  margin-right: 5px;
+  .react-select__control {
+    font-size: 1rem;
+  }
+`;
 
 const Status = styled.div`
   font-size: 1rem;
@@ -335,8 +328,7 @@ export default function RouteSearch({
   wrongInput,
   loading,
   cityRouteLists,
-  // setOnRunCity,
-  // onRunCity,
+  setOnRunCity,
 }) {
   const busRef = useRef('');
   const [collectList, setCollectList] = useState(
@@ -375,21 +367,28 @@ export default function RouteSearch({
   return (
     <Wrapper>
       <SearchContainer>
-        {/* <CityStyledSelect
+        <CityStyledSelect
           classNamePrefix="react-select"
           options={[
             { value: 'Taipei', label: '台北市' },
             { value: 'NewTaipei', label: '新北市' },
           ]}
           defaultValue={{ value: 'Taipei', label: '台北市' }}
-          placeholder="City"
-        /> */}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
+          }}
+          onChange={(e) => {
+            setOnRunCity(e.value);
+          }}
+        />
         <StyledSelect
           classNamePrefix="react-select"
           placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
           options={cityRouteLists}
           styles={{
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
+            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
           }}
           ref={busRef}
           type="text"
@@ -412,7 +411,7 @@ export default function RouteSearch({
           }}
         /> */}
       </SearchContainer>
-      <Status>{wrongInput && '查無資訊，目前僅限行經北市者'}</Status>
+      <Status>{wrongInput && '處理異常，請再試一次'}</Status>
       {!!mergeStation.length && (
         <Direction>
           <Depart onClick={() => setDirection(0)} directionNow={direction === 0}>
@@ -472,6 +471,5 @@ RouteSearch.propTypes = {
   wrongInput: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
   cityRouteLists: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  // setOnRunCity: PropTypes.func.isRequired,
-  // onRunCity: PropTypes.string.isRequired,
+  setOnRunCity: PropTypes.func.isRequired,
 };

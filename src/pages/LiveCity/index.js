@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable no-unused-vars */
 import {
@@ -22,7 +21,13 @@ import LoadingEffect from '../../components/LoadingEffect';
 const Wrapper = styled.div`
   display: flex;
 `;
-
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+`;
 const MemoMapContainer = memo(MapContainer);
 const StyledMemoMapContainer = styled(MemoMapContainer)`
   visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
@@ -74,7 +79,6 @@ export default function LiveCityLeafletMap({ isDark }) {
     if (loading) {
       return;
     }
-    console.log('call api');
 
     // removeLayer();
     setLoading(true);
@@ -142,7 +146,7 @@ export default function LiveCityLeafletMap({ isDark }) {
           />
         )}
       </StyledMemoMapContainer>
-      {loading && <LoadingEffect />}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }

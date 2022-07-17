@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components/macro';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
 
@@ -34,7 +35,7 @@ const Wrapper = styled.div`
 `;
 
 const UserInfo = styled.form`
-  width: 300px;
+  width: 320px;
   height: 100%;
   display: flex;
   margin-right: ${(props) => (props.routeData ? '80px' : '0')};
@@ -196,7 +197,7 @@ const RouteInputContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.color};
+  ${'' /* border-bottom: 1px solid ${({ theme }) => theme.color}; */}
 
   > * {
     border: none;
@@ -205,42 +206,44 @@ const RouteInputContainer = styled.div`
     }
   }
 
-  &:focus-within {
+  ${
+  '' /* &:focus-within {
     outline: none;
     border-bottom: 2px solid ${({ theme }) => theme.color};
     margin-bottom: -1px;
-  }
+  } */
+}
 `;
 
-const RouteInput = styled.input`
-  width: 100%;
-  height: 100%;
-  min-height: 40px;
-  font-size: 1rem;
-  font-weight: 500;
-  padding-left: 5px;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
-`;
+// const RouteInput = styled.input`
+//   width: 100%;
+//   height: 100%;
+//   min-height: 40px;
+//   font-size: 1rem;
+//   font-weight: 500;
+//   padding-left: 5px;
+//   background: ${({ theme }) => theme.background};
+//   color: ${({ theme }) => theme.color};
+// `;
 
-const RouteBtn = styled.button`
-  background: url(${({ theme }) => theme.search}) no-repeat center center;
-  background-size: contain;
-  min-height: 30px;
-  min-width: 30px;
-  cursor: pointer;
+// const RouteBtn = styled.button`
+//   background: url(${({ theme }) => theme.search}) no-repeat center center;
+//   background-size: contain;
+//   min-height: 30px;
+//   min-width: 30px;
+//   cursor: pointer;
 
-  &:hover {
-    transform: scale(1.3);
-    transition: transform 0.1s;
-  }
-  &::active {
-    transform: scale(0.7);
-    transition: transform 0.1s;
-  }
-`;
+//   &:hover {
+//     transform: scale(1.3);
+//     transition: transform 0.1s;
+//   }
+//   &::active {
+//     transform: scale(0.7);
+//     transition: transform 0.1s;
+//   }
+// `;
 
-const Select = styled.select`
+const VanilaSelect = styled.select`
   width: 100%;
   min-width: 160px;
   background: url(${({ theme }) => theme.dropDown}) no-repeat 95% 50%;
@@ -270,6 +273,10 @@ const RouteContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 20px;
+  @media (max-width: 780px) {
+    order: -1;
+  }
 `;
 
 const RouteInfo = styled.div`
@@ -400,6 +407,65 @@ const Stop = styled.div`
   }
 `;
 
+const StyledSelect = styled(Select)`
+  width: 100%;
+  .react-select__placeholder {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__menu {
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+  }
+  .react-select__option--is-focused {
+    border: none;
+    outline: none;
+    background: none;
+  }
+  .react-select__option--is-selected {
+    background: #ffc94a;
+    color: #363537;
+  }
+  .react-select__control {
+    cursor: pointer;
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+    opacity: 1;
+    z-index: 5;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: normal;
+    input {
+      color: unset;
+      color: ${({ theme }) => theme.primary} !important;
+      font-weight: normal;
+    }
+  }
+  .react-select__indicator-separator {
+    display: none;
+  }
+  .react-select__single-value {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__value-container {
+    padding: 0;
+  }
+  .react-select__dropdown-indicator {
+    padding: 0;
+  }
+`;
+
+const CityStyledSelect = styled(StyledSelect)`
+  width: 130px;
+  margin-right: 5px;
+  .react-select__control {
+    font-size: 1rem;
+  }
+`;
+
 export default function InBusTrack() {
   const [bus, setBus] = useState([]);
   const [tdxBuses, setTdxBuses] = useState([]);
@@ -415,6 +481,21 @@ export default function InBusTrack() {
   const [loading, setLoading] = useState(false);
   const [userStopPlate, setUserStopPlate] = useState('');
   const [detectable, setDetectable] = useState(true);
+  const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
+
+  useEffect(() => {
+    api
+      .getToken()
+      .then((token) => api.getRouteInfo(onRunCity, token))
+      .then((result) => result
+        .map((i) => ({
+          value: i.RouteName.Zh_tw,
+          label: i.RouteName.Zh_tw,
+        }))
+        .sort((a, b) => a.value.localeCompare(b.value)))
+      .then((result) => setCityRouteLists(result));
+  }, [cityRouteLists]);
 
   const locateCurrentPosition = () => new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -498,12 +579,11 @@ export default function InBusTrack() {
     }
 
     const token = await api.getToken();
-    const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
-
+    const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, bus);
+    console.log(busWithTime);
     if (bus.length > 0 && busWithTime.length === 0) {
       Swal.fire({
-        title: '請輸入正確的路線名稱',
-        text: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        title: '該路線目前未提供服務',
         confirmButtonColor: '#3085d6',
       });
       return;
@@ -542,9 +622,9 @@ export default function InBusTrack() {
     setError(false);
   }
 
-  async function getData(e) {
-    e.preventDefault();
-    if (bus.length === 0) {
+  async function getData(target) {
+    // e.preventDefault();
+    if (target.length === 0) {
       Swal.fire({
         title: '請輸入路線名稱',
         confirmButtonColor: '#3085d6',
@@ -554,18 +634,17 @@ export default function InBusTrack() {
     }
 
     const token = await api.getToken();
-    const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
+    const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, target);
 
-    if (bus.length > 0 && busWithTime.length === 0) {
+    if (target.length > 0 && busWithTime.length === 0) {
       Swal.fire({
-        title: '請輸入正確的路線名稱',
-        text: 'Sorry...目前僅能搜尋行經台北市區之公車',
+        title: '該路線目前未提供服務',
         confirmButtonColor: '#3085d6',
       });
       return;
     }
-    const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
-    const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
+    const route = await api.getAllStationStopOfRoute(onRunCity, token, target);
+    const filterRoute = route.filter((a) => a.RouteName.Zh_tw === target);
 
     const stops = filterRoute.reduce((acc, cur) => {
       cur.Stops.forEach((stop) => {
@@ -653,7 +732,7 @@ export default function InBusTrack() {
         <Route>
           <Label>路線名稱</Label>
           <RouteInputContainer>
-            <RouteInput
+            {/* <RouteInput
               placeholder="306"
               onChange={(e) => {
                 setBus(e.target.value);
@@ -668,12 +747,39 @@ export default function InBusTrack() {
               onClick={(e) => {
                 getData(e);
               }}
+            /> */}
+            <CityStyledSelect
+              classNamePrefix="react-select"
+              options={[
+                { value: 'Taipei', label: '台北市' },
+                { value: 'NewTaipei', label: '新北市' },
+              ]}
+              defaultValue={{ value: 'Taipei', label: '台北市' }}
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              onChange={(e) => {
+                setOnRunCity(e.value);
+              }}
+            />
+            <StyledSelect
+              classNamePrefix="react-select"
+              placeholder="輸入路線"
+              options={cityRouteLists}
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              type="text"
+              onChange={(e) => {
+                setBus(e.value);
+                getData(e.value);
+              }}
             />
           </RouteInputContainer>
         </Route>
         <Block userOrder="2">
           <Label>上車站牌</Label>
-          <Select
+          <VanilaSelect
             onChange={(e) => {
               setUserOnStop(e.target.value);
             }}
@@ -688,11 +794,11 @@ export default function InBusTrack() {
                   {i.StopName}
                 </Option>
               ))}
-          </Select>
+          </VanilaSelect>
         </Block>
         <Block userOrder="3">
           <Label>下車站牌</Label>
-          <Select
+          <VanilaSelect
             onChange={(e) => {
               setUserOffStop(e.target.value);
             }}
@@ -707,14 +813,14 @@ export default function InBusTrack() {
                   {i.StopName}
                 </Option>
               ))}
-          </Select>
+          </VanilaSelect>
         </Block>
         <Block userOrder="4">
           <Label>
             {/* unChosen={userPlate.length === 0 && tdxBuses.length > 0} */}
             車牌號碼
           </Label>
-          <Select
+          <VanilaSelect
             onChange={(e) => {
               setUserPlate(e.target.value);
             }}
@@ -730,7 +836,7 @@ export default function InBusTrack() {
                     {/* {i.PlateNumb === userStopPlate ? ' 可能搭乘中' : ''} */}
                   </Option>
                 ))}
-          </Select>
+          </VanilaSelect>
         </Block>
         <Remind noDot>
           <DetectInfo detectStatus={detectable}>

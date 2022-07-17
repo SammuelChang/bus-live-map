@@ -27,7 +27,13 @@ const Wrapper = styled.div`
   display: flex;
   position: relative;
 `;
-
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+`;
 const UserMemo = styled.div`
   width: 270px;
   height: 60px;
@@ -304,7 +310,7 @@ export default function LiveNearbyPath({ isDark }) {
           />
         )}
       </StyledMemoMapContainer>
-      {loading && <LoadingEffect />}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }
