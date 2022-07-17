@@ -276,6 +276,16 @@ const RouteContainer = styled.div`
   margin-bottom: 20px;
   @media (max-width: 780px) {
     order: -1;
+    animation: slide-left 0.4s linear both;
+    min-height: calc(100vh - 140px);
+    @keyframes slide-left {
+      0% {
+        transform: translateX(50vh);
+      }
+      100% {
+        transform: translateX(0px);
+      }
+    }
   }
 `;
 
@@ -455,6 +465,9 @@ const StyledSelect = styled(Select)`
   }
   .react-select__dropdown-indicator {
     padding: 0;
+  }
+  .react-select__control--is-focused {
+    border-color: ${({ theme }) => theme.color};
   }
 `;
 

@@ -125,7 +125,7 @@ const Stops = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding-left: 5px;
+    padding-left: 2.5px;
   }
 `;
 
@@ -150,18 +150,29 @@ const Route = styled.div`
 //   padding: 30px 0;
 // `;
 
+const Banner = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding: 0;
+`;
+
+const Status = styled.div`
+  margin-left: 10px;
+`;
+
 const BusIcon = styled.div`
   background: url(${({ theme }) => theme.nearbyBus}) no-repeat center center;
   background-size: contain;
   width: 20px;
   height: 20px;
+  position: relative;
 `;
 
 const StopIcon = styled.div`
   background: url(${({ theme }) => theme.nearbyStop}) no-repeat center center;
   background-size: contain;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   position: relative;
   z-index: 1;
   ${
@@ -230,20 +241,28 @@ export default function NearbyPath({
       </CityContainer>
       <Result>
         <Stops>
-          <StopIcon title="行經站牌" />
+          <Banner>
+            <StopIcon title="行經站牌" />
+            <Status>
+              {!loading && formatNearby.length === 0 && '查無路線'}
+              {loading && '載入中'}
+            </Status>
+          </Banner>
           {!loading
             && formatNearby.length > 0
             && formatNearby.map((stop) => <div key={stop}>{stop}</div>)}
-          {!loading && formatNearby.length === 0 && '查無路線'}
-          {loading && '載入中'}
         </Stops>
         <Route>
-          <BusIcon title="行經路線" />
+          <Banner>
+            <BusIcon title="行經路線" />
+            <Status>
+              {!loading && formatNearby.length === 0 && '查無路線'}
+              {loading && '載入中'}
+            </Status>
+          </Banner>
           {!loading
             && formatRoutes.length > 0
             && formatRoutes.map((route) => <div key={route}>{route}</div>)}
-          {!loading && formatNearby.length === 0 && '查無路線'}
-          {loading && '載入中'}
         </Route>
       </Result>
     </Wrapper>

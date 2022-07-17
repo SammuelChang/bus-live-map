@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   min-width: 300px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   position: relative;
   @media (max-width: 780px) {
@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 
 const CityContainer = styled.div`
   width: 200px;
+  margin-top: 50px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;

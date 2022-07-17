@@ -32,14 +32,25 @@ const SearchContainer = styled.form`
 const StyledSelect = styled(Select)`
   width: 100%;
   .react-select__placeholder {
-    color: ${({ theme }) => theme.primary};
+    ${'' /* color: ${({ theme }) => theme.primary}; */}
   }
   .react-select__control {
     cursor: pointer;
     background: ${({ theme }) => theme.background};
-    color: ${({ theme }) => theme.color};
+    ${'' /* color: ${({ theme }) => theme.color}; */}
     opacity: 1;
     z-index: 5;
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: normal;
+    input {
+      color: unset;
+      color: ${({ theme }) => theme.primary} !important;
+    }
   }
   .react-select__menu {
     background: ${({ theme }) => theme.background};
@@ -57,19 +68,7 @@ const StyledSelect = styled(Select)`
   .react-select__option--is-hovered {
     border-bottom: 1px solid ${({ theme }) => theme.color};
   }
-  .react-select__control {
-    outline: none;
-    border: none;
-    border-radius: 0px;
-    border-bottom: 1px solid ${({ theme }) => theme.color};
-    box-shadow: none;
-    font-size: 1rem;
-    font-weight: normal;
-    input {
-      color: unset;
-      color: ${({ theme }) => theme.primary} !important;
-    }
-  }
+
   .react-select__indicator-separator {
     display: none;
   }
@@ -78,6 +77,9 @@ const StyledSelect = styled(Select)`
   }
   .react-select__value-container {
     padding: 0;
+  }
+  .react-select__control--is-focused {
+    border-color: ${({ theme }) => theme.color};
   }
 `;
 

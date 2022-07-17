@@ -2,13 +2,14 @@ import styled from 'styled-components/macro';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
-import busStop from '../../images/bus-stop-empty.png';
+// import busStop from '../../images/bus-stop-empty.png';
 import trash from '../../images/trash.png';
 import LoadingEffect from '../../components/LoadingEffect';
 
 const StyleLink = styled(Link)`
   text-decoration: none;
   color: black;
+  cursor: pointer;
 `;
 
 const LoadingEffectContainer = styled.div`
@@ -32,23 +33,23 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const NoDataWarn = styled.div`
-  text-align: center;
-  padding-top: 35px;
-  padding-left: 20px;
-  height: 300px;
-  width: 300px;
-  background: url(${busStop}) no-repeat center;
-  color: white;
-  border: 1px solid
-  margin: 15px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  & > span{
-    font-size: 1.3rem;
-  }
+// const NoDataWarn = styled.div`
+//   text-align: center;
+//   padding-top: 35px;
+//   padding-left: 20px;
+//   height: 300px;
+//   width: 300px;
+//   background: url(${busStop}) no-repeat center;
+//   color: white;
+//   border: 1px solid
+//   margin: 15px;
+//   font-size: 1.5rem;
+//   font-weight: bold;
+//   & > span{
+//     font-size: 1.3rem;
+//   }
 
-`;
+// `;
 
 const InfoCard = styled.div`
   height: 250px;
@@ -283,7 +284,7 @@ export default function Collection() {
 
   return (
     <Wrapper>
-      {collectList.length === 0 && (
+      {/* {collectList.length === 0 && (
         <NoDataWarn>
           空空如也
           <br />
@@ -292,7 +293,7 @@ export default function Collection() {
             <span>點我去收藏</span>
           </StyleLink>
         </NoDataWarn>
-      )}
+      )} */}
       {collectList.length >= 0
         && stops.map((stop) => (
           <InfoCard
@@ -337,6 +338,14 @@ export default function Collection() {
             </Function>
           </InfoCard>
         ))}
+      <StyleLink to="/live/route/">
+        <InfoCard>
+          <BusStop style={{ background: '#878484' }}>收藏更多</BusStop>
+          <BusRoute />
+          <BusTime>立即前往</BusTime>
+          <Function />
+        </InfoCard>
+      </StyleLink>
       <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
