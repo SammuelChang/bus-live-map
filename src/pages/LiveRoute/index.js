@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
 import {
   useEffect, useState, useRef, memo,
 } from 'react';
@@ -6,10 +5,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { parse } from 'wellknown';
 import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  FeatureGroup, // useMap,
+  MapContainer, TileLayer, useMapEvents, FeatureGroup, useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import BusStation from '../../components/LeafletMap/BusStation';
@@ -23,6 +19,8 @@ import RouteSearch from '../../components/Sidebar/RouteSearch';
 const Wrapper = styled.div`
   display: flex;
   position: relative;
+  width: 100vw;
+  overflow: hidden;
 `;
 
 const MemoMapContainer = memo(MapContainer);
@@ -51,23 +49,38 @@ export default function LiveRoute({ isDark }) {
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tdxShape, setTdxShape] = useState([]);
   const [tdxBus, setTdxBus] = useState([]);
-  // const [tdxBusInfo, setTdxBusInfo] = useState([]);
+  const [tdxBusInfo, setTdxBusInfo] = useState([]);
   const [mergeStation, setMergeStation] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const [displayBus, setDisplayBus] = useState('');
   const [direction, setDirection] = useState(0);
-  const [boundry, setBoundry] = useState([]);
-  // const preBusInfo = useRef(null);
+  const [bunds, setBunds] = useState([]);
+  const preBusInfo = useRef(null);
   const [wrongInput, setWrongInput] = useState(false);
+  const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
-  // function SetBoundsRectangles() {
-  //   if (boundry.length && preBusInfo.current !== tdxBusInfo) {
-  //     const map = useMap();
-  //     map.fitBounds(boundry);
-  //     console.log('bounds done');
-  //   }
-  //   return null;
-  // }
+  useEffect(() => {
+    api
+      .getToken()
+      .then((token) => api.getRouteInfo(onRunCity, token))
+      .then((result) => result
+        .map((i) => ({
+          value: i.RouteName.Zh_tw,
+          label: i.RouteName.Zh_tw,
+        }))
+        .sort((a, b) => a.value.localeCompare(b.value)))
+      .then((result) => setCityRouteLists(result));
+  }, [cityRouteLists]);
+
+  function SetBoundsComponent() {
+    if (bunds.length && preBusInfo.current[0]?.RouteName.Zh_tw !== tdxBusInfo[0]?.RouteName.Zh_tw) {
+      const map = useMap();
+      map.fitBounds(bunds);
+      map.setView(map.getCenter(), 12);
+    }
+    return null;
+  }
 
   function ZoomListener() {
     const mapEvents = useMapEvents({
@@ -79,13 +92,13 @@ export default function LiveRoute({ isDark }) {
   }
 
   async function getInfoFn(token, bus) {
-    const info = await api.getRouteInfo('Taipei', token, bus);
+    const info = await api.getRouteInfo(onRunCity, token, bus);
     const filterInfo = await info.filter((a) => a.RouteName.Zh_tw === bus);
     return filterInfo;
   }
 
   async function getShapeFn(token, bus) {
-    const shape = await api.getAllShape('Taipei', token, bus);
+    const shape = await api.getAllShape(onRunCity, token, bus);
     const geoShape = await shape
       .map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }))
       .filter((a) => a.RouteName.Zh_tw === bus);
@@ -93,18 +106,18 @@ export default function LiveRoute({ isDark }) {
   }
 
   async function getBusFn(token, bus = '') {
-    const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
+    const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
     const filterBusWithTime = await busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
     return filterBusWithTime;
   }
 
   async function getRouteStationFn(token, bus = '') {
-    const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
+    const route = await api.getAllStationStopOfRoute(onRunCity, token, bus);
     const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
     return filterRoute;
   }
   async function getRouteStationTimeFn(token, bus = '') {
-    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival('Taipei', token, bus);
+    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival(onRunCity, token, bus);
     const filterRouteWithTime = await routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
     return filterRouteWithTime;
   }
@@ -147,7 +160,8 @@ export default function LiveRoute({ isDark }) {
     setLoading(true);
     const token = await api.getToken();
     const info = await getInfoFn(token, bus);
-    // setTdxBusInfo(info);
+
+    setTdxBusInfo(info);
 
     if (!info.length) {
       setLoading(false);
@@ -174,14 +188,14 @@ export default function LiveRoute({ isDark }) {
     Object.values(data).forEach((i) => {
       resultRoute.push([i.StopPosition.PositionLat, i.StopPosition.PositionLon]);
     });
-    setBoundry(resultRoute);
+    setBunds(resultRoute);
 
     setLoading(false);
     setWrongInput(false);
   }
 
   function searchRoute(route) {
-    assignRouteHandler(route || '299');
+    assignRouteHandler(route);
   }
 
   useEffect(() => {
@@ -206,9 +220,9 @@ export default function LiveRoute({ isDark }) {
     setRouteTimer(10);
   }, [displayBus]);
 
-  // useEffect(() => {
-  //   preBusInfo.current = tdxBusInfo;
-  // }, [tdxBusInfo]);
+  useEffect(() => {
+    preBusInfo.current = tdxBusInfo;
+  }, [tdxBusInfo]);
 
   return (
     <Wrapper>
@@ -216,18 +230,21 @@ export default function LiveRoute({ isDark }) {
         <RouteSearch
           displayBus={displayBus}
           setDisplayBus={setDisplayBus}
-          searchRoute={searchRoute}
+          searchRoute={() => searchRoute}
           mergeStation={Object.values(mergeStation)}
           direction={direction}
           setDirection={setDirection}
           wrongInput={wrongInput}
           loading={loading}
+          cityRouteLists={cityRouteLists}
+          setOnRunCity={setOnRunCity}
+          onRunCity={onRunCity}
         />
       </Sidebar>
       <StyledMemoMapContainer
         center={mapRef.current ? null : location}
         zoom={mapRef.current ? null : zoomLevel}
-        bounds={mapRef.current ? boundry : null}
+        bounds={mapRef.current ? bunds : null}
         minZoom={12}
         maxZoom={15}
         scrollWheelZoom
@@ -255,7 +272,7 @@ export default function LiveRoute({ isDark }) {
           />
         )}
         <ZoomListener />
-        {/* <SetBoundsRectangles /> */}
+        <SetBoundsComponent />
       </StyledMemoMapContainer>
       {/* {loading && <LoadingEffect />} */}
     </Wrapper>

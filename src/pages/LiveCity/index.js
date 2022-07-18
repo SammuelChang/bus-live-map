@@ -21,7 +21,13 @@ import LoadingEffect from '../../components/LoadingEffect';
 const Wrapper = styled.div`
   display: flex;
 `;
-
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+`;
 const MemoMapContainer = memo(MapContainer);
 const StyledMemoMapContainer = styled(MemoMapContainer)`
   visibility: ${(props) => (props.loading ? 'hidden' : 'visible')};
@@ -48,9 +54,10 @@ export default function LiveCityLeafletMap({ isDark }) {
   const [zoomLevel, setZoomLevel] = useState(12);
   const [tdxBus, setTdxBus] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
   async function getBusFn(token, bus = '') {
-    const busWithTime = await api.getAllRealTimeByFrequency('Taipei', token, bus);
+    const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
     return busWithTime;
   }
 
@@ -73,7 +80,6 @@ export default function LiveCityLeafletMap({ isDark }) {
     if (loading) {
       return;
     }
-    console.log('call api');
 
     // removeLayer();
     setLoading(true);
@@ -98,7 +104,6 @@ export default function LiveCityLeafletMap({ isDark }) {
   }, []);
 
   useEffect(() => {
-    console.log(routeTimer);
     // 根據計時狀況，重置計時器並呼叫api
     if (routeTimer === 0) {
       setRouteTimer(10);
@@ -109,12 +114,22 @@ export default function LiveCityLeafletMap({ isDark }) {
     }
   }, [routeTimer]);
 
+  useEffect(() => {
+    assignRouteHandler();
+    setRouteTimer(10);
+  }, [onRunCity]);
+
   const allBus = true;
 
   return (
     <Wrapper>
       <Sidebar>
-        <CityBusState tdxBus={tdxBus} loading={loading} />
+        <CityBusState
+          tdxBus={tdxBus}
+          loading={loading}
+          setOnRunCity={setOnRunCity}
+          onRunCity={onRunCity}
+        />
       </Sidebar>
       <StyledMemoMapContainer
         center={location}
@@ -141,7 +156,7 @@ export default function LiveCityLeafletMap({ isDark }) {
           />
         )}
       </StyledMemoMapContainer>
-      {loading && <LoadingEffect />}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }

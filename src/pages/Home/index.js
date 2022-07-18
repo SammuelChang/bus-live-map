@@ -2,7 +2,8 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import missing from '../../images/missing.jpg';
+import busMove from '../../images/bus_move.png';
+import grab from '../../images/grab.png';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
 import featureMap from '../../images/map-feature-light.png';
@@ -10,16 +11,18 @@ import featureRoute from '../../images/featureRouteLight.png';
 import featureCollection from '../../images/featureCollectionLight.png';
 import featureCity from '../../images/featureCityLight.png';
 import featureNearby from '../../images/featureNearbyLight.png';
+import featureInBus from '../../images/featureInBus.png';
 import leadership from '../../images/leadership.png';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(700vh - 120px + 50px + 25px);
+  height: calc(800vh - 120px + 50px + 25px);
   display: flex;
   flex-direction: column;
   align-items: center;
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
+  overflow: hidden;
 `;
 
 const NextPage = styled.div`
@@ -67,9 +70,10 @@ const NextPage = styled.div`
 
 const Cover = styled.div`
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: calc(100vh - 120px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   @media (max-width: 780px) {
@@ -80,15 +84,13 @@ const Cover = styled.div`
 const CoverTitle = styled.div`
   font-size: 4vw;
   font-weight: bold;
-  height: 30vw;
+  height: 100px;
   cursor: default;
   user-select: none;
   padding: 0 10px 30px;
-  margin-right: 30px;
 
   display: flex;
-  align-items: flex-top;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   @media (max-width: 780px) {
     align-items: center;
@@ -98,19 +100,71 @@ const CoverTitle = styled.div`
   }
 `;
 
-const CoverImg = styled.div`
-  background: url(${missing});
-  background-position: center top;
+const CoverImgContainer = styled.div`
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  > * {
+    display: flex;
+    align-items: flex-end;
+  }
+`;
+
+const Grab = styled.div`
+  background: url(${grab});
+  background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   border-radius: 3px;
-  width: 30vw;
-  height: 30vw;
-  opacity: 0.9;
-  transform: skew(-0.03turn, 10deg);
-  @media (max-width: 780px) {
-    width: 300px;
-    height: 300px;
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  animation: shake-left-right 0.8s 3s ease-in-out 13;
+  @keyframes shake-left-right {
+    0%,
+    100% {
+      transform: rotate(0deg);
+      transform-origin: 50% 50%;
+    }
+    10% {
+      transform: rotate(8deg);
+    }
+    20%,
+    40%,
+    60% {
+      transform: rotate(-10deg);
+    }
+    30%,
+    50%,
+    70% {
+      transform: rotate(10deg);
+    }
+    80% {
+      transform: rotate(-8deg);
+    }
+    90% {
+      transform: rotate(8deg);
+    }
+  }
+`;
+
+const BusMove = styled.div`
+  background: url(${busMove});
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 250px;
+  height: 150px;
+  position: relative;
+  animation: moving-bus 5s 3s 2;
+  @keyframes moving-bus {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(60vw);
+    }
   }
 `;
 
@@ -128,6 +182,7 @@ const SubCover = styled.div`
 `;
 
 const SubCoverTitle = styled.div`
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
   font-size: 6rem;
   font-weight: bold;
   margin-bottom: 50px;
@@ -136,7 +191,7 @@ const SubCoverTitle = styled.div`
   transition: 1.5s ease;
   @keyframes scale {
     0% {
-      transform: scale(0.5);
+      transform: scale(0);
     }
     100% {
       transform: scale(1);
@@ -167,10 +222,10 @@ const SubCoverTitle = styled.div`
 `;
 
 const SubCoverText = styled.div`
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
   font-size: 2rem;
   font-weight: bold;
   text-align: center;
-  visibility: visible;
   z-index: 3;
   animation: ${(props) => (props.isVisible ? 'scale-up-center' : '')} 3s ease-in-out 1;
   @keyframes scale-up-center {
@@ -264,10 +319,11 @@ const MainImgMap = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 50%;
-  min-height: 50vw;
-  min-width: 50vw;
+  min-height: 40vw;
+  min-width: 40vw;
   margin-left: 10vw;
   border: ${({ theme }) => theme.border} 1px solid;
+  position: relative;
   @media (max-width: 780px) {
     height: 50vw;
     width: 50vw;
@@ -279,13 +335,10 @@ const MainImgContainer = styled.div`
   display: flex;
   align-items: flex-end;
   position: absolute;
-  left: calc(25% - 25px);
-  margin-left: 10vw;
-  @media (max-width: 780px) {
-    left: calc(50% - 50px);
-    top: calc(25% - 50px);
-    margin-left: 0;
-  }
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-25%, -50%);
 `;
 
 const MainImgBus = styled.div`
@@ -363,11 +416,14 @@ const FeatureImg = styled.div`
   background-size: contain;
   width: 40%;
   height: 100%;
+  max-height: 400px;
   margin: ${(props) => props.margin};
 
   @media (max-width: 780px) {
     width: 50vw;
+    min-width: 300px;
     height: 50vw;
+    min-height: 300px;
     margin: 0;
   }
 `;
@@ -385,14 +441,22 @@ const FeatureIntro = styled.div`
     justify-content: center;
     text-align: center;
     order: 2;
+    margin-bottom: 30px;
   }
 `;
 const FeatureTitle = styled.div`
-  font-size: 4rem;
+  font-size: 3.2rem;
+  @media (max-width: 780px) {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
 `;
 const FeatureText = styled.div`
   font-size: 2rem;
   opacity: 0.5;
+  @media (max-width: 780px) {
+    font-size: 1.5rem;
+  }
 `;
 
 export default function Home() {
@@ -425,8 +489,11 @@ export default function Home() {
   return (
     <Wrapper>
       <Cover id="cover">
-        <CoverTitle>這是你每天的生活嗎？</CoverTitle>
-        <CoverImg />
+        <CoverTitle>這是你每天的生活嗎</CoverTitle>
+        <CoverImgContainer>
+          <Grab />
+          <BusMove />
+        </CoverImgContainer>
       </Cover>
       <SubCover id="sub-cover">
         <RollingBus
@@ -452,7 +519,12 @@ export default function Home() {
       </SubCover>
       <MainFeature id="main-feature">
         <MainLayoutContainer>
-          <MainImgMap />
+          <MainImgMap>
+            <MainImgContainer>
+              <MainImgBus />
+              <MainImgStop />
+            </MainImgContainer>
+          </MainImgMap>
           <MainTextContainer>
             <MainTitle>
               用公車動態
@@ -465,10 +537,6 @@ export default function Home() {
               而非我們追趕公車
             </MainText>
           </MainTextContainer>
-          <MainImgContainer>
-            <MainImgBus />
-            <MainImgStop />
-          </MainImgContainer>
         </MainLayoutContainer>
       </MainFeature>
       <Feature>
@@ -514,6 +582,17 @@ export default function Home() {
           <FeatureText>三秒鐘知道最遠去處</FeatureText>
         </FeatureIntro>
         <FeatureImg img={featureNearby} margin="0 0 0 50px" />
+      </Feature>
+      <Feature>
+        <FeatureImg img={featureInBus} margin="0 0 0 100px" />
+        <FeatureIntro margin="0 0 0 50px" text="left">
+          <FeatureTitle>
+            即便車廂擁擠
+            <br />
+            從此不再坐過站
+          </FeatureTitle>
+          <FeatureText>乘坐車輛偵測+路線實況</FeatureText>
+        </FeatureIntro>
       </Feature>
       <Link activeClass="active" to="header" spy smooth offset={0} duration={1000}>
         <NextPage down={false} title="回到頂端" />

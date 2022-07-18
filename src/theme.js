@@ -38,6 +38,7 @@ export const lightTheme = {
   fontWeight: 'normal',
   menu: menuImg,
   background: 'white',
+  adjBackground: '#edede9',
   headerColor: '#878484', // 淺灰
   headerHoverColor: 'black',
   color: 'black',
@@ -67,6 +68,7 @@ export const darkTheme = {
   mapScreen: mapScreenDark,
   fontWeight: 'bold',
   menu: menuDarkImg,
+  adjBackground: '#495057',
   background: '#363537', // 淺黑
   headerColor: 'white',
   headerHoverColor: 'white',

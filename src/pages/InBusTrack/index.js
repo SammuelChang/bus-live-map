@@ -1,8 +1,10 @@
+/* eslint-disable no-alert */
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components/macro';
+import Swal from 'sweetalert2';
+import Select from 'react-select';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
-// import LoadingEffect from '../../components/LoadingEffect';
 
 const ProgressAdjust = styled.div`
   z-index: 100;
@@ -19,9 +21,10 @@ const Wrapper = styled.div`
   align-items: flex-start;
   height: 100%;
   min-height: calc(100vh - 120px);
-  width: 100vw;
-  padding: 50px 0;
+  max-width: 100vw;
+  padding: 10px 0;
   user-select: none;
+
   > * {
     color: ${({ theme }) => theme.color};
   }
@@ -32,10 +35,10 @@ const Wrapper = styled.div`
 `;
 
 const UserInfo = styled.form`
-  width: 400px;
+  width: 320px;
   height: 100%;
   display: flex;
-  margin-right: ${(props) => (props.routeData ? '100px' : '0')};
+  margin-right: ${(props) => (props.routeData ? '80px' : '0')};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,19 +67,107 @@ const UserInfoBanner = styled.div`
 `;
 
 const Block = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
+  color: ${(props) => props.color};
+
+  &::before {
+    content: '${(props) => props.userOrder}';
+    min-width: 30px;
+    min-height: 30px;
+    color: ${({ theme }) => theme.main};
+    background: ${({ theme }) => theme.primary};
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    visibility: ${(props) => (props.noDot ? 'hidden' : 'visible')};
+  }
 `;
 
 const Label = styled.h5`
-  min-width: 100px;
-  font-size: 1.2rem;
+  min-width: 80px;
+  font-size: 1rem;
+  text-align: left;
   margin-right: 10px;
+  padding-left: 10px;
+
   ${(props) => props.unChosen
     && css`
       color: #e63946;
     `};
+`;
+
+const Remind = styled(Block)`
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  ::before {
+    display: none;
+  }
+`;
+
+const DetectInfo = styled.div`
+  padding: 10px 0 10px 0px;
+  margin: 10px 0 10px 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: ${(props) => (props.detectStatus ? `${({ theme }) => theme.main}` : 'gray')};
+`;
+// ${({ theme }) => theme.main}
+const NoDetectBtn = styled.button`
+  background: ${(props) => (props.detectStatus ? '#e63946' : '#2a9d8f')};
+  color: white;
+  padding: 5px;
+  margin: 0;
+  border: none;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  box-shadow: 0 4px #999;
+  outline: 0.5px solid transparent;
+
+  :active {
+    background-color: #3e8e41;
+    box-shadow: 0 2px #666;
+    transform: translateY(2px);
+  }
+  :hover {
+    outline: 0.5px solid ${({ theme }) => theme.background};
+  }
+`;
+
+const Note = styled.table`
+  color: gray;
+  font-size: 0.8rem;
+  margin-left: 5px;
+
+  tbody {
+    width: 100%;
+  }
+  tr {
+    width: 100%;
+  }
+  td {
+    vertical-align: top;
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
 `;
 
 const Route = styled.div`
@@ -84,15 +175,29 @@ const Route = styled.div`
   display: flex;
   align-items: center;
   padding: 15px 5px 15px 0;
-  margin: 20px 15px;
+  margin-top: 15px;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.color};
 
-  &:focus-within {
-    outline: none;
-    border-bottom: 2px solid ${({ theme }) => theme.color};
-    margin: 20px 15px 19px 15px;
+  &::before {
+    content: '1';
+    min-width: 30px;
+    min-height: 30px;
+    color: ${({ theme }) => theme.main};
+    background: ${({ theme }) => theme.primary};
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
   }
+`;
+const RouteInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
+  ${'' /* border-bottom: 1px solid ${({ theme }) => theme.color}; */}
 
   > * {
     border: none;
@@ -100,36 +205,45 @@ const Route = styled.div`
       outline: none;
     }
   }
+
+  ${
+  '' /* &:focus-within {
+    outline: none;
+    border-bottom: 2px solid ${({ theme }) => theme.color};
+    margin-bottom: -1px;
+  } */
+}
 `;
 
-const RouteInput = styled.input`
-  width: 100%;
-  height: 100%;
-  font-size: 1rem;
-  font-weight: 500;
-  padding-left: 5px;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
-`;
+// const RouteInput = styled.input`
+//   width: 100%;
+//   height: 100%;
+//   min-height: 40px;
+//   font-size: 1rem;
+//   font-weight: 500;
+//   padding-left: 5px;
+//   background: ${({ theme }) => theme.background};
+//   color: ${({ theme }) => theme.color};
+// `;
 
-const RouteBtn = styled.button`
-  background: url(${({ theme }) => theme.search}) no-repeat center center;
-  background-size: contain;
-  min-height: 30px;
-  min-width: 30px;
-  cursor: pointer;
+// const RouteBtn = styled.button`
+//   background: url(${({ theme }) => theme.search}) no-repeat center center;
+//   background-size: contain;
+//   min-height: 30px;
+//   min-width: 30px;
+//   cursor: pointer;
 
-  &:hover {
-    transform: scale(1.3);
-    transition: transform 0.1s;
-  }
-  &::active {
-    transform: scale(0.7);
-    transition: transform 0.1s;
-  }
-`;
+//   &:hover {
+//     transform: scale(1.3);
+//     transition: transform 0.1s;
+//   }
+//   &::active {
+//     transform: scale(0.7);
+//     transition: transform 0.1s;
+//   }
+// `;
 
-const Select = styled.select`
+const VanilaSelect = styled.select`
   width: 100%;
   min-width: 160px;
   background: url(${({ theme }) => theme.dropDown}) no-repeat 95% 50%;
@@ -143,6 +257,7 @@ const Select = styled.select`
   border-bottom: 1px solid ${({ theme }) => theme.color};
   color: ${({ theme }) => theme.color};
   cursor: pointer;
+  position: relative;
 
   &:focus {
     outline: none;
@@ -158,6 +273,20 @@ const RouteContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 20px;
+  @media (max-width: 780px) {
+    order: -1;
+    min-height: calc(100vh - 140px);
+    animation: scale-up-center 0.4s;
+    @keyframes scale-up-center {
+      0% {
+        transform: scale(0.5);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+  }
 `;
 
 const RouteInfo = styled.div`
@@ -199,17 +328,19 @@ const RouteStatus = styled.div`
   color: ${({ theme }) => theme.color};
   font-size: 1rem;
   text-align: center;
-  margin: 0px auto 15px;
+  margin: 5px auto 15px;
+  white-space: pre;
 `;
 
 const RouteBackground = styled.div`
   height: 100%;
-  width: 200px;
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  margin-right: 50px;
 
   &::before {
     content: '';
@@ -232,9 +363,11 @@ const Stop = styled.div`
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  border: 2px solid grey;
+  border: 4px solid grey;
   position: relative;
   margin: 5px 0 5px 0;
+  display: flex;
+  align-items: center;
 
   ${(props) => props.pre
     && css`
@@ -268,18 +401,81 @@ const Stop = styled.div`
   &::after {
     content: '${(props) => props.name}';
     display: block;
-    margin-left: 40px;
-    margin-top: -2.5px;
+    margin-left: 25px;
     width: 100px;
     height: 30px;
+    margin-top: 7px;
     white-space: nowrap;
   }
 
   &:last-child::after {
-    margin-left: 50px;
+    margin-left: 45px;
+    margin-bottom: 5px;
     height: 40px;
     display: flex;
     align-items: center;
+  }
+`;
+
+const StyledSelect = styled(Select)`
+  width: 100%;
+  .react-select__placeholder {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__menu {
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+  }
+  .react-select__option--is-focused {
+    border: none;
+    outline: none;
+    background: none;
+  }
+  .react-select__option--is-selected {
+    background: #ffc94a;
+    color: #363537;
+  }
+  .react-select__control {
+    cursor: pointer;
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+    opacity: 1;
+    z-index: 5;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: normal;
+    input {
+      color: unset;
+      color: ${({ theme }) => theme.primary} !important;
+      font-weight: normal;
+    }
+  }
+  .react-select__indicator-separator {
+    display: none;
+  }
+  .react-select__single-value {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__value-container {
+    padding: 0;
+  }
+  .react-select__dropdown-indicator {
+    padding: 0;
+  }
+  .react-select__control--is-focused {
+    border-color: ${({ theme }) => theme.color};
+  }
+`;
+
+const CityStyledSelect = styled(StyledSelect)`
+  width: 130px;
+  margin-right: 5px;
+  .react-select__control {
+    font-size: 1rem;
   }
 `;
 
@@ -296,6 +492,79 @@ export default function InBusTrack() {
   const [error, setError] = useState(false);
   const [busCurrentStop, setBusCurrentStop] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userStopPlate, setUserStopPlate] = useState('');
+  const [detectable, setDetectable] = useState(true);
+  const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
+
+  useEffect(() => {
+    api
+      .getToken()
+      .then((token) => api.getRouteInfo(onRunCity, token))
+      .then((result) => result
+        .map((i) => ({
+          value: i.RouteName.Zh_tw,
+          label: i.RouteName.Zh_tw,
+        }))
+        .sort((a, b) => a.value.localeCompare(b.value)))
+      .then((result) => setCityRouteLists(result));
+  }, [cityRouteLists]);
+
+  const locateCurrentPosition = () => new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve(position.coords);
+      },
+      (e) => {
+        reject(e);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000,
+      },
+    );
+  });
+
+  async function getUserNearbyStop(stops, userBuses) {
+    if (!detectable) {
+      return null;
+    }
+
+    const userPosition = await locateCurrentPosition();
+
+    if (userPosition === undefined) {
+      return null;
+    }
+
+    let userCurrentStop;
+    let userCurrentStopToNearbyStop = Math.sqrt(
+      (stops[0].PositionLat - userPosition.latitude) ** 2
+        + (stops[0].PositionLon - userPosition.longitude) ** 2,
+    );
+
+    stops.forEach((i) => {
+      if (
+        Math.sqrt(
+          (i.PositionLat - userPosition.latitude) ** 2
+            + (i.PositionLon - userPosition.longitude) ** 2,
+        ) < userCurrentStopToNearbyStop
+      ) {
+        userCurrentStop = i.StopName;
+        userCurrentStopToNearbyStop = Math.sqrt(
+          (i.PositionLat - userPosition.latitude) ** 2
+            + (i.PositionLon - userPosition.longitude) ** 2,
+        );
+      }
+    });
+    const result = [
+      userCurrentStop,
+      userBuses
+        .filter((a) => a.Direction === userDirection)
+        .find((i) => i.StopName.Zh_tw === userCurrentStop)?.PlateNumb,
+    ];
+    return result;
+  }
 
   function getDirection(list, on, off) {
     // 判斷去程、返程
@@ -323,10 +592,13 @@ export default function InBusTrack() {
     }
 
     const token = await api.getToken();
-    const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
-
+    const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, bus);
+    console.log(busWithTime);
     if (bus.length > 0 && busWithTime.length === 0) {
-      alert('請輸入正確的路線名稱');
+      Swal.fire({
+        title: '該路線目前未提供服務',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
 
@@ -363,29 +635,43 @@ export default function InBusTrack() {
     setError(false);
   }
 
-  async function getData(e) {
-    e.preventDefault();
-
-    const token = await api.getToken();
-    const busWithTime = await api.getAllRealTimeNearStop('Taipei', token, bus);
-
-    if (bus.length > 0 && busWithTime.length === 0) {
-      alert('請輸入正確的路線名稱');
+  async function getData(target) {
+    // e.preventDefault();
+    if (target.length === 0) {
+      Swal.fire({
+        title: '請輸入路線名稱',
+        confirmButtonColor: '#3085d6',
+        width: '350px',
+      });
       return;
     }
-    const route = await api.getAllStationStopOfRoute('Taipei', token, bus);
-    const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
+
+    const token = await api.getToken();
+    const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, target);
+
+    if (target.length > 0 && busWithTime.length === 0) {
+      Swal.fire({
+        title: '該路線目前未提供服務',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+    const route = await api.getAllStationStopOfRoute(onRunCity, token, target);
+    const filterRoute = route.filter((a) => a.RouteName.Zh_tw === target);
 
     const stops = filterRoute.reduce((acc, cur) => {
       cur.Stops.forEach((stop) => {
-        acc[`${stop.StopUID}-${stop.Direction}`] = {};
-        acc[`${stop.StopUID}-${stop.Direction}`].StationID = stop.StationID;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopUID = stop.StopUID;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopName = stop.StopName.Zh_tw;
-        acc[`${stop.StopUID}-${stop.Direction}`].StopSequence = stop.StopSequence;
-        acc[`${stop.StopUID}-${stop.Direction}`].Direction = cur.Direction;
-        acc[`${stop.StopUID}-${stop.Direction}`].SubRouteUID = cur.SubRouteUID;
-        acc[`${stop.StopUID}-${stop.Direction}`].idx = `${cur.Direction}${stop.StopSequence}`;
+        const key = `${stop.StopUID}-${stop.Direction}`;
+        acc[key] = {};
+        acc[key].StationID = stop.StationID;
+        acc[key].StopUID = stop.StopUID;
+        acc[key].StopName = stop.StopName.Zh_tw;
+        acc[key].StopSequence = stop.StopSequence;
+        acc[key].Direction = cur.Direction;
+        acc[key].SubRouteUID = cur.SubRouteUID;
+        acc[key].idx = `${cur.Direction}${stop.StopSequence}`;
+        acc[key].PositionLat = stop.StopPosition.PositionLat;
+        acc[key].PositionLon = stop.StopPosition.PositionLon;
       });
       return acc;
     }, {});
@@ -444,32 +730,69 @@ export default function InBusTrack() {
     }
   }, [error]);
 
+  useEffect(() => {
+    if (userRoute.length > 0 && tdxBuses.length > 0) {
+      getUserNearbyStop(userRoute, tdxBuses).then((p) => {
+        setUserStopPlate(p !== null ? p[1] : undefined);
+      });
+    }
+  }, [userRoute, tdxBuses]);
+
   return (
     <Wrapper>
       <UserInfo routeData={userPlate}>
         <UserInfoBanner>目前搭乘公車</UserInfoBanner>
         <Route>
           <Label>路線名稱</Label>
-          <RouteInput
-            placeholder="306"
-            onChange={(e) => {
-              setBus(e.target.value);
-            }}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
+          <RouteInputContainer>
+            {/* <RouteInput
+              placeholder="306"
+              onChange={(e) => {
+                setBus(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  getData(e);
+                }
+              }}
+            />
+            <RouteBtn
+              onClick={(e) => {
                 getData(e);
-              }
-            }}
-          />
-          <RouteBtn
-            onClick={(e) => {
-              getData(e);
-            }}
-          />
+              }}
+            /> */}
+            <CityStyledSelect
+              classNamePrefix="react-select"
+              options={[
+                { value: 'Taipei', label: '台北市' },
+                { value: 'NewTaipei', label: '新北市' },
+              ]}
+              defaultValue={{ value: 'Taipei', label: '台北市' }}
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              onChange={(e) => {
+                setOnRunCity(e.value);
+              }}
+            />
+            <StyledSelect
+              classNamePrefix="react-select"
+              placeholder="輸入路線"
+              options={cityRouteLists}
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              type="text"
+              onChange={(e) => {
+                setBus(e.value);
+                getData(e.value);
+              }}
+            />
+          </RouteInputContainer>
         </Route>
-        <Block>
+        <Block userOrder="2">
           <Label>上車站牌</Label>
-          <Select
+          <VanilaSelect
             onChange={(e) => {
               setUserOnStop(e.target.value);
             }}
@@ -484,11 +807,11 @@ export default function InBusTrack() {
                   {i.StopName}
                 </Option>
               ))}
-          </Select>
+          </VanilaSelect>
         </Block>
-        <Block>
+        <Block userOrder="3">
           <Label>下車站牌</Label>
-          <Select
+          <VanilaSelect
             onChange={(e) => {
               setUserOffStop(e.target.value);
             }}
@@ -503,11 +826,14 @@ export default function InBusTrack() {
                   {i.StopName}
                 </Option>
               ))}
-          </Select>
+          </VanilaSelect>
         </Block>
-        <Block>
-          <Label unChosen={userPlate.length === 0 && tdxBuses.length > 0}>車牌號碼</Label>
-          <Select
+        <Block userOrder="4">
+          <Label>
+            {/* unChosen={userPlate.length === 0 && tdxBuses.length > 0} */}
+            車牌號碼
+          </Label>
+          <VanilaSelect
             onChange={(e) => {
               setUserPlate(e.target.value);
             }}
@@ -520,10 +846,56 @@ export default function InBusTrack() {
                 .map((i) => (
                   <Option key={i.PlateNumb} value={i.PlateNumb}>
                     {i.PlateNumb}
+                    {/* {i.PlateNumb === userStopPlate ? ' 可能搭乘中' : ''} */}
                   </Option>
                 ))}
-          </Select>
+          </VanilaSelect>
         </Block>
+        <Remind noDot>
+          <DetectInfo detectStatus={detectable}>
+            可能搭乘的車輛：
+            {detectable && userStopPlate?.length > 0 && `${userStopPlate}`}
+            {detectable && !userStopPlate?.length > 0 && '偵測中'}
+            {!detectable && '暫停偵測'}
+            <NoDetectBtn
+              detectStatus={detectable}
+              onClick={(e) => {
+                e.preventDefault();
+                setDetectable(!detectable);
+              }}
+            >
+              {detectable ? '暫停偵測' : '開始偵測'}
+            </NoDetectBtn>
+          </DetectInfo>
+          <Note>
+            <tbody>
+              {/* <tr>
+                <td style={{ width: '120px' }}>※ 您可能搭乘的車輛</td>
+                <td>{userStopPlate?.length > 0 ? `${userStopPlate}` : '偵測中'}</td>
+              </tr> */}
+              <tr>
+                <td colSpan="2" style={{ width: '120px' }}>
+                  ※ 可手動關閉位置偵測，避免電力損失
+                </td>
+              </tr>
+              <tr>
+                <td style={{ width: '120px' }}>※ 常見車牌位置</td>
+                <td>
+                  <ol>
+                    <li>司機右上方中央看板</li>
+                    <li>車內乘客後門正上方</li>
+                    <li>車外正前方、正後方、右後方</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan="2" style={{ width: '120px' }}>
+                  ※ 紅色實心圓為公車最新到站站牌
+                </td>
+              </tr>
+            </tbody>
+          </Note>
+        </Remind>
       </UserInfo>
       {userPlate && (
         <RouteContainer>
@@ -548,9 +920,9 @@ export default function InBusTrack() {
                 ))}
           </RouteBackground>
           <RouteStatus>
-            {busCurrentStop === undefined ? '指定車牌尚未行經區間站牌內' : ''}
-            <br />
-            {busCurrentStop === undefined ? '請確認乘坐車牌是否正確' : ''}
+            {!loading && busCurrentStop === undefined
+              ? '該車牌未行經區間內，請確認乘坐車牌是否正確。\r\n兩站牌間距較長時，可能短暫無法取得車牌資訊。'
+              : ''}
             {busCurrentStop !== undefined && tdxBuses.length
               ? `車機更新時間：${busCurrentStop.SrcUpdateTime.replace('T', ' ').replace(
                 '+08:00',

@@ -2,52 +2,54 @@ import styled from 'styled-components/macro';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
-import busStop from '../../images/bus-stop-empty.png';
+// import busStop from '../../images/bus-stop-empty.png';
 import trash from '../../images/trash.png';
 import LoadingEffect from '../../components/LoadingEffect';
 
 const StyleLink = styled(Link)`
   text-decoration: none;
   color: black;
+  cursor: pointer;
+`;
+
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 20px;
+  right: 15px;
 `;
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.background};
   height: 100%;
+  min-height: calc(100vh - 120px);
   width: 100%;
-  padding: 30px;
+  ${'' /* padding: 30px; */}
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+  position: relative;
 `;
 
-const NoDataWarn = styled.div`
-  text-align: center;
-  padding-top: 35px;
-  padding-left: 20px;
-  height: 300px;
-  width: 300px;
-  background: url(${busStop}) no-repeat center;
-  color: white;
-  border: 1px solid
-  margin: 15px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  animation: rotate-vertical-center 2s;
-  @keyframes rotate-vertical-center {
-    0% {
-      transform: rotateY(180deg);
-    }
-    100% {
-      transform: rotateY(0);
-    }
-  }
-  & > span{
-    font-size: 1.3rem;
-  }
+// const NoDataWarn = styled.div`
+//   text-align: center;
+//   padding-top: 35px;
+//   padding-left: 20px;
+//   height: 300px;
+//   width: 300px;
+//   background: url(${busStop}) no-repeat center;
+//   color: white;
+//   border: 1px solid
+//   margin: 15px;
+//   font-size: 1.5rem;
+//   font-weight: bold;
+//   & > span{
+//     font-size: 1.3rem;
+//   }
 
-`;
+// `;
 
 const InfoCard = styled.div`
   height: 250px;
@@ -98,16 +100,19 @@ const InfoCard = styled.div`
 `;
 
 const BusStop = styled.div`
-  height: 20%;
+  height: 25%;
   width: 100%;
   font-size: 1.2rem;
   font-weight: bold;
   background: ${(props) => (props.coming ? '#e63946' : '#1299ce')};
   color: white;
+  padding: 5px;
+  white-space: pre;
+  text-align: center;
 `;
 
 const BusRoute = styled.div`
-  height: 40%;
+  height: 35%;
   width: 100%;
   justify-content: space-around;
 `;
@@ -133,6 +138,7 @@ const BusDirection = styled.div`
   }
   & > span:last-child {
     font-size: 1rem;
+    white-space: pre;
     &::after {
       content: ' ';
     }
@@ -143,6 +149,19 @@ const BusTime = styled.div`
   height: 30%;
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
   color: ${(props) => (props.coming ? '#e63946' : 'black')};
+  white-space: pre;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 20px;
+
+  div {
+    text-align: center;
+  }
+
+  span {
+    text-align: center;
+    font-size: 1rem;
+  }
 `;
 
 const Function = styled.div`
@@ -164,6 +183,7 @@ const Remove = styled.div`
 
 export default function Collection() {
   const [loading, setLoading] = useState(false);
+  const [firstLoading, setFirstLoading] = useState(true);
   const [collectList, setCollectList] = useState(
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
@@ -209,15 +229,25 @@ export default function Collection() {
       return;
     }
     setLoading(true);
+    const cityAbrLists = [...new Set(collectList.map((i) => i.RouteUID.substring(0, 3)))];
     const token = await api.getToken();
-    const stopsWithTime = await api.getAllStationEstimatedTimeOfArrival(
-      'Taipei',
-      token,
-      '',
-      stopFilter,
-    );
 
-    const busInfo = await api.getRouteInfo('Taipei', token, '', routeFilter);
+    const stopsWithTimeNWT = cityAbrLists.includes('NWT')
+      ? await api.getAllStationEstimatedTimeOfArrival('NewTaipei', token, '', stopFilter)
+      : [];
+    const busInfoNWT = cityAbrLists.includes('NWT')
+      ? await api.getRouteInfo('NewTaipei', token, '', routeFilter)
+      : [];
+    const stopsWithTimeTPE = cityAbrLists.includes('TPE')
+      ? await api.getAllStationEstimatedTimeOfArrival('Taipei', token, '', stopFilter)
+      : [];
+    const busInfoTPE = cityAbrLists.includes('TPE')
+      ? await api.getRouteInfo('Taipei', token, '', routeFilter)
+      : [];
+
+    const stopsWithTime = [...(stopsWithTimeTPE || []), ...(stopsWithTimeNWT || [])];
+    const busInfo = [...(busInfoTPE || []), ...(busInfoNWT || [])];
+
     const stopsWithTimeInfo = stopsWithTime.map((i) => ({
       ...i,
       DestinationStopNameZh: busInfo.find((info) => info.RouteUID === i.RouteUID)
@@ -253,9 +283,15 @@ export default function Collection() {
     }
   }, [routeTimer]);
 
+  useEffect(() => {
+    if (!loading && stops.length > 0) {
+      setFirstLoading(false);
+    }
+  }, [stops]);
+
   return (
     <Wrapper>
-      {collectList.length === 0 && (
+      {/* {collectList.length === 0 && (
         <NoDataWarn>
           空空如也
           <br />
@@ -264,30 +300,40 @@ export default function Collection() {
             <span>點我去收藏</span>
           </StyleLink>
         </NoDataWarn>
-      )}
+      )} */}
       {collectList.length >= 0
         && stops.map((stop) => (
           <InfoCard
             key={`${stop.RouteUID}_${stop.StopUID}_${stop.Direction}_${stop.EstimateTime}`}
             coming={stop.EstimateTime < comingThreshold}
           >
-            <BusStop coming={stop.EstimateTime < comingThreshold}>{stop.StopName.Zh_tw}</BusStop>
+            <BusStop coming={stop.EstimateTime < comingThreshold}>
+              {stop.StopName.Zh_tw.replace('/', ' /\n').replace('(', ' \n(')}
+            </BusStop>
             <BusRoute>
               <BusName>{stop.RouteName.Zh_tw}</BusName>
               <BusDirection>
                 <span>往</span>
                 <span>
-                  {stop.Direction === 0 && stop.DestinationStopNameZh}
-                  {stop.Direction === 1 && stop.DepartureStopNameZh}
+                  {stop.Direction === 0 && stop.DestinationStopNameZh.replace('(', ' \n(')}
+                  {stop.Direction === 1 && stop.DepartureStopNameZh.replace('(', ' \n(')}
                 </span>
               </BusDirection>
             </BusRoute>
             <BusTime coming={stop.EstimateTime < comingThreshold}>
               {' '}
-              {stop.EstimateTime < comingThreshold / 2 && '將到站'}
-              {stop.EstimateTime > comingThreshold / 2
-                && stop.EstimateTime < comingThreshold
-                && '將到站'}
+              {stop.EstimateTime < comingThreshold / 2 && (
+                <div>
+                  <div>進站中</div>
+                  <span>(1分內)</span>
+                </div>
+              )}
+              {stop.EstimateTime > comingThreshold / 2 && stop.EstimateTime < comingThreshold && (
+                <div>
+                  <div>將到站</div>
+                  <span>(2分內)</span>
+                </div>
+              )}
               {stop.EstimateTime >= comingThreshold && `${Math.floor(stop.EstimateTime / 60)}分`}
               {stop.EstimateTime === undefined && '未發車'}
             </BusTime>
@@ -299,7 +345,17 @@ export default function Collection() {
             </Function>
           </InfoCard>
         ))}
-      {loading && <LoadingEffect />}
+      {(!firstLoading || collectList.length === 0) && (
+        <StyleLink to="/live/route/">
+          <InfoCard>
+            <BusStop style={{ background: '#878484' }}>收藏更多</BusStop>
+            <BusRoute />
+            <BusTime>立即前往</BusTime>
+            <Function />
+          </InfoCard>
+        </StyleLink>
+      )}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }

@@ -10,8 +10,10 @@ import styled from 'styled-components';
 // `;
 const Loading = styled.div`
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  width: max-content;
+  min-width: 40px;
+  height: max-content;
+  min-height: 40px;
   position: absolute;
   bottom: 20px;
   right: 20px;

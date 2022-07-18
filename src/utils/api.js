@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const api = {
   top: 10000,
   host: 'https://tdx.transportdata.tw',
@@ -16,7 +17,6 @@ const api = {
       body: urlencoded,
       redirect: 'follow',
     };
-
     return fetch(
       `${this.host}/auth/realms/TDXConnect/protocol/openid-connect/token`,
       requestOptions,

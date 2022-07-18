@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
+// import { css } from 'styled-components/macro';
 
 const ProgressContainer = styled.div`
-  height: 20px;
+  height: 10px;
   width: 100%;
   z-index: 100;
   margin: auto 0;
@@ -18,7 +19,8 @@ const Progress = styled.div`
   height: 5px;
   position: relative;
 
-  ${(props) => props.loading
+  ${
+  '' /* ${(props) => props.loading
     && css`
       background: #e63946;
       animation: shine 0.5s linear forwards infinite;
@@ -30,7 +32,8 @@ const Progress = styled.div`
           opacity: 0;
         }
       }
-    `}
+    `} */
+}
 `;
 
 const ProgressValue = styled.div`
@@ -54,7 +57,7 @@ const ProgressValue = styled.div`
 export default function ProgressBar({ loading, data }) {
   return (
     <ProgressContainer>
-      <Progress loading={loading ? true : undefined}>
+      <Progress loading={loading ? 1 : 0}>
         <ProgressValue run={!loading && data.length !== 0} />
       </Progress>
     </ProgressContainer>

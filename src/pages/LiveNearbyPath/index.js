@@ -14,7 +14,8 @@ import {
 import 'leaflet/dist/leaflet.css';
 import { parse } from 'wellknown';
 import styled from 'styled-components';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import BusShape from '../../components/LeafletMap/BusShape';
@@ -26,9 +27,15 @@ const Wrapper = styled.div`
   display: flex;
   position: relative;
 `;
-
+const LoadingEffectContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+`;
 const UserMemo = styled.div`
-  width: 250px;
+  width: 270px;
   height: 60px;
   background: white;
   z-index: 100;
@@ -60,7 +67,7 @@ const StyledMemoMapContainer = styled(MemoMapContainer)`
     }
   }
 `;
-Modal.setAppElement('#root');
+// Modal.setAppElement('#root');
 
 function AddMarkerToClick({
   markers, setMarkers, getCurrentPoi, setGetCurrentPoi,
@@ -142,16 +149,21 @@ export default function LiveNearbyPath({ isDark }) {
   const [nearby, setNearby] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [tdxShape, setTdxShape] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(true);
   const [getCurrentPoi, setGetCurrentPoi] = useState(false);
+  const [onRunCity, setOnRunCity] = useState('Taipei');
 
   async function getNearby(lon, lat) {
     setLoading(true);
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
     const token = await api.getToken();
-    const result = await api.getNearbyStops('Taipei', token, lon, lat);
+    const result = await api.getNearbyStops(onRunCity, token, lon, lat);
     setNearby(result.features ?? []);
 
+    if (Object.keys(result).length === 0) {
+      setLoading(false);
+      return;
+    }
     if ((await Object.keys(result).length) !== 0) {
       const stationFilter = result.features
         .reduce((acc, cur) => {
@@ -162,7 +174,7 @@ export default function LiveNearbyPath({ isDark }) {
         .join('')
         .replace('or Stops', 'Stops');
 
-      const routeData = await api.getAllStationStopOfRoute('Taipei', token, '', stationFilter);
+      const routeData = await api.getAllStationStopOfRoute(onRunCity, token, '', stationFilter);
       setRoutes(routeData);
 
       const routeSets = routeData
@@ -173,7 +185,7 @@ export default function LiveNearbyPath({ isDark }) {
         .map((i) => `or RouteUID eq '${i}'`)
         .join('')
         .replace('or RouteUID', 'RouteUID');
-      const shapeData = await api.getAllShape('Taipei', token, '', routeSets);
+      const shapeData = await api.getAllShape(onRunCity, token, '', routeSets);
       const geoShapeData = shapeData.map((obj) => ({
         ...obj,
         Geojson: { ...parse(obj.Geometry), properties: { RouteName: obj.RouteName.Zh_tw } },
@@ -195,13 +207,26 @@ export default function LiveNearbyPath({ isDark }) {
       setTdxShape([]);
       getNearby(markers[0].lng, markers[0].lat);
     }
-  }, [markers]);
+  }, [markers, onRunCity]);
+
+  function successLocate(position) {
+    setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
+    setGetCurrentPoi(true);
+  }
+
+  function failedLocate() {
+    setMarkers([
+      {
+        lat: location[0],
+        lng: location[1],
+      },
+    ]);
+    setGetCurrentPoi(false);
+    setLoading(false);
+  }
 
   function locatePosition() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setMarkers([{ lat: position.coords.latitude, lng: position.coords.longitude }]);
-      setGetCurrentPoi(true);
-    });
+    navigator.geolocation.getCurrentPosition(successLocate, failedLocate);
   }
 
   useEffect(() => {
@@ -209,15 +234,17 @@ export default function LiveNearbyPath({ isDark }) {
   }, []);
 
   useEffect(() => {
-    setIsOpen(true);
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 3000);
+    if (!getCurrentPoi) return;
+    Swal.fire({
+      title: '已自動偵測您現在位置',
+      showConfirmButton: false,
+      timer: 1500,
+    });
   }, [getCurrentPoi]);
 
   return (
     <Wrapper>
-      {getCurrentPoi && (
+      {/* {getCurrentPoi && (
         <Modal
           closeTimeoutMS={500}
           isOpen={isOpen}
@@ -249,14 +276,21 @@ export default function LiveNearbyPath({ isDark }) {
         >
           <div>已自動定位您所在位置，三秒後自動關閉視窗</div>
         </Modal>
-      )}
+      )} */}
       <Sidebar>
-        <NearbyPath nearby={nearby} routes={routes} markers={markers} />
+        <NearbyPath
+          nearby={nearby}
+          routes={routes}
+          markers={markers}
+          onRunCity={onRunCity}
+          setOnRunCity={setOnRunCity}
+          loading={loading}
+        />
       </Sidebar>
       <UserMemo>
         點擊地圖任意位置
         <br />
-        查看500公尺內行經公車路線
+        查看500公尺內行經公車最遠範圍
       </UserMemo>
       <StyledMemoMapContainer
         center={location}
@@ -288,7 +322,7 @@ export default function LiveNearbyPath({ isDark }) {
           />
         )}
       </StyledMemoMapContainer>
-      {loading && <LoadingEffect />}
+      <LoadingEffectContainer>{loading && <LoadingEffect />}</LoadingEffectContainer>
     </Wrapper>
   );
 }

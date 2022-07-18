@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 import styled, { css } from 'styled-components/macro';
 import heart from '../../images/heart.png';
 
@@ -28,49 +29,65 @@ const SearchContainer = styled.form`
   width: 100%;
 `;
 
-const SearchButton = styled.div`
-  background: url(${({ theme }) => theme.search}) no-repeat center center;
-  background-size: contain;
-  height: 40px;
-  width: 40px;
-  border: none;
-  margin-right: 10px;
-  cursor: pointer;
-  position: relative;
-
-  &:hover {
-    transform: scale(1.3);
-    transition: transform 0.1s;
+const StyledSelect = styled(Select)`
+  width: 100%;
+  .react-select__placeholder {
+    ${'' /* color: ${({ theme }) => theme.primary}; */}
   }
-  &::active {
-    transform: scale(0.7);
-    transition: transform 0.1s;
+  .react-select__control {
+    cursor: pointer;
+    background: ${({ theme }) => theme.background};
+    ${'' /* color: ${({ theme }) => theme.color}; */}
+    opacity: 1;
+    z-index: 5;
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: normal;
+    input {
+      color: unset;
+      color: ${({ theme }) => theme.primary} !important;
+    }
+  }
+  .react-select__menu {
+    background: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
+  }
+  .react-select__option--is-focused {
+    border: none;
+    outline: none;
+    background: none;
+  }
+  .react-select__option--is-selected {
+    background: #ffc94a;
+    color: #363537;
+  }
+  .react-select__option--is-hovered {
+    border-bottom: 1px solid ${({ theme }) => theme.color};
+  }
+
+  .react-select__indicator-separator {
+    display: none;
+  }
+  .react-select__single-value {
+    color: ${({ theme }) => theme.primary};
+  }
+  .react-select__value-container {
+    padding: 0;
+  }
+  .react-select__control--is-focused {
+    border-color: ${({ theme }) => theme.color};
   }
 `;
 
-const SearchText = styled.input`
-  background: none;
-  border: none;
-  width: 100%;
-  height: 50%;
-  max-height: 100px;
-  color: ${({ theme }) => theme.color};
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 15px 15px 20px 0;
-  margin-left: 15px;
-  resize: none;
-  border: none;
-  overflow: hidden;
-  outline: none;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  border-bottom: 0.5px solid ${({ theme }) => theme.background};
-
-  &:focus-within {
-    border-bottom: 0.5px solid gray;
-    transition: border-bottom 0.25s linear;
+const CityStyledSelect = styled(StyledSelect)`
+  width: 130px;
+  margin-right: 5px;
+  .react-select__control {
+    font-size: 1rem;
   }
 `;
 
@@ -80,7 +97,6 @@ const Status = styled.div`
   color: #e63946;
   height: 30px;
   width: 100%;
-  padding: 5px 5px;
   animation: blur-in-expand 0.4s linear both;
   @keyframes blur-in-expand {
     0% {
@@ -112,7 +128,8 @@ const Direction = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 1s;
+    transition: all 0.3s;
+    border: 1px solid ${({ theme }) => theme.third};
   }
 `;
 
@@ -124,7 +141,8 @@ const Depart = styled.div`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.7;
+      background: none;
+      opacity: 0.5;
       &:hover {
         width: 100%;
         padding: 0;
@@ -141,7 +159,8 @@ const Destination = styled.div`
       width: 30%;
       padding: 0;
       font-size: 0.5rem;
-      opacity: 0.7;
+      background: none;
+      opacity: 0.5;
       &:hover {
         width: 100%;
         padding: 0;
@@ -156,25 +175,6 @@ const Stops = styled.div`
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-
-  ${
-  '' /* &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.background};
-  }
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: ${({ theme }) => theme.background};
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: ${({ theme }) => theme.headerColor};
-  } */
-}
 `;
 
 const Stop = styled.div`
@@ -209,9 +209,13 @@ const Stop = styled.div`
 const StopName = styled.div`
   text-align: left;
   width: 60%;
-  white-space: nowrap;
   font-weight: bold;
   padding-left: 5px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: auto 0;
 `;
 
 const StopTime = styled.div`
@@ -221,6 +225,11 @@ const StopTime = styled.div`
   color: ${({ theme }) => theme.color};
   color: ${(props) => (props.coming ? '#e63946' : '')};
   font-weight: ${(props) => (props.coming ? 'bold' : 'normal')};
+
+  span {
+    font-size: 0.5rem;
+    margin-left: 5px;
+  }
 `;
 
 const Collect = styled.button`
@@ -276,7 +285,8 @@ const Progress = styled.div`
   height: 5px;
   position: relative;
 
-  ${(props) => props.loading
+  ${
+  '' /* ${(props) => props.loading
     && css`
       background: #e63946;
       animation: shine 0.5s linear forwards infinite;
@@ -288,7 +298,8 @@ const Progress = styled.div`
           opacity: 0;
         }
       }
-    `}
+    `} */
+}
 `;
 
 const ProgressValue = styled.div`
@@ -318,6 +329,8 @@ export default function RouteSearch({
   setDirection,
   wrongInput,
   loading,
+  cityRouteLists,
+  setOnRunCity,
 }) {
   const busRef = useRef('');
   const [collectList, setCollectList] = useState(
@@ -356,26 +369,51 @@ export default function RouteSearch({
   return (
     <Wrapper>
       <SearchContainer>
-        <SearchText
-          placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
-          ref={busRef}
-          type="text"
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              searchRoute(busRef.current.value);
-              setDisplayBus(busRef.current.value);
-            }
+        <CityStyledSelect
+          classNamePrefix="react-select"
+          options={[
+            { value: 'Taipei', label: '台北市' },
+            { value: 'NewTaipei', label: '新北市' },
+          ]}
+          defaultValue={{ value: 'Taipei', label: '台北市' }}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
+          }}
+          onChange={(e) => {
+            setOnRunCity(e.value);
           }}
         />
-        <SearchButton
+        <StyledSelect
+          classNamePrefix="react-select"
+          placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
+          options={cityRouteLists}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
+          }}
+          ref={busRef}
+          type="text"
+          onChange={(e) => {
+            searchRoute(e.value);
+            setDisplayBus(e.value);
+          }}
+          // onKeyPress={(e) => {
+          //   if (e.key === 'Enter') {
+          //     e.preventDefault();
+          //     searchRoute(e.value);
+          //     setDisplayBus(e.value);
+          //   }
+          // }}
+        />
+        {/* <SearchButton
           onClick={() => {
             searchRoute(busRef.current.value);
             setDisplayBus(busRef.current.value);
           }}
-        />
+        /> */}
       </SearchContainer>
-      <Status>{wrongInput && '查無路線資訊'}</Status>
+      <Status>{wrongInput && '處理異常，請再試一次'}</Status>
       {!!mergeStation.length && (
         <Direction>
           <Depart onClick={() => setDirection(0)} directionNow={direction === 0}>
@@ -395,10 +433,15 @@ export default function RouteSearch({
             <Stop key={stop.StopUID}>
               <StopName>{stop.StopName.Zh_tw}</StopName>
               <StopTime coming={stop.EstimateTime <= 120}>
-                {stop.EstimateTime == null && '未發車'}
-                {stop.EstimateTime > 0 && stop.EstimateTime <= 60 && '進站中'}
+                {stop.EstimateTime === undefined && '未發車'}
+                {stop.EstimateTime >= 0 && stop.EstimateTime <= 60 && '進站中'}
                 {stop.EstimateTime > 60 && stop.EstimateTime <= 120 && '將進站'}
-                {stop.EstimateTime > 120 && Math.floor(stop.EstimateTime / 60)}
+                {stop.EstimateTime > 120 && (
+                  <>
+                    {Math.floor(stop.EstimateTime / 60)}
+                    <span>分</span>
+                  </>
+                )}
               </StopTime>
               <Collect
                 onClick={() => clickHandler(stop.RouteUID, stop.StopUID)}
@@ -412,7 +455,7 @@ export default function RouteSearch({
           ))}
       </Stops>
       <ProgressContainer>
-        <Progress loading={loading ? true : undefined}>
+        <Progress loading={loading ? 1 : undefined}>
           <ProgressValue run={!loading && mergeStation.length !== 0} />
         </Progress>
       </ProgressContainer>
@@ -429,4 +472,6 @@ RouteSearch.propTypes = {
   setDirection: PropTypes.func.isRequired,
   wrongInput: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
+  cityRouteLists: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  setOnRunCity: PropTypes.func.isRequired,
 };

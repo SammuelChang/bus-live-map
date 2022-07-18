@@ -2,6 +2,7 @@ import { useLocation, Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import GlobalStyle from '../../globalStyles';
 
 const StyleLink = styled(Link)`
@@ -40,10 +41,10 @@ const NavContainer = styled.div`
 
 const Brand = styled.div`
   box-sizing: border-box;
-  width: 200px;
+  width: 170px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   font-size: 2rem;
   font-weight: 500;
   border-bottom: 2px solid gray;
@@ -56,6 +57,8 @@ const Brand = styled.div`
 const BrandName = styled.div`
   display: flex;
   align-items: flex-end;
+  margin-bottom: -5px;
+  font-family: 'Oswald', sans-serif;
 `;
 
 const Logo = styled.div`
@@ -105,8 +108,6 @@ const NavTo = styled.div`
     position: absolute;
     width: 100%;
     border-bottom: 1.2px solid gray;
-    ${'' /* border-radius: 4px; */}
-    ${'' /* background-color: #18272f; */}
     bottom: 0;
     left: 0;
     transform-origin: right;
@@ -126,7 +127,10 @@ const NavTo = styled.div`
       color: ${({ theme }) => theme.hoverColor};
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s linear;
+      transition: none;
+    }
+    &::before {
+      visibility: hidden;
     }
   }
 `;
@@ -223,6 +227,7 @@ function Header({ toggleTheme }) {
     setMenu(!menu);
   };
   const handleScroll = () => setMenu(false);
+  const isMediaMatch = useMediaQuery({ query: '(max-width: 780px)' });
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -242,25 +247,24 @@ function Header({ toggleTheme }) {
           <StyleLink to="/in-bus-track">
             <NavTo cur={pathname.includes('in-bus-track')}>乘車快報</NavTo>
           </StyleLink>
-          {/* <StyleLink to="/live/city">
-            <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
-          </StyleLink> */}
+          {!isMediaMatch && (
+            <StyleLink to="/live/city">
+              <NavTo cur={pathname.includes('city')}>全城動態</NavTo>
+            </StyleLink>
+          )}
           <StyleLink to="/live/nearbyPath">
             <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
           </StyleLink>
-          <StyleA
-            href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
-            target="_blank"
-          >
+          <StyleA href="https://pse.is/4baf7f" target="_blank">
             <NavTo>意見提供</NavTo>
           </StyleA>
         </SideContent>
       </SideNav>
       <StyleLink to="/">
         <Brand>
-          <BrandName>Live</BrandName>
+          <BrandName>BUS</BrandName>
           <Logo />
-          <BrandName>Bus</BrandName>
+          <BrandName>LIVE</BrandName>
         </Brand>
       </StyleLink>
       <NavContainer>
@@ -285,10 +289,7 @@ function Header({ toggleTheme }) {
         <StyleLink to="/live/nearbyPath">
           <NavTo cur={pathname.includes('nearby')}>最遠路徑</NavTo>
         </StyleLink>
-        <StyleA
-          href="https://docs.google.com/forms/d/1h8zZNw4ewqD1iPn4BaBYsG_iuhjbRU0a7VTfqYYwoQw/edit"
-          target="_blank"
-        >
+        <StyleA href="https://pse.is/4baf7f" target="_blank">
           <NavTo>意見提供</NavTo>
         </StyleA>
       </NavContainer>
