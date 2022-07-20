@@ -187,6 +187,7 @@ export default function CityBusState({
         <BusMove moveDirection={moveDirection} />
         {cityOptions.map((i) => (
           <CityOption
+            key={i.cityCode}
             textAlign={i.textAlign}
             onClick={() => {
               cityAlter(i.cityCode, i.direction);
@@ -199,7 +200,7 @@ export default function CityBusState({
       </CityContainer>
       {busStatics
         && busStatics.map((i) => (
-          <BusStatus bg={i.bg} clr={i.clr}>
+          <BusStatus key={i.bg} bg={i.bg} clr={i.clr}>
             <Status>{i.status}</Status>
             <Count>{i.count}</Count>
             <Explain>{i.explain}</Explain>

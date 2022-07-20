@@ -189,6 +189,7 @@ export default function NearbyPath({
         <BusMove moveDirection={moveDirection} />
         {cityOptions.map((i) => (
           <CityOption
+            key={i.cityCode}
             textAlign={i.textAlign}
             onClick={() => {
               cityAlter(i.cityCode, i.direction);
