@@ -12,10 +12,24 @@ import LiveCity from './pages/LiveCity';
 import LiveNearbyPath from './pages/LiveNearbyPath';
 import NoMatch from './pages/NoMatch';
 import InBusTrack from './pages/InBusTrack';
+import api from './utils/api';
 
 function App() {
   const [theme, setTheme] = useState('light');
   const [isDark, setIsDark] = useState(false);
+  const [accessToken] = useState(JSON.parse(localStorage.getItem('stopToken')) || []);
+  async function tokenCheck() {
+    if (new Date().getTime() < accessToken.expireDateMs) {
+      return null;
+    }
+
+    const token = await api.getToken();
+    const expireDateMs = new Date().getTime() + 86000000;
+    localStorage.setItem('stopToken', JSON.stringify({ token, expireDateMs }));
+    return null;
+  }
+
+  tokenCheck();
 
   const toggleTheme = () => {
     if (theme === 'light') {

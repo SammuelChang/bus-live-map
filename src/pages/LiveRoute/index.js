@@ -39,6 +39,91 @@ const StyledMemoMapContainer = styled(MemoMapContainer)`
   }
 `;
 
+const cacheInfoList = [];
+const cacheShapeList = [];
+const cacheStopList = [];
+
+async function getInfoFn(city, token, bus) {
+  const cacheInfo = cacheInfoList.find((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheInfo) {
+    return [cacheInfo];
+  }
+
+  const info = await api.getRouteInfo(city, token, bus);
+  const filterInfo = await info.filter((a) => a.RouteName.Zh_tw === bus);
+  cacheInfoList.push(...filterInfo);
+  return filterInfo;
+}
+
+async function getShapeFn(city, token, bus) {
+  const cacheShape = cacheShapeList.find((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheShape) {
+    return [cacheShape];
+  }
+
+  const shape = await api.getAllShape(city, token, bus);
+  const geoShape = await shape
+    .map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }))
+    .filter((a) => a.RouteName.Zh_tw === bus);
+  cacheShapeList.push(...geoShape);
+  return geoShape;
+}
+
+async function getRouteStationFn(city, token, bus = '') {
+  const cacheStop = cacheStopList.find((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheStop) {
+    return [cacheStop];
+  }
+
+  const route = await api.getAllStationStopOfRoute(city, token, bus);
+  const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
+  cacheStopList.push(...filterRoute);
+  return filterRoute;
+}
+
+async function getBusFn(city, token, bus = '') {
+  const busWithTime = await api.getAllRealTimeByFrequency(city, token, bus);
+  const filterBusWithTime = await busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
+  return filterBusWithTime;
+}
+
+async function getRouteStationTimeFn(city, token, bus = '') {
+  const routeWithTime = await api.getAllStationEstimatedTimeOfArrival(city, token, bus);
+  const filterRouteWithTime = await routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
+  return filterRouteWithTime;
+}
+
+function mergeStationHandler(s, t, i) {
+  const routeInfo = s.flatMap((route) => i.flatMap((info) => ({
+    ...route,
+    DepartureStopNameZh: info.DepartureStopNameZh,
+    DestinationStopNameZh: info.DestinationStopNameZh,
+  })));
+
+  const routeMerge = routeInfo.reduce((acc, cur) => {
+    cur.Stops.forEach((stop) => {
+      if (stop in acc) return;
+      acc[stop.StopUID] = stop;
+      acc[stop.StopUID].RouteUID = cur.RouteUID;
+      acc[stop.StopUID].SubRouteUID = cur.SubRouteUID;
+      acc[stop.StopUID].Direction = cur.Direction;
+      acc[stop.StopUID].DepartureStopNameZh = cur.DepartureStopNameZh;
+      acc[stop.StopUID].DestinationStopNameZh = cur.DestinationStopNameZh;
+      acc[stop.StopUID].StopSequence = stop.StopSequence;
+    });
+    return acc;
+  }, {});
+
+  t.forEach((time) => {
+    if (routeMerge[time.StopUID]) {
+      routeMerge[time.StopUID].EstimateTime = time.EstimateTime;
+      routeMerge[time.StopUID].UpdateTime = time.UpdateTime;
+    }
+  });
+
+  return routeMerge;
+}
+
 export default function LiveRoute({ isDark }) {
   const lightMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
   const darkMap = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${process.env.REACT_APP_STADIA_API_KEY}`;
@@ -91,75 +176,13 @@ export default function LiveRoute({ isDark }) {
     return null;
   }
 
-  async function getInfoFn(token, bus) {
-    const info = await api.getRouteInfo(onRunCity, token, bus);
-    const filterInfo = await info.filter((a) => a.RouteName.Zh_tw === bus);
-    return filterInfo;
-  }
-
-  async function getShapeFn(token, bus) {
-    const shape = await api.getAllShape(onRunCity, token, bus);
-    const geoShape = await shape
-      .map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }))
-      .filter((a) => a.RouteName.Zh_tw === bus);
-    return geoShape;
-  }
-
-  async function getBusFn(token, bus = '') {
-    const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
-    const filterBusWithTime = await busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
-    return filterBusWithTime;
-  }
-
-  async function getRouteStationFn(token, bus = '') {
-    const route = await api.getAllStationStopOfRoute(onRunCity, token, bus);
-    const filterRoute = route.filter((a) => a.RouteName.Zh_tw === bus);
-    return filterRoute;
-  }
-  async function getRouteStationTimeFn(token, bus = '') {
-    const routeWithTime = await api.getAllStationEstimatedTimeOfArrival(onRunCity, token, bus);
-    const filterRouteWithTime = await routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
-    return filterRouteWithTime;
-  }
-
-  function mergeStationHandler(s, t, i) {
-    const routeInfo = s.flatMap((route) => i.flatMap((info) => ({
-      ...route,
-      DepartureStopNameZh: info.DepartureStopNameZh,
-      DestinationStopNameZh: info.DestinationStopNameZh,
-    })));
-
-    const routeMerge = routeInfo.reduce((acc, cur) => {
-      cur.Stops.forEach((stop) => {
-        if (stop in acc) return;
-        acc[stop.StopUID] = stop;
-        acc[stop.StopUID].RouteUID = cur.RouteUID;
-        acc[stop.StopUID].SubRouteUID = cur.SubRouteUID;
-        acc[stop.StopUID].Direction = cur.Direction;
-        acc[stop.StopUID].DepartureStopNameZh = cur.DepartureStopNameZh;
-        acc[stop.StopUID].DestinationStopNameZh = cur.DestinationStopNameZh;
-        acc[stop.StopUID].StopSequence = stop.StopSequence;
-      });
-      return acc;
-    }, {});
-
-    t.forEach((time) => {
-      if (routeMerge[time.StopUID]) {
-        routeMerge[time.StopUID].EstimateTime = time.EstimateTime;
-        routeMerge[time.StopUID].UpdateTime = time.UpdateTime;
-      }
-    });
-
-    return routeMerge;
-  }
-
   async function assignRouteHandler(bus) {
     if (loading) {
       return;
     }
     setLoading(true);
     const token = await api.getToken();
-    const info = await getInfoFn(token, bus);
+    const info = await getInfoFn(onRunCity, token, bus);
 
     setTdxBusInfo(info);
 
@@ -173,23 +196,21 @@ export default function LiveRoute({ isDark }) {
       return;
     }
 
-    const shapeData = await getShapeFn(token, bus);
+    const shapeData = await getShapeFn(onRunCity, token, bus);
     setTdxShape(shapeData);
 
-    const busData = await getBusFn(token, bus);
+    const busData = await getBusFn(onRunCity, token, bus);
     setTdxBus(busData);
 
-    const routeData = await getRouteStationFn(token, bus);
-    const routeTimeData = await getRouteStationTimeFn(token, bus);
+    const routeData = await getRouteStationFn(onRunCity, token, bus);
+    const routeTimeData = await getRouteStationTimeFn(onRunCity, token, bus);
     const data = await mergeStationHandler(routeData, routeTimeData, info);
     setMergeStation(data);
-
     const resultRoute = [];
     Object.values(data).forEach((i) => {
       resultRoute.push([i.StopPosition.PositionLat, i.StopPosition.PositionLon]);
     });
     setBunds(resultRoute);
-
     setLoading(false);
     setWrongInput(false);
   }
