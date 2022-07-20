@@ -32,12 +32,14 @@ const SearchContainer = styled.form`
 const StyledSelect = styled(Select)`
   width: 100%;
   .react-select__placeholder {
-    ${'' /* color: ${({ theme }) => theme.primary}; */}
+  }
+
+  .react-select__indicator-separator {
+    display: none;
   }
   .react-select__control {
     cursor: pointer;
     background: ${({ theme }) => theme.background};
-    ${'' /* color: ${({ theme }) => theme.color}; */}
     opacity: 1;
     z-index: 5;
     outline: none;
@@ -51,6 +53,12 @@ const StyledSelect = styled(Select)`
       color: unset;
       color: ${({ theme }) => theme.primary} !important;
     }
+  }
+  .react-select__control--is-focused {
+    border-color: ${({ theme }) => theme.color};
+  }
+  .react-select__value-container {
+    padding: 0;
   }
   .react-select__menu {
     background: ${({ theme }) => theme.background};
@@ -68,24 +76,15 @@ const StyledSelect = styled(Select)`
   .react-select__option--is-hovered {
     border-bottom: 1px solid ${({ theme }) => theme.color};
   }
-
-  .react-select__indicator-separator {
-    display: none;
-  }
   .react-select__single-value {
     color: ${({ theme }) => theme.primary};
-  }
-  .react-select__value-container {
-    padding: 0;
-  }
-  .react-select__control--is-focused {
-    border-color: ${({ theme }) => theme.color};
   }
 `;
 
 const CityStyledSelect = styled(StyledSelect)`
   width: 130px;
   margin-right: 5px;
+
   .react-select__control {
     font-size: 1rem;
   }
@@ -133,24 +132,6 @@ const Direction = styled.div`
   }
 `;
 
-const Depart = styled.div`
-  background: ${({ theme }) => theme.third};
-  color: ${({ theme }) => theme.primary};
-  ${(props) => props.directionNow === false
-    && css`
-      width: 30%;
-      padding: 0;
-      font-size: 0.5rem;
-      background: none;
-      opacity: 0.5;
-      &:hover {
-        width: 100%;
-        padding: 0;
-        font-size: 1rem;
-      }
-    `};
-`;
-
 const Destination = styled.div`
   background: ${({ theme }) => theme.third};
   color: ${({ theme }) => theme.primary};
@@ -161,6 +142,7 @@ const Destination = styled.div`
       font-size: 0.5rem;
       background: none;
       opacity: 0.5;
+
       &:hover {
         width: 100%;
         padding: 0;
@@ -284,22 +266,6 @@ const Progress = styled.div`
   display: flex;
   height: 5px;
   position: relative;
-
-  ${
-  '' /* ${(props) => props.loading
-    && css`
-      background: #e63946;
-      animation: shine 0.5s linear forwards infinite;
-      @keyframes shine {
-        0% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-    `} */
-}
 `;
 
 const ProgressValue = styled.div`
@@ -337,6 +303,16 @@ export default function RouteSearch({
     JSON.parse(localStorage.getItem('stopCollect')) || [],
   );
 
+  const cityOptions = [
+    { value: 'Taipei', label: '台北市' },
+    { value: 'NewTaipei', label: '新北市' },
+  ];
+
+  const selectControlCustomStyle = {
+    menu: (provided) => ({ ...provided, zIndex: 9999 }),
+    control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
+  };
+
   useEffect(() => {
     setDisplayBus(displayBus);
   }, [busRef.current.value]);
@@ -347,6 +323,7 @@ export default function RouteSearch({
     );
 
     if (collectListIndex === -1) {
+      // 若從未收藏，推入local中
       const collect = [
         ...collectList,
         {
@@ -360,6 +337,7 @@ export default function RouteSearch({
       setCollectList(collect);
       localStorage.setItem('stopCollect', JSON.stringify(collect));
     } else if (collectListIndex > -1) {
+      // 若已經收藏過，從local中移除
       const collect = collectList.filter((_, index) => index !== collectListIndex);
       setCollectList(collect);
       localStorage.setItem('stopCollect', JSON.stringify(collect));
@@ -371,15 +349,9 @@ export default function RouteSearch({
       <SearchContainer>
         <CityStyledSelect
           classNamePrefix="react-select"
-          options={[
-            { value: 'Taipei', label: '台北市' },
-            { value: 'NewTaipei', label: '新北市' },
-          ]}
-          defaultValue={{ value: 'Taipei', label: '台北市' }}
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
-          }}
+          options={cityOptions}
+          defaultValue={cityOptions[0]}
+          styles={selectControlCustomStyle}
           onChange={(e) => {
             setOnRunCity(e.value);
           }}
@@ -388,38 +360,21 @@ export default function RouteSearch({
           classNamePrefix="react-select"
           placeholder={displayBus ? `${displayBus}` : '請輸入路線'}
           options={cityRouteLists}
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-            control: (base) => ({ ...base, border: 0, boxShadow: 'none' }),
-          }}
+          styles={selectControlCustomStyle}
           ref={busRef}
-          type="text"
           onChange={(e) => {
             searchRoute(e.value);
             setDisplayBus(e.value);
           }}
-          // onKeyPress={(e) => {
-          //   if (e.key === 'Enter') {
-          //     e.preventDefault();
-          //     searchRoute(e.value);
-          //     setDisplayBus(e.value);
-          //   }
-          // }}
         />
-        {/* <SearchButton
-          onClick={() => {
-            searchRoute(busRef.current.value);
-            setDisplayBus(busRef.current.value);
-          }}
-        /> */}
       </SearchContainer>
       <Status>{wrongInput && '處理異常，請再試一次'}</Status>
       {!!mergeStation.length && (
         <Direction>
-          <Depart onClick={() => setDirection(0)} directionNow={direction === 0}>
+          <Destination onClick={() => setDirection(0)} directionNow={direction === 0}>
             往
             {mergeStation.length ? mergeStation[0].DestinationStopNameZh : '終點站'}
-          </Depart>
+          </Destination>
           <Destination onClick={() => setDirection(1)} directionNow={direction === 1}>
             往
             {mergeStation.length ? mergeStation[0].DepartureStopNameZh : '起點站'}
