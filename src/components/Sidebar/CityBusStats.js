@@ -120,63 +120,91 @@ const Count = styled.div`
   margin-bottom: 10px;
 `;
 
+const Explain = styled.span`
+  font-size: 0.5rem;
+`;
+
 const ProgressAdjust = styled.div`
   width: 90%;
   position: absolute;
   bottom: 0;
 `;
+
 export default function CityBusState({
   tdxBus, loading, setOnRunCity, onRunCity,
 }) {
   const [moveDirection, setMoveDirection] = useState('');
+  const cityOptions = [
+    {
+      textAlign: 'flex-start',
+      cityCode: 'Taipei',
+      cityName: '台北市',
+      direction: 'moveBack',
+    },
+    {
+      textAlign: 'flex-end',
+      cityCode: 'NewTaipei',
+      cityName: '新北市',
+      direction: 'moveForward',
+    },
+  ];
+  const busStatics = [
+    {
+      status: '飆速中',
+      count: tdxBus.filter((x) => x.Speed > 40).length,
+      explain: '時速大於40數量',
+      bg: '#e63946',
+      clr: 'white',
+    },
+    {
+      status: '移動中',
+      count: tdxBus.filter((x) => x.Speed > 0).length,
+      explain: '時速大於0數量',
+      bg: '#2a9d8f',
+    },
+    {
+      status: '未移動',
+      count: tdxBus.filter((x) => x.Speed === 0).length,
+      explain: '時速等於0數量',
+      bg: '#e9c46a',
+    },
+    {
+      status: '其他非營運狀態',
+      count: tdxBus.filter((x) => x.BusStatus !== 0).length,
+      explain: '出租、緊急事件或非營運中數量',
+      bg: '#8d99ae',
+    },
+  ];
+
+  function cityAlter(city, direction) {
+    setOnRunCity(city);
+    setMoveDirection(direction);
+  }
 
   return (
     <Wrapper>
       <CityContainer>
         <BusMove moveDirection={moveDirection} />
-        <CityOption
-          textAlign="flex-start"
-          onClick={() => {
-            setOnRunCity('Taipei');
-            setMoveDirection('moveBack');
-          }}
-          onRunCity={onRunCity === 'Taipei'}
-          current={onRunCity === 'Taipei'}
-        >
-          台北市
-        </CityOption>
-        <CityOption
-          textAlign="flex-end"
-          onClick={() => {
-            setOnRunCity('NewTaipei');
-            setMoveDirection('moveForward');
-          }}
-          onRunCity={onRunCity === 'NewTaipei'}
-          current={onRunCity === 'NewTaipei'}
-        >
-          新北市
-        </CityOption>
+        {cityOptions.map((i) => (
+          <CityOption
+            textAlign={i.textAlign}
+            onClick={() => {
+              cityAlter(i.cityCode, i.direction);
+            }}
+            current={onRunCity === i.cityCode}
+          >
+            {i.cityName}
+          </CityOption>
+        ))}
       </CityContainer>
-      <BusStatus bg="#e63946" clr="white">
-        <Status>飆速中</Status>
-        <Count>{tdxBus.filter((x) => x.Speed > 40).length}</Count>
-        <span style={{ fontSize: '0.5rem' }}>時速大於40數量</span>
-      </BusStatus>
-      <BusStatus bg="#2a9d8f">
-        <Status>移動中</Status>
-        <Count>{tdxBus.filter((x) => x.Speed > 0).length}</Count>
-        <span style={{ fontSize: '0.5rem' }}>時速大於0數量</span>
-      </BusStatus>
-      <BusStatus bg="#e9c46a">
-        <Status>未移動</Status>
-        <Count>{tdxBus.filter((x) => x.Speed === 0).length}</Count>
-        <span style={{ fontSize: '0.5rem' }}>時速等於0數量</span>
-      </BusStatus>
-      <BusStatus bg="#8d99ae">
-        <Status>其他非營運狀態</Status>
-        <Count>{tdxBus.filter((x) => x.BusStatus !== 0).length}</Count>
-        <span style={{ fontSize: '0.5rem' }}>出租、緊急事件或非營運中數量</span>
-      </BusStatus>
+      {busStatics
+        && busStatics.map((i) => (
+          <BusStatus bg={i.bg} clr={i.clr}>
+            <Status>{i.status}</Status>
+            <Count>{i.count}</Count>
+            <Explain>{i.explain}</Explain>
+          </BusStatus>
+        ))}
       <ProgressAdjust>
         <ProgressBar loading={loading} data={tdxBus} />
       </ProgressAdjust>
