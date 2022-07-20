@@ -593,7 +593,6 @@ export default function InBusTrack() {
 
     const token = await api.getToken();
     const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, bus);
-    console.log(busWithTime);
     if (bus.length > 0 && busWithTime.length === 0) {
       Swal.fire({
         title: '該路線目前未提供服務',

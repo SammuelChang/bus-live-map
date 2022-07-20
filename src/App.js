@@ -6,7 +6,6 @@ import { lightTheme, darkTheme } from './theme';
 import GlobalStyle from './globalStyles';
 import Header from './components/Header';
 import Home from './pages/Home';
-import Live from './pages/Live';
 import Collection from './pages/Collection';
 import LiveRoute from './pages/LiveRoute';
 import LiveCity from './pages/LiveCity';
@@ -36,7 +35,6 @@ function App() {
           <Header toggleTheme={toggleTheme} />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/live" element={<Live />} />
             <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
             <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
             <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
