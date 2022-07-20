@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled, { css } from 'styled-components/macro';
 import PropTypes from 'prop-types';
 import busMove from '../../images/bus_move.png';
-// import location from '../../images/location.png';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -86,35 +85,16 @@ const BusMove = styled.div`
   }
 `;
 
-const Result = styled.div`
+const BusInfo = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   margin-bottom: 10px;
   margin-left: 20px;
-
-  ${
-  '' /* &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    background-color: #f5f5f5;
-  }
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: #f5f5f5;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #555;
-  } */
-}
 `;
 
-const Stops = styled.div`
+const Block = styled.div`
   width: 200px;
   font-size: 1rem;
   margin-bottom: 20px;
@@ -126,39 +106,13 @@ const Stops = styled.div`
   > * {
     height: 20px;
     width: 100%;
-    margin-bottom: 10px;
+    margin: 10px 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-left: 2.5px;
   }
 `;
-
-const Route = styled.div`
-  width: 200px;
-  font-size: 1rem;
-  background: ${({ theme }) => theme.adjBackground};
-  border-radius: 10px;
-  padding: 10px;
-  color: ${({ theme }) => theme.primary};
-
-  > * {
-    height: 20px;
-    width: 100%;
-    margin-bottom: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-left: 1.5px;
-  }
-`;
-
-// const IconContainer = styled.div`
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: flex-end;
-//   padding: 30px 0;
-// `;
 
 const Banner = styled.div`
   display: flex;
@@ -185,19 +139,6 @@ const StopIcon = styled.div`
   height: 20px;
   position: relative;
   z-index: 1;
-  ${
-  '' /*
-  &::after {
-    content: '行經站牌';
-    width: 50px;
-    height: 25px;
-    position: absolute;
-    left: 30px;
-    top: 0;
-    background: red;
-    white-space: nowrap;
-  } */
-}
 `;
 
 export default function NearbyPath({
@@ -222,35 +163,44 @@ export default function NearbyPath({
       .sort()
     : [];
 
+  const cityOptions = [
+    {
+      textAlign: 'flex-start',
+      cityCode: 'Taipei',
+      cityName: '台北市',
+      direction: 'moveBack',
+    },
+    {
+      textAlign: 'flex-end',
+      cityCode: 'NewTaipei',
+      cityName: '新北市',
+      direction: 'moveForward',
+    },
+  ];
+
+  function cityAlter(city, direction) {
+    setOnRunCity(city);
+    setMoveDirection(direction);
+  }
+
   return (
     <Wrapper>
       <CityContainer>
         <BusMove moveDirection={moveDirection} />
-        <CityOption
-          textAlign="flex-start"
-          onClick={() => {
-            setOnRunCity('Taipei');
-            setMoveDirection('moveBack');
-          }}
-          onRunCity={onRunCity === 'Taipei'}
-          current={onRunCity === 'Taipei'}
-        >
-          台北市
-        </CityOption>
-        <CityOption
-          textAlign="flex-end"
-          onClick={() => {
-            setOnRunCity('NewTaipei');
-            setMoveDirection('moveForward');
-          }}
-          onRunCity={onRunCity === 'NewTaipei'}
-          current={onRunCity === 'NewTaipei'}
-        >
-          新北市
-        </CityOption>
+        {cityOptions.map((i) => (
+          <CityOption
+            textAlign={i.textAlign}
+            onClick={() => {
+              cityAlter(i.cityCode, i.direction);
+            }}
+            current={onRunCity === i.cityCode}
+          >
+            {i.cityName}
+          </CityOption>
+        ))}
       </CityContainer>
-      <Result>
-        <Stops>
+      <BusInfo>
+        <Block>
           <Banner>
             <StopIcon title="行經站牌" />
             <Status>
@@ -258,11 +208,9 @@ export default function NearbyPath({
               {loading && '載入中'}
             </Status>
           </Banner>
-          {!loading
-            && formatNearby.length > 0
-            && formatNearby.map((stop) => <div key={stop}>{stop}</div>)}
-        </Stops>
-        <Route>
+          {!loading && formatNearby?.map((stop) => <div key={stop}>{stop}</div>)}
+        </Block>
+        <Block>
           <Banner>
             <BusIcon title="行經路線" />
             <Status>
@@ -270,11 +218,9 @@ export default function NearbyPath({
               {loading && '載入中'}
             </Status>
           </Banner>
-          {!loading
-            && formatRoutes.length > 0
-            && formatRoutes.map((route) => <div key={route}>{route}</div>)}
-        </Route>
-      </Result>
+          {!loading && formatRoutes?.map((route) => <div key={route}>{route}</div>)}
+        </Block>
+      </BusInfo>
     </Wrapper>
   );
 }
@@ -282,7 +228,6 @@ export default function NearbyPath({
 NearbyPath.propTypes = {
   nearby: PropTypes.oneOfType([PropTypes.array]).isRequired,
   routes: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  // markers: PropTypes.oneOfType([PropTypes.array]).isRequired,
   setOnRunCity: PropTypes.func.isRequired,
   onRunCity: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
