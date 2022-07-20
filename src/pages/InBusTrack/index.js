@@ -121,7 +121,7 @@ const DetectInfo = styled.div`
   position: relative;
   color: ${(props) => (props.detectStatus ? `${({ theme }) => theme.main}` : 'gray')};
 `;
-// ${({ theme }) => theme.main}
+
 const NoDetectBtn = styled.button`
   background: ${(props) => (props.detectStatus ? '#e63946' : '#2a9d8f')};
   color: white;
@@ -197,7 +197,6 @@ const RouteInputContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  ${'' /* border-bottom: 1px solid ${({ theme }) => theme.color}; */}
 
   > * {
     border: none;
@@ -205,43 +204,7 @@ const RouteInputContainer = styled.div`
       outline: none;
     }
   }
-
-  ${
-  '' /* &:focus-within {
-    outline: none;
-    border-bottom: 2px solid ${({ theme }) => theme.color};
-    margin-bottom: -1px;
-  } */
-}
 `;
-
-// const RouteInput = styled.input`
-//   width: 100%;
-//   height: 100%;
-//   min-height: 40px;
-//   font-size: 1rem;
-//   font-weight: 500;
-//   padding-left: 5px;
-//   background: ${({ theme }) => theme.background};
-//   color: ${({ theme }) => theme.color};
-// `;
-
-// const RouteBtn = styled.button`
-//   background: url(${({ theme }) => theme.search}) no-repeat center center;
-//   background-size: contain;
-//   min-height: 30px;
-//   min-width: 30px;
-//   cursor: pointer;
-
-//   &:hover {
-//     transform: scale(1.3);
-//     transition: transform 0.1s;
-//   }
-//   &::active {
-//     transform: scale(0.7);
-//     transition: transform 0.1s;
-//   }
-// `;
 
 const VanilaSelect = styled.select`
   width: 100%;
@@ -479,6 +442,16 @@ const CityStyledSelect = styled(StyledSelect)`
   }
 `;
 
+const cacheRoute = [];
+async function getRouteDataFn(onRunCity, token, target) {
+  if (cacheRoute.find((i) => i.RouteName.Zh_tw === target)) {
+    return cacheRoute;
+  }
+  const data = await api.getAllStationStopOfRoute(onRunCity, token, target);
+  cacheRoute.push(...data);
+  return data;
+}
+
 export default function InBusTrack() {
   const [bus, setBus] = useState([]);
   const [tdxBuses, setTdxBuses] = useState([]);
@@ -583,11 +556,9 @@ export default function InBusTrack() {
   }
 
   async function getRealtimeData() {
-    // 取得車輛即時資訊
     setLoading(true);
 
     if (bus.length === 0) {
-      // alert('請輸入路線後搜尋');
       return;
     }
 
@@ -635,7 +606,6 @@ export default function InBusTrack() {
   }
 
   async function getData(target) {
-    // e.preventDefault();
     if (target.length === 0) {
       Swal.fire({
         title: '請輸入路線名稱',
@@ -655,7 +625,8 @@ export default function InBusTrack() {
       });
       return;
     }
-    const route = await api.getAllStationStopOfRoute(onRunCity, token, target);
+
+    const route = await getRouteDataFn(onRunCity, token, target);
     const filterRoute = route.filter((a) => a.RouteName.Zh_tw === target);
 
     const stops = filterRoute.reduce((acc, cur) => {
@@ -744,22 +715,6 @@ export default function InBusTrack() {
         <Route>
           <Label>路線名稱</Label>
           <RouteInputContainer>
-            {/* <RouteInput
-              placeholder="306"
-              onChange={(e) => {
-                setBus(e.target.value);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  getData(e);
-                }
-              }}
-            />
-            <RouteBtn
-              onClick={(e) => {
-                getData(e);
-              }}
-            /> */}
             <CityStyledSelect
               classNamePrefix="react-select"
               options={[
