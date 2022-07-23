@@ -1,10 +1,11 @@
 import styled from 'styled-components/macro';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 // import busStop from '../../images/bus-stop-empty.png';
 import trash from '../../images/trash.png';
 import LoadingEffect from '../../components/LoadingEffect';
+import TokenContext from '../../components/Context';
 
 const StyleLink = styled(Link)`
   text-decoration: none;
@@ -190,6 +191,7 @@ export default function Collection() {
   const [stops, setStops] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const comingThreshold = 120;
+  const tokenCheck = useContext(TokenContext);
 
   function removeFn(r, s, d) {
     const newCollectList = collectList.filter(
@@ -230,7 +232,7 @@ export default function Collection() {
     }
     setLoading(true);
     const cityAbrLists = [...new Set(collectList.map((i) => i.RouteUID.substring(0, 3)))];
-    const token = await api.getToken();
+    const token = await tokenCheck();
 
     const stopsWithTimeNWT = cityAbrLists.includes('NWT')
       ? await api.getAllStationEstimatedTimeOfArrival('NewTaipei', token, '', stopFilter)

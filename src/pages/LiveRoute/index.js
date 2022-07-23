@@ -1,5 +1,5 @@
 import {
-  useEffect, useState, useRef, memo,
+  useEffect, useState, useRef, memo, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import RouteSearch from '../../components/Sidebar/RouteSearch';
 // import LoadingEffect from '../../components/LoadingEffect';
+import TokenContext from '../../components/Context';
 
 const Wrapper = styled.div`
   display: flex;
@@ -144,10 +145,13 @@ export default function LiveRoute({ isDark }) {
   const [wrongInput, setWrongInput] = useState(false);
   const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
   const [onRunCity, setOnRunCity] = useState('Taipei');
-
+  const tokenCheck = useContext(TokenContext);
+  // useEffect(() => {
+  //   const result = tokenCheck();
+  //   console.log(result);
+  // }, []);
   useEffect(() => {
-    api
-      .getToken()
+    tokenCheck()
       .then((token) => api.getRouteInfo(onRunCity, token))
       .then((result) => result
         .map((i) => ({
@@ -181,7 +185,7 @@ export default function LiveRoute({ isDark }) {
       return;
     }
     setLoading(true);
-    const token = await api.getToken();
+    const token = await tokenCheck();
     const info = await getInfoFn(onRunCity, token, bus);
 
     setTdxBusInfo(info);

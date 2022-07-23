@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { ParallaxProvider } from 'react-scroll-parallax';
@@ -13,23 +13,30 @@ import LiveNearbyPath from './pages/LiveNearbyPath';
 import NoMatch from './pages/NoMatch';
 import InBusTrack from './pages/InBusTrack';
 import api from './utils/api';
+import TokenContext from './components/Context';
 
 function App() {
   const [theme, setTheme] = useState('light');
   const [isDark, setIsDark] = useState(false);
-  const [accessToken] = useState(JSON.parse(localStorage.getItem('stopToken')) || []);
-  async function tokenCheck() {
-    if (new Date().getTime() < accessToken.expireDateMs) {
-      return null;
-    }
 
-    const token = await api.getToken();
-    const expireDateMs = new Date().getTime() + 86000000;
-    localStorage.setItem('stopToken', JSON.stringify({ token, expireDateMs }));
-    return null;
-  }
+  const tokenCheck = useCallback(() => {
+    const tokenChecking = async () => {
+      const localToken = JSON.parse(localStorage.getItem('stopToken'));
+      if (localToken && new Date().getTime() < localToken.expireDateMs) {
+        // console.log('localToken', localToken.token);
+        return localToken.token;
+      }
 
-  tokenCheck();
+      const token = await api.getToken();
+      const expireDateMs = new Date().getTime() + 86000000;
+      const tokenObj = { token, expireDateMs };
+      localStorage.setItem('stopToken', JSON.stringify(tokenObj));
+      // console.log('tokenObj', tokenObj.token);
+      return tokenObj.token;
+    };
+
+    return tokenChecking();
+  }, []);
 
   const toggleTheme = () => {
     if (theme === 'light') {
@@ -43,21 +50,23 @@ function App() {
 
   return (
     <Router>
-      <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-        <ParallaxProvider>
-          <GlobalStyle />
-          <Header toggleTheme={toggleTheme} />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
-            <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
-            <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
-            <Route path="/collection" element={<Collection />} />
-            <Route path="/in-bus-track" element={<InBusTrack />} />
-            <Route path="*" element={<NoMatch />} />
-          </Routes>
-        </ParallaxProvider>
-      </ThemeProvider>
+      <TokenContext.Provider value={tokenCheck}>
+        <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+          <ParallaxProvider>
+            <GlobalStyle />
+            <Header toggleTheme={toggleTheme} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/live/route" element={<LiveRoute isDark={isDark} />} />
+              <Route path="/live/city" element={<LiveCity isDark={isDark} />} />
+              <Route path="/live/nearbyPath" element={<LiveNearbyPath isDark={isDark} />} />
+              <Route path="/collection" element={<Collection />} />
+              <Route path="/in-bus-track" element={<InBusTrack />} />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </ParallaxProvider>
+        </ThemeProvider>
+      </TokenContext.Provider>
     </Router>
   );
 }

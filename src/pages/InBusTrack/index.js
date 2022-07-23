@@ -1,10 +1,11 @@
 /* eslint-disable no-alert */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import styled, { css } from 'styled-components/macro';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import api from '../../utils/api';
 import ProgressBar from '../../components/Sidebar/ProgressBar';
+import TokenContext from '../../components/Context';
 
 const ProgressAdjust = styled.div`
   z-index: 100;
@@ -469,10 +470,10 @@ export default function InBusTrack() {
   const [detectable, setDetectable] = useState(true);
   const [cityRouteLists, setCityRouteLists] = useState([{ value: '載入中', label: '載入中' }]);
   const [onRunCity, setOnRunCity] = useState('Taipei');
+  const tokenCheck = useContext(TokenContext);
 
   useEffect(() => {
-    api
-      .getToken()
+    tokenCheck()
       .then((token) => api.getRouteInfo(onRunCity, token))
       .then((result) => result
         .map((i) => ({
@@ -562,7 +563,7 @@ export default function InBusTrack() {
       return;
     }
 
-    const token = await api.getToken();
+    const token = await tokenCheck();
     const busWithTime = await api.getAllRealTimeNearStop(onRunCity, token, bus);
     if (bus.length > 0 && busWithTime.length === 0) {
       Swal.fire({
