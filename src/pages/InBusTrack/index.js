@@ -543,14 +543,20 @@ export default function InBusTrack() {
   function getDirection(list, on, off) {
     // 判斷去程、返程
     if (list && list.length !== 0) {
-      const arr1 = list.filter((i) => i.StopName === on && i.Direction === 0);
-      const arr2 = list.filter((i) => i.StopName === off && i.Direction === 0);
-      if (!arr1[0] || !arr2[0]) {
-        // 往返站牌可能不同，當上下車站牌之間無法找到關聯時，提早結束
-        setError(true);
-        return null;
+      const arr1 = list.filter((i) => i.StopName === on);
+      const arr2 = list.filter((i) => i.StopName === off);
+
+      // 若上下車站牌僅有去程或回程有，則直接回傳該站牌行徑方向
+      if (arr1.length === 1) {
+        return arr1[0].Direction;
       }
-      const direction = arr1[0].StopSequence < arr2[0].StopSequence ? 0 : 1;
+      if (arr2.length === 1) {
+        return arr2[0].Direction;
+      }
+
+      const arr1ForwardSequence = arr1.find((i) => i.Direction === 0).StopSequence;
+      const arr2ForwardSequence = arr2.find((i) => i.Direction === 0).StopSequence;
+      const direction = arr1ForwardSequence < arr2ForwardSequence ? 0 : 1;
       return direction;
     }
     return null;
