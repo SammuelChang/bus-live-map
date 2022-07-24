@@ -45,25 +45,25 @@ const cacheShapeList = [];
 const cacheStopList = [];
 
 async function getInfoFn(city, token, bus) {
-  const cacheInfo = cacheInfoList.find((i) => i.RouteName?.Zh_tw === bus);
-  if (cacheInfo) {
+  const cacheInfo = cacheInfoList.filter((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheInfo.length > 0) {
     return [cacheInfo];
   }
 
   const info = await api.getRouteInfo(city, token, bus);
-  const filterInfo = await info.filter((a) => a.RouteName.Zh_tw === bus);
+  const filterInfo = info.filter((a) => a.RouteName.Zh_tw === bus);
   cacheInfoList.push(...filterInfo);
   return filterInfo;
 }
 
 async function getShapeFn(city, token, bus) {
-  const cacheShape = cacheShapeList.find((i) => i.RouteName?.Zh_tw === bus);
-  if (cacheShape) {
+  const cacheShape = cacheShapeList.filter((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheShape.length > 0) {
     return [cacheShape];
   }
 
   const shape = await api.getAllShape(city, token, bus);
-  const geoShape = await shape
+  const geoShape = shape
     .map((obj) => ({ ...obj, Geojson: parse(obj.Geometry) }))
     .filter((a) => a.RouteName.Zh_tw === bus);
   cacheShapeList.push(...geoShape);
@@ -71,8 +71,8 @@ async function getShapeFn(city, token, bus) {
 }
 
 async function getRouteStationFn(city, token, bus = '') {
-  const cacheStop = cacheStopList.find((i) => i.RouteName?.Zh_tw === bus);
-  if (cacheStop) {
+  const cacheStop = cacheStopList.filter((i) => i.RouteName?.Zh_tw === bus);
+  if (cacheStop.length > 0) {
     return [cacheStop];
   }
 
@@ -84,13 +84,13 @@ async function getRouteStationFn(city, token, bus = '') {
 
 async function getBusFn(city, token, bus = '') {
   const busWithTime = await api.getAllRealTimeByFrequency(city, token, bus);
-  const filterBusWithTime = await busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
+  const filterBusWithTime = busWithTime.filter((a) => a.RouteName.Zh_tw === bus);
   return filterBusWithTime;
 }
 
 async function getRouteStationTimeFn(city, token, bus = '') {
   const routeWithTime = await api.getAllStationEstimatedTimeOfArrival(city, token, bus);
-  const filterRouteWithTime = await routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
+  const filterRouteWithTime = routeWithTime.filter((a) => a.RouteName.Zh_tw === bus);
   return filterRouteWithTime;
 }
 

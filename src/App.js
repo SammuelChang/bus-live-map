@@ -23,7 +23,6 @@ function App() {
     const tokenChecking = async () => {
       const localToken = JSON.parse(localStorage.getItem('stopToken'));
       if (localToken && new Date().getTime() < localToken.expireDateMs) {
-        // console.log('localToken', localToken.token);
         return localToken.token;
       }
 
@@ -31,7 +30,6 @@ function App() {
       const expireDateMs = new Date().getTime() + 86000000;
       const tokenObj = { token, expireDateMs };
       localStorage.setItem('stopToken', JSON.stringify(tokenObj));
-      // console.log('tokenObj', tokenObj.token);
       return tokenObj.token;
     };
 
