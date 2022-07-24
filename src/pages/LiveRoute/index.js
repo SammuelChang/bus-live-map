@@ -47,7 +47,7 @@ const cacheStopList = [];
 async function getInfoFn(city, token, bus) {
   const cacheInfo = cacheInfoList.filter((i) => i.RouteName?.Zh_tw === bus);
   if (cacheInfo.length > 0) {
-    return [cacheInfo];
+    return [...cacheInfo];
   }
 
   const info = await api.getRouteInfo(city, token, bus);
@@ -59,7 +59,7 @@ async function getInfoFn(city, token, bus) {
 async function getShapeFn(city, token, bus) {
   const cacheShape = cacheShapeList.filter((i) => i.RouteName?.Zh_tw === bus);
   if (cacheShape.length > 0) {
-    return [cacheShape];
+    return [...cacheShape];
   }
 
   const shape = await api.getAllShape(city, token, bus);
@@ -73,7 +73,7 @@ async function getShapeFn(city, token, bus) {
 async function getRouteStationFn(city, token, bus = '') {
   const cacheStop = cacheStopList.filter((i) => i.RouteName?.Zh_tw === bus);
   if (cacheStop.length > 0) {
-    return [cacheStop];
+    return [...cacheStop];
   }
 
   const route = await api.getAllStationStopOfRoute(city, token, bus);
