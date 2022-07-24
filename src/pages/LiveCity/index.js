@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable no-unused-vars */
 import {
-  useEffect, useState, useRef, memo,
+  useEffect, useState, useRef, memo, useContext,
 } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import CityBusState from '../../components/Sidebar/CityBusStats';
 import LoadingEffect from '../../components/LoadingEffect';
+import TokenContext from '../../components/Context';
 
 const Wrapper = styled.div`
   display: flex;
@@ -55,6 +56,7 @@ export default function LiveCityLeafletMap({ isDark }) {
   const [tdxBus, setTdxBus] = useState([]);
   const [routeTimer, setRouteTimer] = useState(10);
   const [onRunCity, setOnRunCity] = useState('Taipei');
+  const tokenCheck = useContext(TokenContext);
 
   async function getBusFn(token, bus = '') {
     const busWithTime = await api.getAllRealTimeByFrequency(onRunCity, token, bus);
@@ -84,7 +86,7 @@ export default function LiveCityLeafletMap({ isDark }) {
     // removeLayer();
     setLoading(true);
 
-    const token = await api.getToken();
+    const token = await tokenCheck();
     const busData = await getBusFn(token, bus);
 
     setTdxBus(busData);

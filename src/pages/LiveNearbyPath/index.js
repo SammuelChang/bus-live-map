@@ -1,5 +1,5 @@
 import {
-  useState, useRef, memo, useEffect,
+  useState, useRef, memo, useEffect, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -22,6 +22,7 @@ import BusShape from '../../components/LeafletMap/BusShape';
 import NearbyPath from '../../components/Sidebar/NearbyPath';
 import './index.css';
 import LoadingEffect from '../../components/LoadingEffect';
+import TokenContext from '../../components/Context';
 
 const Wrapper = styled.div`
   display: flex;
@@ -152,11 +153,12 @@ export default function LiveNearbyPath({ isDark }) {
   // const [isOpen, setIsOpen] = useState(true);
   const [getCurrentPoi, setGetCurrentPoi] = useState(false);
   const [onRunCity, setOnRunCity] = useState('Taipei');
+  const tokenCheck = useContext(TokenContext);
 
   async function getNearby(lon, lat) {
     setLoading(true);
     // token -> 指定位置周遭站牌 -> 行經站牌路線 -> 路線線形
-    const token = await api.getToken();
+    const token = await tokenCheck();
     const result = await api.getNearbyStops(onRunCity, token, lon, lat);
     setNearby(result.features ?? []);
 
