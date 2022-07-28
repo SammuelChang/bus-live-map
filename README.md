@@ -55,6 +55,8 @@ http://bus-live-d2581.web.app
 
   <ul>
     <li>Git</li>
+    <li>Firebase</li>
+    <li>Postman</li>
     <li>Eslint</li>
     <li>Prettier</li>
     <li>Styled Components</li>
@@ -63,13 +65,23 @@ http://bus-live-d2581.web.app
     <li>Open Street Map</li>
   </ul>
 
+#### Project Technics
+
+  <ul>
+    <li>Geographic data processing</li>
+    <li>Displaying geo-data on the map</li>
+    <li>Detecting user current location and judge possible plate number </li>
+    <li>Caching Data preventing redundant API request</li>
+    <li>Parallax and keyframe animation</li>
+    <li>Dark mode</li>
+    <li>Countdown progress bar</li>
+  </ul>
+
 </div>
 
 ## Function Map
 
-## ![](src/readme/flow.jpg)
-
-##
+## ![](src/readme/flow.svg)
 
 ## Feature Demo
 
@@ -79,7 +91,8 @@ http://bus-live-d2581.web.app
 
 ### Route Search(路線查詢)
 
-It's a basic feature for user check time, position and path of city bus of specific route. Just like any bus App you've been ever download. Besides, this feature provide a visualization map for you to seize entire bus of route.
+It's a basic feature for user check time, position and path of city bus of specific route. Just like any bus App you've been ever download. Besides, this feature <strong>provide a visualization map for you to seize entire bus of route</strong>.
+
 ![](src/readme/route.gif)
 
 <div id="stops-collection"></div>
@@ -95,7 +108,7 @@ If user desired to frequently check same stop and route -- on work, off work, ou
 
 Have you ever been confused about what stop you pass through in the bus? Most people is stocked on running text on display board, and probably want to identify it from scene out of window.
 
-With In-Bus-Track, user merely need to key-in some bus info and get current driving bus destination, current stop and all stops betweens start and end. You don't need to be nervous of confusing about where am I now.
+With In-Bus-Track, user merely need to key-in some bus info and <strong>get current driving bus destination, current stop and all stops betweens start and end</strong>. You don't need to be nervous of confusing about where am I now.
 ![](src/readme/in-bus.gif)
 
 <div id="city-dynamic"></div>
@@ -104,7 +117,7 @@ With In-Bus-Track, user merely need to key-in some bus info and get current driv
 
 Usually, we observer a route at one time for immediate needs to get on bus. This website give a funny feature for entertainment.
 
-City Dynamics show all operating bus on the map, marked as different color based on speed and status. User could check each bus' position and its route number.
+City Dynamics show <strong>all operating bus on the map, marked as different color based on speed and status</strong>. User could check each bus' position and its route number.
 ![](src/readme/city.gif)
 
 <div id="nearby-bus-path"></div>
@@ -114,7 +127,7 @@ City Dynamics show all operating bus on the map, marked as different color based
 People who lives in Taipei City or New Taipei City mostly rely on Metro system.
 While for some, metro may not be first choice(it can be far rather then bus stop).
 
-This feature provide probability seizing all nearby bus stops and buses went through with its driving path.
+This feature provide probability <strong>seizing all nearby bus stops and buses went through with its driving path.</strong>
 
 Some users may benefited from feature:
 1.worker which seeking new rental position
@@ -130,6 +143,13 @@ Some users may benefited from feature:
 
 One click to change website color from white to dark, providing more comfortable experience at night.
 ![](src/readme/darkMode.gif)
+
+## Contact
+
+<ul>
+  <li>Author: Sam Chang</li>
+  <li>E-mail: s23593517844@hotmail.com</li>
+</ul>
 
 <br/>
 <br/>
