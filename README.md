@@ -57,7 +57,7 @@ http://bus-live-d2581.web.app
     <li>Git</li>
     <li>Firebase</li>
     <li>Postman</li>
-    <li>Eslint</li>
+    <li>Eslint(Airbnb)</li>
     <li>Prettier</li>
     <li>Styled Components</li>
     <li>React Router</li>
