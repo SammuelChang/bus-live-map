@@ -29,8 +29,6 @@
   </ol>
 <!-- </details> -->
 
----
-
 <!-- Description -->
 
 ## Description
@@ -39,13 +37,9 @@ A website provided with realtime city bus information and some special features.
 
 Basically, BusLive is used to check estimated waiting time and checked bus position. While user could do more, such as track bus current stop in the bus on your mobile device. Or, track all city buses' position or driving path on the map -- just for fun.
 
----
-
 ## Link
 
 http://bus-live-d2581.web.app
-
----
 
 ## Feature Skills
 
@@ -71,15 +65,11 @@ http://bus-live-d2581.web.app
 
 </div>
 
----
-
 ## Function Map
 
 ## ![](src/readme/flow.jpg)
 
 ##
-
----
 
 ## Feature Demo
 
@@ -92,16 +82,12 @@ http://bus-live-d2581.web.app
 It's a basic feature for user check time, position and path of city bus of specific route. Just like any bus App you've been ever download. Besides, this feature provide a visualization map for you to seize entire bus of route.
 ![](src/readme/route.gif)
 
----
-
 <div id="stops-collection"></div>
 
 ### Stops Collection（收藏站牌）
 
 If user desired to frequently check same stop and route -- on work, off work, out of home -- Stops Collection give a shortcut to save it. When ever open this page, all stops is saying hello to you.
 ![](src/readme/collection.gif)
-
----
 
 <div id="in-bus-track"></div>
 
@@ -112,8 +98,6 @@ Have you ever been confused about what stop you pass through in the bus? Most pe
 With In-Bus-Track, user merely need to key-in some bus info and get current driving bus destination, current stop and all stops betweens start and end. You don't need to be nervous of confusing about where am I now.
 ![](src/readme/in-bus.gif)
 
----
-
 <div id="city-dynamic"></div>
 
 ### City Dynamic(全城動態)
@@ -122,8 +106,6 @@ Usually, we observer a route at one time for immediate needs to get on bus. This
 
 City Dynamics show all operating bus on the map, marked as different color based on speed and status. User could check each bus' position and its route number.
 ![](src/readme/city.gif)
-
----
 
 <div id="nearby-bus-path"></div>
 
@@ -144,11 +126,11 @@ Some users may benefited from feature:
 
 </div>
 
----
-
 ### Dark Mode
 
 One click to change website color from white to dark, providing more comfortable experience at night.
 ![](src/readme/darkMode.gif)
 
+<br/>
+<br/>
 <p align="center">(<a href="#top">Back To Top</a>)</p>
