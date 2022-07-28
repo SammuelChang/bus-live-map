@@ -81,7 +81,7 @@ http://bus-live-d2581.web.app
 
 ## Function Map
 
-## ![](src/readme/flow.svg)
+## ![FunctionMap.svg](src/readme/flow.svg)
 
 ## Feature Demo
 
@@ -93,14 +93,14 @@ http://bus-live-d2581.web.app
 
 It's a basic feature for user check time, position and path of city bus of specific route. Just like any bus App you've been ever download. Besides, this feature <strong>provide a visualization map for you to seize entire bus of route</strong>.
 
-![](src/readme/route.gif)
+![Route Search(路線查詢).gif](src/readme/route.gif)
 
 <div id="stops-collection"></div>
 
-### Stops Collection（收藏站牌）
+### Stops Collection(收藏站牌)
 
 If user desired to frequently check same stop and route -- on work, off work, out of home -- Stops Collection give a shortcut to save it. When ever open this page, all stops is saying hello to you.
-![](src/readme/collection.gif)
+![Stops Collection（收藏站牌).gif](src/readme/collection.gif)
 
 <div id="in-bus-track"></div>
 
@@ -109,7 +109,7 @@ If user desired to frequently check same stop and route -- on work, off work, ou
 Have you ever been confused about what stop you pass through in the bus? Most people is stocked on running text on display board, and probably want to identify it from scene out of window.
 
 With In-Bus-Track, user merely need to key-in some bus info and <strong>get current driving bus destination, current stop and all stops betweens start and end</strong>. You don't need to be nervous of confusing about where am I now.
-![](src/readme/in-bus.gif)
+![InBusTrack(乘車快報).gif](src/readme/in-bus.gif)
 
 <div id="city-dynamic"></div>
 
@@ -118,7 +118,7 @@ With In-Bus-Track, user merely need to key-in some bus info and <strong>get curr
 Usually, we observer a route at one time for immediate needs to get on bus. This website give a funny feature for entertainment.
 
 City Dynamics show <strong>all operating bus on the map, marked as different color based on speed and status</strong>. User could check each bus' position and its route number.
-![](src/readme/city.gif)
+![CityDynamic(全城動態).gif](src/readme/city.gif)
 
 <div id="nearby-bus-path"></div>
 
@@ -135,14 +135,14 @@ Some users may benefited from feature:
 3.looking for fun
 4.people who want to start unknowing destination traveling
 
-![](src/readme/nearby.gif)
+![NearbyBusPath(最遠路徑).gif](src/readme/nearby.gif)
 
 </div>
 
 ### Dark Mode
 
 One click to change website color from white to dark, providing more comfortable experience at night.
-![](src/readme/darkMode.gif)
+![Dark Mode.gif](src/readme/darkMode.gif)
 
 ## Contact
 
