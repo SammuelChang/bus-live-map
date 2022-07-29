@@ -1,71 +1,156 @@
-# metro-live-map
-# Getting Started with Create React App
+<div id="top"></div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+  <a href="#">
+    <img src="src/images/bus_24_2x.png" alt="Logo" width="80" height="80">
+  </a>
+</div>
 
-## Available Scripts
+<h1 align="center">Bus Live</h1>
 
-In the project directory, you can run:
+<!-- TABLE OF CONTENTS -->
+<!-- <details> -->
+  <summary>Outline</summary>
+  <ol>
+    <li><a href="#description">Description</a></li>
+    <li><a href="#link">Link</a></li>
+    <li><a href="#feature-skills">Feature Skills</a></li>
+    <li><a href="#function-map">Function Map</a></li>
+    <li><a href="#feature-demo">Feature Demo</a>
+      <ul style="margin-left: -20px;">
+        <li><a href="#route-search">Route Search (路線查詢)</a></li>
+        <li><a href="#stops-collection">Stops Collection (收藏站牌)</a></li>
+        <li><a href="#in-bus-track">In-Bus-Track(乘車快報)</a></li>
+        <li><a href="#city-dynamic">City Dynamic(全城動態)</a></li>
+        <li><a href="#nearby-bus-path">Nearby Bus Path(最遠路徑)</a></li>
+        <li><a href="#dark-mode">Dark Mode</a></li>
+      </ul>
+    </li>
+  </ol>
+<!-- </details> -->
 
-### `npm start`
+<!-- Description -->
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Description
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+A website provided with realtime city bus information and some special features.
 
-### `npm test`
+Basically, BusLive is used to check estimated waiting time and checked bus position. While user could do more, such as track bus current stop in the bus on your mobile device. Or, track all city buses' position or driving path on the map -- just for fun.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Link
 
-### `npm run build`
+http://bus-live-d2581.web.app
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Feature Skills
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<div style="margin-left: 30px;">
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### Programing
 
-### `npm run eject`
+  <ul>
+    <li>React</li>
+  </ul>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Packaging Tools
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  <ul>
+    <li>Git</li>
+    <li>Firebase</li>
+    <li>Postman</li>
+    <li>Eslint(Airbnb)</li>
+    <li>Prettier</li>
+    <li>Styled Components</li>
+    <li>React Router</li>
+    <li>Leaflet</li>
+    <li>Open Street Map</li>
+  </ul>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Project Technics
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  <ul>
+    <li>Geographic data processing</li>
+    <li>Displaying geo-data on the map</li>
+    <li>Detecting user current location and judge possible plate number </li>
+    <li>Caching Data preventing redundant API request</li>
+    <li>Parallax and keyframe animation</li>
+    <li>Dark mode</li>
+    <li>Countdown progress bar</li>
+  </ul>
 
-## Learn More
+</div>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Function Map
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ![FunctionMap.svg](src/readme/flow.svg)
 
-### Code Splitting
+## Feature Demo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<div id="route-search"></div>
 
-### Analyzing the Bundle Size
+<div style="margin-left: 10px;">
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Route Search(路線查詢)
 
-### Making a Progressive Web App
+It's a basic feature for user check time, position and path of city bus of specific route. Just like any bus App you've been ever download. Besides, this feature <strong>provide a visualization map for you to seize entire bus of route</strong>.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+![Route Search(路線查詢).gif](src/readme/route.gif)
 
-### Advanced Configuration
+<div id="stops-collection"></div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Stops Collection(收藏站牌)
 
-### Deployment
+If user desired to frequently check same stop and route -- on work, off work, out of home -- Stops Collection give a shortcut to save it. When ever open this page, all stops is saying hello to you.
+![Stops Collection（收藏站牌).gif](src/readme/collection.gif)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+<div id="in-bus-track"></div>
 
-### `npm run build` fails to minify
+### In Bus Track(乘車快報)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Have you ever been confused about what stop you pass through in the bus? Most people is stocked on running text on display board, and probably want to identify it from scene out of window.
+
+With In-Bus-Track, user merely need to key-in some bus info and <strong>get current driving bus destination, current stop and all stops betweens start and end</strong>. You don't need to be nervous of confusing about where am I now.
+![InBusTrack(乘車快報).gif](src/readme/in-bus.gif)
+
+<div id="city-dynamic"></div>
+
+### City Dynamic(全城動態)
+
+Usually, we observer a route at one time for immediate needs to get on bus. This website give a funny feature for entertainment.
+
+City Dynamics show <strong>all operating bus on the map, marked as different color based on speed and status</strong>. User could check each bus' position and its route number.
+![CityDynamic(全城動態).gif](src/readme/city.gif)
+
+<div id="nearby-bus-path"></div>
+
+### Nearby Bus Path(最遠路徑)
+
+People who lives in Taipei City or New Taipei City mostly rely on Metro system.
+While for some, metro may not be first choice(it can be far rather then bus stop).
+
+This feature provide probability <strong>seizing all nearby bus stops and buses went through with its driving path.</strong>
+
+Some users may benefited from feature:
+1.worker which seeking new rental position
+2.no metro around you or housing place
+3.looking for fun
+4.people who want to start unknowing destination traveling
+
+![NearbyBusPath(最遠路徑).gif](src/readme/nearby.gif)
+
+</div>
+
+### Dark Mode
+
+One click to change website color from white to dark, providing more comfortable experience at night.
+![Dark Mode.gif](src/readme/darkMode.gif)
+
+## Contact
+
+<ul>
+  <li>Author: Sam Chang</li>
+  <li>E-mail: s23593517844@hotmail.com</li>
+</ul>
+
+<br/>
+<br/>
+<p align="center">(<a href="#top">Back To Top</a>)</p>

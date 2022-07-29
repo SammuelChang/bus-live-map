@@ -1,0 +1,12 @@
+.custom-tooltip {
+  border-radius: 0px;
+  padding: none;
+  border: none;
+  margin: none;
+  text-align: center;
+}
+
+.custom-tooltip-coming {
+  background-color: #e63946;
+  color: white;
+}

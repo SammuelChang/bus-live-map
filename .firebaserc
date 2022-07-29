@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "taipei-metro-live-map",
+    "bus-live-map": "bus-live-d2581"
+  },
+  "targets": {}
+}
