@@ -22,7 +22,7 @@ function App() {
   const tokenCheck = useCallback(() => {
     const tokenChecking = async () => {
       const localToken = JSON.parse(localStorage.getItem('stopToken'));
-      if (localToken && new Date().getTime() < localToken.expireDateMs) {
+      if (localToken?.token && new Date().getTime() < localToken.expireDateMs) {
         return localToken.token;
       }
 
