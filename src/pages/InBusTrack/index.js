@@ -473,15 +473,18 @@ export default function InBusTrack() {
   const tokenCheck = useContext(TokenContext);
 
   useEffect(() => {
-    tokenCheck()
-      .then((token) => api.getRouteInfo(onRunCity, token))
-      .then((result) => result
+    const buildRouteLists = async () => {
+      const token = await tokenCheck();
+      const routeInfo = await api.getRouteInfo(onRunCity, token);
+      const labelValue = routeInfo
         .map((i) => ({
           value: i.RouteName.Zh_tw,
           label: i.RouteName.Zh_tw,
         }))
-        .sort((a, b) => a.value.localeCompare(b.value)))
-      .then((result) => setCityRouteLists(result));
+        .sort((a, b) => a.value.localeCompare(b.value));
+      setCityRouteLists(labelValue);
+    };
+    buildRouteLists();
   }, [cityRouteLists]);
 
   const locateCurrentPosition = () => new Promise((resolve, reject) => {
