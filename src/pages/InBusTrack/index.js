@@ -485,7 +485,7 @@ export default function InBusTrack() {
       setCityRouteLists(labelValue);
     };
     buildRouteLists();
-  }, [cityRouteLists]);
+  }, []);
 
   const locateCurrentPosition = () => new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(

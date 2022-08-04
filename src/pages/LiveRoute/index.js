@@ -163,7 +163,7 @@ export default function LiveRoute({ isDark }) {
       setCityRouteLists(labelValue);
     };
     buildRouteLists();
-  }, [cityRouteLists]);
+  }, []);
 
   function SetBoundsComponent() {
     if (bunds.length && preBusInfo.current[0]?.RouteName.Zh_tw !== tdxBusInfo[0]?.RouteName.Zh_tw) {
