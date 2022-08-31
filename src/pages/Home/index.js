@@ -2,8 +2,6 @@ import styled from 'styled-components/macro';
 import { Link } from 'react-scroll';
 import { useRef, useState, useEffect } from 'react';
 import { Parallax } from 'react-scroll-parallax';
-import busMove from '../../images/bus_move.png';
-import grab from '../../images/grab.png';
 import busMarker from '../../images/bus-marker.png';
 import busStop from '../../images/bus-stop-empty.png';
 import featureMap from '../../images/map-feature-light.png';
@@ -13,6 +11,7 @@ import featureCity from '../../images/featureCityLight.png';
 import featureNearby from '../../images/featureNearbyLight.png';
 import featureInBus from '../../images/featureInBus.png';
 import leadership from '../../images/leadership.png';
+import coverImg from '../../images/coverImg.jpg';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -69,103 +68,29 @@ const NextPage = styled.div`
 `;
 
 const Cover = styled.div`
+  background: url(${coverImg});
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
   position: relative;
   width: 100vw;
   height: calc(100vh - 120px);
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  @media (max-width: 780px) {
-    flex-direction: column;
-  }
+  align-items: flex-start;
 `;
 
-const CoverTitle = styled.div`
-  font-size: 4vw;
+const CoverText = styled.div`
+  text-align: center;
+  font-size: 2.5rem;
   font-weight: bold;
-  height: 100px;
-  cursor: default;
-  user-select: none;
-  padding: 0 10px 30px;
-
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  @media (max-width: 780px) {
-    align-items: center;
-    font-size: 8vw;
-    margin: 0;
-    height: 100px;
-  }
-`;
-
-const CoverImgContainer = styled.div`
-  width: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  > * {
-    display: flex;
-    align-items: flex-end;
-  }
-`;
-
-const Grab = styled.div`
-  background: url(${grab});
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  border-radius: 3px;
-  width: 50px;
-  height: 50px;
-  margin-right: 20px;
-  animation: shake-left-right 0.8s 3s ease-in-out 13;
-  @keyframes shake-left-right {
-    0%,
-    100% {
-      transform: rotate(0deg);
-      transform-origin: 50% 50%;
-    }
-    10% {
-      transform: rotate(8deg);
-    }
-    20%,
-    40%,
-    60% {
-      transform: rotate(-10deg);
-    }
-    30%,
-    50%,
-    70% {
-      transform: rotate(10deg);
-    }
-    80% {
-      transform: rotate(-8deg);
-    }
-    90% {
-      transform: rotate(8deg);
-    }
-  }
-`;
-
-const BusMove = styled.div`
-  background: url(${busMove});
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 250px;
-  height: 150px;
-  position: relative;
-  animation: moving-bus 5s 3s 2;
-  @keyframes moving-bus {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(60vw);
-    }
-  }
+  color: white;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 40px;
+  margin-right: -100px;
 `;
 
 const SubCover = styled.div`
@@ -489,11 +414,7 @@ export default function Home() {
   return (
     <Wrapper>
       <Cover id="cover">
-        <CoverTitle>這是你每天的生活嗎</CoverTitle>
-        <CoverImgContainer>
-          <Grab />
-          <BusMove />
-        </CoverImgContainer>
+        <CoverText>公車都不來....</CoverText>
       </Cover>
       <SubCover id="sub-cover">
         <RollingBus
